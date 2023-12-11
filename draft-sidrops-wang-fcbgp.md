@@ -10,7 +10,7 @@ date:
 consensus: true
 v: 3
 # area: AREA
-# workgroup: WG Working Group
+workgroup: sidrops
 venue:
 #  group: WG
 #  type: Working Group
@@ -18,6 +18,13 @@ venue:
 #  arch: https://example.com/WG
   github: "BasilGuo/fcbgp-framework"
   latest: "https://BasilGuo.github.io/fcbgp-framework/draft-sidrops-wang-fcbgp.html"
+
+coding: us-ascii
+pi:    # can use array (if all yes) or hash here
+
+toc: yes
+sortrefs: yes  # defaults to yes
+symrefs: yes
 
 author:
   -
