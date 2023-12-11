@@ -19,7 +19,6 @@ venue:
   github: "BasilGuo/fcbgp-framework"
   latest: "https://BasilGuo.github.io/fcbgp-framework/draft-sidrops-wang-fcbgp.html"
 
-coding: us-ascii
 pi:    # can use array (if all yes) or hash here
 
 toc: yes
