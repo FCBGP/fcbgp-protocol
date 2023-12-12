@@ -3,7 +3,7 @@ title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
 
-docname: draft-sidrops-wang-fcbgp-latest
+docname: draft-sidrops-wang-fcbgp-protocol-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
@@ -16,8 +16,8 @@ venue:
 #  type: Working Group
 #  mail: WG@example.com
 #  arch: https://example.com/WG
-  github: "BasilGuo/fcbgp-framework"
-  latest: "https://BasilGuo.github.io/fcbgp-framework/draft-sidrops-wang-fcbgp.html"
+  github: "BasilGuo/fcbgp-protocol"
+  latest: "https://BasilGuo.github.io/fcbgp-protocol/draft-sidrops-wang-fcbgp-protocol.html"
 
 pi:    # can use array (if all yes) or hash here
 
@@ -64,14 +64,16 @@ informative:
 
 --- abstract
 
-This document defines a standard profile for the framework of Forwarding Commitment BGP (FC-BGP). Forwarding Commitment（FC）is a cryptographically signed code to certify an AS's routing intent on its directly connected hops. Based on FC, the goal of FC-BGP is to build a secure inter-domain system that can simultaneously authenticate AS_PATH attribute in BGP-UPDATE and validate network forwarding on the dataplane.
+This document describes Forwarding Commitment BGP (FC-BGP), an extension to the Border Gateway Protocol (BGP) that provides security for the path of Autonomous Systems (ASes) through which a BGP UPDATE message passes. Forwarding Commitment（FC）is a cryptographically signed code to certify an AS's routing intent on its directly connected hops. Based on FC, the goal of FC-BGP is to build a secure inter-domain system that can simultaneously authenticate the AS_PATH attribute in BGP-UPDATE and validate network forwarding on the data plane.
 
 
 --- middle
 
 # Introduction
 
-## Conventions and Definitions
+TODO
+
+## Requirements Language
 
 {::boilerplate bcp14-tagged}
 
