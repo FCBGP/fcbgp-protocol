@@ -17,7 +17,7 @@
 /versioned/
 Gemfile.lock
 archive.json
-draft-sidrops-wang-fcbgp.xml
+draft-sidrops-wang-fcbgp-protocol.xml
 package-lock.json
 report.xml
 !requirements.txt
