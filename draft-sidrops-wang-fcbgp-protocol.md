@@ -39,13 +39,13 @@ author:
       country: China
       email: wangxiaoliang0623@foxmail.com
   -
-      fullname: Zhuotao liu
+      fullname: Zhuotao Liu
       org: Tsinghua University
       city: Beijing
       country: China
       email: zhuotaoliu@tsinghua.edu.cn
   -
-      fullname: Li Qi
+      fullname: Qi Li
       org: Tsinghua University
       city: Beijing
       country: China
