@@ -60,6 +60,8 @@ author:
 normative:
   RFC4271:
   RFC4272:
+  RFC5492:
+  RFC6472:
   RFC7607:
   RFC8205:
 
@@ -77,7 +79,7 @@ This document describes Forwarding Commitment BGP (FC-BGP), an extension to the 
 
 The FC-BGP control plane mechanism described in this document is used to verify the authenticity of BGP advertised routes. Compared to BGPsec, the FC-BGP control plane mechanism is characterized by its support for partial deployment and its security guarantees in partial deployment scenarios.
 
-FC-BGP extends the BGP Update message with a new optional, transitive, non-partial, extended path attribute called FC (Forwarding Commitment). All FC-BGP enabled ASes that the BGP Update message traverses will add the corresponding FC. Subsequent ASes can then use the FC list carried in the update message to verify that the advertised path is consistent with the AS Path attribute.
+FC-BGP extends the BGP Update message with a new optional, transitive, and extended path attribute called FC (Forwarding Commitment). All FC-BGP enabled ASes that the BGP Update message traverses will add the corresponding FC. Subsequent ASes can then use the FC list carried in the update message to verify that the advertised path is consistent with the AS Path attribute.
 
 Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation. Additionally, any FC-BGP speaker that wishes to generate and propagate FC along with BGP Update messages must use a router certificate from RPKI that is associated with its AS number.
 
@@ -88,14 +90,11 @@ It is worth noting that FC-BGP also includes the ability to verify data plane fo
 
 {::boilerplate bcp14-tagged}
 
-# FC-BGP Negotiation
+# FC Attribute{#fc-attr}
 
-TODO: BGP-OPEN packet
-TODO: no use BGP-AS_SET
+FC exists in BGP UPDATE messages as a path attribute. It is an optional, transitive, and extended-length path attribute, so there is no need to negotiate this feature in the setup of FC-BGP. Thought FC-BGP would not modify the AS_PATH path attribute, never use AS_SET or AS_CONFED_SET in FC-BGP as {{RFC6472}} says.
 
-# FC Attribute
-
-FC exists in BGP UPDATE messages as a path attribute. It is an optional, transitive, non-partial, and extended-length path attribute. The format of FC path attribute is shown in {{figure2}}.
+The format of FC path attribute is shown in {{figure1}}.
 
 ~~~~
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
