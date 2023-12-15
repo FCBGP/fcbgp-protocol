@@ -1,4 +1,4 @@
----
+![image](https://github.com/BasilGuo/fcbgp-protocol/assets/42705918/65172209-7a42-4a35-8bd2-ce95312facbf)---
 title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
@@ -58,6 +58,7 @@ author:
       email: jianping@cernet.edu.cn
 
 normative:
+  - RFC5492
 
 informative:
 
@@ -79,8 +80,41 @@ TODO
 
 # FC-BGP Negotiation
 
-TODO: BGP-OPEN packet
-TODO: no use BGP-AS_SET
+In the running process of BGP, it should first negotiate the FC-BGP capability {{RFC5492}}. This document defines the BGP capability that allows a BGP speaker to advertise to a neighbor the ability to send or receive FC-BGP UPDATE messages containing the FC path attribute.
+
+This capability has capability code TBD.
+
+The capability length for this capability MUST be set to 3.
+
+The three octets of the capability value are specified as follows.
+
+~~~~~~
+  0   1   2  3   4      5  6  7
++--------------------------------+
+|   Version   | Dir |  Reserved  |
++--------------------------------+
+|                                |
++------------- AFI --------------+
+|                                |
++--------------------------------+
+~~~~~
+
+Version:
+: The first octet's first four bits (bit 0, 1, and 3). It defines the version of FC-BGP for which the BGP speaker is advertising support. This document only defines version 0 and this field MUST be set to 0. Other versions may be set in  future documents. An FC-BGP speaker MAY advertise support for multiple versions of FC-BGP by including multiple versions of the FC-BGP capability in its BGP OPEN message.
+
+Dir:
+: The fifth bit (bit 4) of the first octet. It defines the direction of this .
+
+Reserved:
+: The last three bits (bits 5, 6, and 7) of the first octet.
+
+AFI:
+: The last two octets.
+
+
+
+
+
 
 # FC Attribute
 
