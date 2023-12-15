@@ -184,7 +184,7 @@ The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 655
 
 # Security Considerations
 
-TODO Security
+The security considerations of {{RFC8205}} and {{RFC4272}} also apply to ASPAs.
 
 
 # IANA Considerations
