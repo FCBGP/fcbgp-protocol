@@ -58,7 +58,7 @@ author:
       email: jianping@cernet.edu.cn
 
 normative:
-  - RFC7607:
+  RFC7607:
 
 informative:
 
