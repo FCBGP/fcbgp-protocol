@@ -93,7 +93,6 @@ TODO: no use BGP-AS_SET
 
 FC exists in BGP UPDATE messages as a path attribute. It is an optional, transitive, non-partial, and extended-length path attribute. The format of FC path attribute is shown in {{figure2}}.
 
-                     1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |      Flags    |      Type     |         FCList Length         |
@@ -112,8 +111,6 @@ FC path attribute includes the following parts:
 
 * FCList (variable length): The value is a sequence of FCs, in order. The definition of the FC format is shown in {{figure2}}.
 
-
-                     1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                Previous Autonomous System Number              |
