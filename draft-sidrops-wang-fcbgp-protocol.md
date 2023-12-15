@@ -59,13 +59,12 @@ author:
 
 normative:
   RFC4271:
-  RFC4272:
-  RFC5492:
-  RFC6472:
   RFC7607:
   RFC8205:
 
 informative:
+  RFC4272:
+  RFC6472:
 
 
 --- abstract
@@ -90,7 +89,7 @@ It is worth noting that FC-BGP also includes the ability to verify data plane fo
 
 {::boilerplate bcp14-tagged}
 
-# FC Attribute{#fc-attr}
+# FC Attribute
 
 FC exists in BGP UPDATE messages as a path attribute. It is an optional, transitive, and extended-length path attribute, so there is no need to negotiate this feature in the setup of FC-BGP. Thought FC-BGP would not modify the AS_PATH path attribute, never use AS_SET or AS_CONFED_SET in FC-BGP as {{RFC6472}} says.
 
