@@ -205,7 +205,7 @@ In FC-BGP, FC protects the route prefix and part of the AS-Path information in t
 
 When the AS-PATH uses AS_SEQUENCE in the BGP UPDATE, the FC-BGP function will not be enabled. In other cases, the FC-BGP speaker router will enable the FC-BGP function and update the FC path attribute after completing the above two steps, and continue to announce to other neighbors.
 
-All FC-BGP UPDATE messages must comply with the maximum BGP message size. If the final message exceeds the maximum message size, then it must follow the processing of section 9.2 of RFC4271.
+All FC-BGP UPDATE messages must comply with the maximum BGP message size. If the final message exceeds the maximum message size, then it must follow the processing of {{Section 9.2 of RFC4271}}.
 
 The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key. Afterwards, AS65537 will insert its own FC at the top of the FC List. The FC path attribute uses the message format shown in {{figure1}} and {{figure2}} for filling and packaging. FC signature uses RPKI router certificate. When signing, first perform SHA256 hash in the order of (PASN, CASN, NASN, IP Prefix Address, and IP Prefix Length). When PASN is not present, the field is 0. 0 is reserved by IANA. For specific uses, please refer to {{RFC7607}}. Calculate the digest information Digest, sign the Digest with ECDSA, fill the result into the Signature field of the FC message, and fill in the FC fields at the same time. After the FC-BGP speaker is filled, it sends the BGP UPDATE message according to the standard BGP processing flow.
 
@@ -216,7 +216,7 @@ The security considerations of {{RFC8205}} and {{RFC4272}} also apply to FC-BGP.
 
 # IANA Considerations
 
-This document has no IANA actions.
+FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
 
 
 --- back
