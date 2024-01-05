@@ -159,8 +159,10 @@ Nexthop Autonomous System Number (NASN):
 Subject Key Identifier (SKI):
 : 20 bytes, it exists in the RPKI router certificate, used to uniquely identify the public key for signature verification.
 
+
+<!-- TODO: Different from BGPsec as each FC has its algorithm ID, there is no need to set more than one FC for each hop. -->
 Algorithm ID:
-: 1 byte, the current value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in {{RFC8208}} and its updates.
+: 1 byte, the current value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in {{RFC8208}} and its updates. As each FC has its Algorithm ID, so no need to worry about that one suddenly changing its algorithm suite.
 
 Flags:
 : 1 byte, its value MUST be 0. None of these bits are assigned values.
@@ -177,9 +179,9 @@ Upon receiving a BGP UPDATE message carrying FC path attributes, an AS will perf
 
 1. Verify the AS-Path attribute.
 2. BGP best path selection.
-3. Update the FC path attributes and continue to advertise the BGP route.
+3. Update the FC path attributes and continue advertising the BGP route.
 
-Note that an AS that originates a BGP UPDATE message carrying FC path attributes will only perform the third step. An AS that no longer propagates a BGP UPDATE will only complete the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message that contains a declaration for the prefix 192.0.2.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
+Note that an AS that originates a BGP UPDATE message carrying FC path attributes will only perform the third step. An AS that no longer propagates a BGP UPDATE will only complete the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message that contains a declaration for the prefix 192.0.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
 
 ## Verify AS-Path Attribute
 
