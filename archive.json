@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-09T00:54:01.692553+00:00",
+  "timestamp": "2024-01-11T02:18:32.880351+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -189,6 +189,34 @@
       "mergedBy": "BasilGuo",
       "mergeCommit": {
         "oid": "a3996515c23cf36ca1115420de8855073bcbdd88"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOK4QgQc5jjjyj",
+      "title": "Revise draft.",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/6",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "1. Add router key references,\r\n2. terminalize BGP UPDATE, AS_PATH,\r\n3. partly modifies the FC process,\r\n4. standardize requirements language including MUST, SHOULD, MAY, and NOT ones.",
+      "createdAt": "2024-01-09T09:20:08Z",
+      "updatedAt": "2024-01-10T08:11:30Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "76ceb70fde2b798e10686bc78c88cd658683161f",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-check",
+      "headRefOid": "7110bd9cec59acdeebb2fa389485be354890fd72",
+      "closedAt": "2024-01-10T08:11:29Z",
+      "mergedAt": "2024-01-10T08:11:29Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "9e12667be24047f061ec9e75ed9c48400f9128fe"
       },
       "comments": [],
       "reviews": []
