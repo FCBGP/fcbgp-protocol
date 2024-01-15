@@ -166,7 +166,7 @@ Subject Key Identifier (SKI, 20 octets):
 
 <!-- TODO: Different from BGPsec as each FC has its algorithm ID, there is no need to set more than one FC for each hop. -->
 Algorithm ID (1 octet):
-: The current assigned value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in {{RFC8208}} and its updates. As each FC has its Algorithm ID, so no need to worry about that one suddenly changing its algorithm suite.
+: The current assigned value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in {{RFC8208}} and its updates. Each FC has its Algorithm ID, so there is no need to worry about that one suddenly changing its algorithm suite.
 
 Flags (1 octet):
 : Its value MUST be 0. None of these bits are assigned values.
@@ -175,7 +175,7 @@ Signature Length (2 octets):
 : It indicates the signature length in bytes.
 
 Signature (variable length):
-: The signature content and order are Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix)), where the Prefix is the IP address prefix which is encapsulated in the BGP UPDATE, and only one prefix is used each time. For hashing and signing, it uses the full IP address and IP prefix length. The full IP address uses 4 bytes for IPv4 and 16 bytes for IPv6.
+: The signature content and order are Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix)), where the Prefix is the IP address prefix encapsulated in the BGP UPDATE. Only one prefix is used each time. For hashing and signing, these fields are in network byte order and use the full IP address and IP prefix length. The full IP address uses 4 bytes for IPv4 and 16 bytes for IPv6.
 
 # Processing a Received FC-BGP UPDATE Message
 
@@ -199,7 +199,7 @@ Based on the AS-Path verification, it is recommended that AS 65537 prioritize ro
 
 2. Full path validation. All AS hops in the AS-Path attribute from the source AS to the current AS have successfully passed FC validation.
 
-3. Partial path validation. There is a contiguous AS subsequence in the AS-Path attribute starting from the source AS. All AS hops in the subsequence have successfully passed FC validation. However, there is at least one AS between the last AS in the subsequence and the current AS that is missing or fails the FC validation. We denote the number of ASes included in the subsequence as N, and the total number of ASes from the source AS to the current AS as M. At this time, N and M need to meet the following requirements: if N = 1, then M <= 4; if N > 1, then M <= N + 3. Under these conditions, the route path can still be guaranteed to be safe from hijacking. For detailed analysis, see xxx.
+3. Partial path validation. There is a contiguous AS subsequence in the AS-Path attribute starting from the source AS. All AS hops in the subsequence have successfully passed FC validation. However, there is at least one AS between the last AS in the subsequence and the current AS that is missing or fails the FC validation. We denote the number of ASes included in the subsequence as N, and the total number of ASes from the source AS to the current AS as M. At this time, N and M need to meet the following requirements: if N = 1, then M <= 4; if N > 1, then M <= N + 3. Under these conditions, the route path can still be guaranteed safe from hijacking. For detailed analysis, see xxx.
 
 4. Shorter AS-Path. The current AS selects the route with the shorter AS_PATH.
 
