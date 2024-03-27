@@ -3,7 +3,7 @@ title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
 
-docname: draft-wang-sidrops-fcbgp-protocol-00
+docname: draft-wang-sidrops-fcbgp-protocol-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
