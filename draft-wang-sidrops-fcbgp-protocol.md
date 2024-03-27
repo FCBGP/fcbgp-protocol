@@ -85,7 +85,7 @@ This document describes Forwarding Commitment BGP (FC-BGP), an extension to the 
 
 # Introduction
 
-The FC-BGP control plane mechanism described in this document is to verify the authenticity of BGP advertised routes.  FC-BGP is fully compatible with BGP and provides more security benefits in case of partial deployment compared with BGPsec. 
+The FC-BGP control plane mechanism described in this document is to verify the authenticity of BGP advertised routes.  FC-BGP is fully compatible with BGP and provides more security benefits in case of partial deployment compared with BGPsec.
 FC-BGP extends the BGP UPDATE message with a new optional, transitive, and extended path attribute called FC (Forwarding Commitment). When the BGP UPDATE message traverses an FC-BGP enabled AS, it adds a new FC according to the AS order in AS_PATH. Subsequent ASes can then use the list of FCs in the UPDATE message to verify that the advertised path is consistent with the AS_PATH attribute.
 
 Similar to BGPsec defined in {{RFC8205}}, FC-BGP relies on RPKI to perform route origin validation. Additionally, any FC-enabled BGP speaker that wishes to generate and propagate FC along with BGP UPDATE messages MUST use a router certificate from RPKI that is associated with its AS number. The router key generation here follows {{RFC8635}}.
@@ -188,7 +188,7 @@ The AS that originates a BGP UPDATE message with the FC path attributes only per
 
 ## Verify the AS-Path Attribute
 
-The FC-BGP speaker in AS 65537, upon receiving an UPDATE message, retrieves the FC path attribute and extracts the FC list. It then finds the FC with CASN = 65536 and checks if NASN is equal to 65537. If so, it uses the SKI field to find the public key and calculates the signature using the algorithm specified in the Algorithm ID. If the calculated signature matches the signature in the message, then the AS-Path hop associated with the AS 65536 is verified. This process repeats for all FCs and AS-Paths in the FC list. If AS 65537 does not support FC-BGP, it simply forwards the BGP UPDATE to its neighbors when propagating this BGP route. 
+The FC-BGP speaker in AS 65537, upon receiving an UPDATE message, retrieves the FC path attribute and extracts the FC list. It then finds the FC with CASN = 65536 and checks if NASN is equal to 65537. If so, it uses the SKI field to find the public key and calculates the signature using the algorithm specified in the Algorithm ID. If the calculated signature matches the signature in the message, then the AS-Path hop associated with the AS 65536 is verified. This process repeats for all FCs and AS-Paths in the FC list. If AS 65537 does not support FC-BGP, it simply forwards the BGP UPDATE to its neighbors when propagating this BGP route.
 
 ## BGP Best Path Selection
 
@@ -198,16 +198,16 @@ Based on the AS-Path verification, it is recommended that AS 65537 prioritize ro
 
 2. Full path validation. All AS hops in the AS-Path attribute from the source AS to the current AS have successfully passed the aforementioned FC validation.
 
-3. Partial path validation. There is a contiguous AS subsequence in the AS-Path attribute starting from the source AS. All AS hops in the subsequence have successfully passed the FC validation. However, there is at least one AS between the last AS in the subsequence and the current AS whose associated FC is either missing or invalid. We denote the number of ASes included in the subsequence as N, and the total number of ASes from the source AS to the current AS as M. This path should be considered to be secure in the following two conditions: N = 1 and M <= 4 or N > 1 and M <= N + 3. 
+3. Partial path validation. There is a contiguous AS subsequence in the AS-Path attribute starting from the source AS. All AS hops in the subsequence have successfully passed the FC validation. However, there is at least one AS between the last AS in the subsequence and the current AS whose associated FC is either missing or invalid. We denote the number of ASes included in the subsequence as N, and the total number of ASes from the source AS to the current AS as M. This path should be considered to be secure in the following two conditions: N = 1 and M <= 4 or N > 1 and M <= N + 3.
 
 4. Shorter AS-Path. The current AS selects the route with the shorter AS_PATH.
 
-5. Other attributes with lower priority than the AS-path length. The addition of FCs in this case should not affect path selection. 
+5. Other attributes with lower priority than the AS-path length. The addition of FCs in this case should not affect path selection.
 
 ## Update the FC path attributes and continue to advertise the BGP route
 FC-BGP speakers need to generate different UPDATE messages for different peers. Each UPDATE announcement contains only one route prefix and cannot be aggregated. This is because different route prefixes may have different announcement paths due to different routing policies. Multiple aggregated route prefixes may cause FC generation and verification errors. When multiple route prefixes need to be announced, the FC-BGP speaker needs to generate different UPDATE messages for each route prefix.
 
-When the AS-PATH uses AS_SEQUENCE in the BGP UPDATE, the FC-BGP function will not be enabled. In other cases, the FC-BGP speaker router will enable the FC-BGP function and update the FC path attribute after verifying AS-Path Attribute and selecting the preferable BGP path. 
+When the AS-PATH uses AS_SEQUENCE in the BGP UPDATE, the FC-BGP function will not be enabled. In other cases, the FC-BGP speaker router will enable the FC-BGP function and update the FC path attribute after verifying AS-Path Attribute and selecting the preferable BGP path.
 All FC-BGP UPDATE messages must comply with the maximum BGP message size. If the final message exceeds the maximum message size, then it must follow the processing of {{Section 9.2 of RFC4271}}.
 
 The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key. Afterwards, AS65537 will prepend its own FC on the top of the FC List. The FC path attribute uses the message format shown in {{figure1}} and {{figure2}} and should be signed with the RPKI router certificate. When signing the FC attribute, the FC-BGP speaker computes the  SHA256 hash in the order of (PASN ( 0 if absent), CASN, NASN, IP Prefix Address, and IP Prefix Length) firstly. Afterwards, the FC-BGP speaker should calculate the digest information Digest, sign the Digest with ECDSA, and then fill the Signature field and FC fields. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
