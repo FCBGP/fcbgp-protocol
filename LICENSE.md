@@ -1,4 +1,4 @@
 # License
 
 See the
-[guidelines for contributions](https://github.com/BasilGuo/fcbgp-protocol/blob/main/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/FCBGP/fcbgp-protocol/blob/main/CONTRIBUTING.md).
