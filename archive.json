@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-26T00:50:27.889082+00:00",
+  "timestamp": "2024-03-28T00:50:53.434314+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -205,7 +205,7 @@
       "labels": [],
       "body": "1. Add router key references,\r\n2. terminalize BGP UPDATE, AS_PATH,\r\n3. partly modifies the FC process,\r\n4. standardize requirements language including MUST, SHOULD, MAY, and NOT ones.",
       "createdAt": "2024-01-09T09:20:08Z",
-      "updatedAt": "2024-01-10T08:11:30Z",
+      "updatedAt": "2024-03-26T02:17:23Z",
       "baseRepository": "FCBGP/fcbgp-protocol",
       "baseRefName": "main",
       "baseRefOid": "76ceb70fde2b798e10686bc78c88cd658683161f",
@@ -218,6 +218,60 @@
       "mergeCommit": {
         "oid": "9e12667be24047f061ec9e75ed9c48400f9128fe"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOK4QgQc5q3h2Q",
+      "title": "Basil guo patch",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/9",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This version is updated by ZTL and XLW and submitted to datatracker as version-00.",
+      "createdAt": "2024-03-27T02:01:09Z",
+      "updatedAt": "2024-03-27T02:40:55Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "9e12667be24047f061ec9e75ed9c48400f9128fe",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-patch",
+      "headRefOid": "acf84861a61398e9ceb0eaeff00200243264f839",
+      "closedAt": "2024-03-27T02:40:10Z",
+      "mergedAt": "2024-03-27T02:40:10Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOK4QgQc5q5_eO",
+      "title": "update: revise the draft making it more detailed",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/11",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-27T10:12:57Z",
+      "updatedAt": "2024-03-27T10:12:58Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-revise",
+      "headRefOid": "47311679b40ef316a77f6f27c7a7644d1b7f10a0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
