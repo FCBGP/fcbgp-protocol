@@ -86,15 +86,15 @@ This document describes Forwarding Commitment BGP (FC-BGP), an extension to the 
 
 # Introduction
 
-This document describes FC-BGP, a mechanism for providing path security for Border Gateway Protocol (BGP) {{RFC4271}} route advertisements.
+The FC-BGP control plane mechanism described in this document is to verify the authenticity of BGP {{RFC4271}} advertised routes.  FC-BGP is fully compatible with BGP and provides more security benefits in case of partial deployment compared with BGPsec {{RFC8205}}, which we will prove at {{comparison}}.
 
-The FC-BGP control plane mechanism described in this document is to verify the authenticity of BGP advertised routes.  FC-BGP is fully compatible with BGP and provides more security benefits in case of partial deployment compared with BGPsec, which we will prove at {{comparison}}.
+<!-- TODO: the following paragraph can remove the last 2 sentences -->
 
-FC-BGP extends the BGP UPDATE message with a new optional, transitive, and extended path attribute called FC (Forwarding Commitment). When the BGP UPDATE message traverses an FC-BGP enabled AS, it adds a new FC according to the AS order in AS_PATH. Subsequent ASes can then use the list of FCs in the UPDATE message to verify that the advertised path is consistent with the AS_PATH attribute.
+FC-BGP extends the BGP UPDATE message with a new optional, transitive, and extended length path attribute called FC (Forwarding Commitment). This document also describes how an FC-BGP-compliant BGP speaker (referred to hereafter as an FC-BGP speaker) can generate, propagate, and validate BGP UPDATE messages containing this attribute to obtain security. In short, when the BGP UPDATE message traverses an FC-BGP-enabled AS, it adds a new FC according to the AS order in AS_PATH. Subsequent ASes can then use the list of FCs in the UPDATE message to verify that the advertised path is consistent with the AS_PATH attribute.
 
-Similar to BGPsec defined in {{RFC8205}}, FC-BGP relies on RPKI to perform route origin validation. Additionally, any FC-enabled BGP speaker that wishes to generate and propagate FC along with BGP UPDATE messages MUST use a router certificate from RPKI that is associated with its AS number. The router key generation here follows {{RFC8635}}.
+Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation. Additionally, any FC-BGP speaker that wishes to generate and propagate FC along with BGP UPDATE messages MUST use a router certificate from RPKI. This certificate is associated with its AS number. The router key generation here follows {{RFC8208}} and {{RFC8635}}.
 
-It is worth noting that the FC-BGP framework can be extended to verify data plane forwarding paths, ensuring that these paths are honoring the control plane BGP paths. However, the description of these mechanisms is outside the scope of this document.
+It is worth noting that the FC-BGP framework can be extended to verify data plane forwarding paths, ensuring that these paths honor the control plane BGP paths. However, the description of these mechanisms is outside the scope of this document.
 
 
 ## Requirements Language
@@ -105,11 +105,15 @@ It is worth noting that the FC-BGP framework can be extended to verify data plan
 
 <!-- TODO -->
 
-FC-BGP doesn't need to negotiate with peers as it is defined as a transitive path attribute in BGP UPDATE message. So there is no need to defines a new BGP capability {{RFC5492}}.
+FC-BGP is NOT REQUIRED to negotiate with peers as it is defined as a transitive path attribute in the BGP UPDATE message. Therefore, there is no need to define a new BGP capability {{RFC5492}} here.
 
 # FC Path Attribute
 
-Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended length path attribute. Thus, it is unnecessary to negotiate this feature in the BGP OPEN message.
+Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended length path attribute. So, it isn't necessary to negotiate this capability in the BGP OPEN message.
+
+This document registers a new attribute type code for this attribute: TBD.
+
+The FC path attribute includes the digital signatures that protect the pathlet information. We refer to those update messages that contain the FC path attribute as "FC-BGP UPDATE messages".
 
 Although FC-BGP would not modify the AS_PATH path attribute, it is REQUIRED to never use the AS_SET or AS_CONFED_SET in FC-BGP according to what {{RFC6472}} says.
 
