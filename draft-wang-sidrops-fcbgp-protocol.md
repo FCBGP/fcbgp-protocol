@@ -111,13 +111,11 @@ FC-BGP is NOT REQUIRED to negotiate with peers as it is defined as a transitive 
 
 Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended length path attribute. So, it isn't necessary to negotiate this capability in the BGP OPEN message.
 
-This document registers a new attribute type code for this attribute: TBD.
+This document registers a new attribute type code for this attribute: TBD, see {{iana-consideration}} for more information.
 
-The FC path attribute includes the digital signatures that protect the pathlet information. We refer to those update messages that contain the FC path attribute as "FC-BGP UPDATE messages".
+The FC path attribute includes the digital signatures that protect the pathlet information. We refer to those update messages that contain the FC path attribute as "FC-BGP UPDATE messages". Although FC-BGP would not modify the AS_PATH path attribute, it is REQUIRED to never use the AS_SET or AS_CONFED_SET in FC-BGP according to what {{RFC6472}} says.
 
-Although FC-BGP would not modify the AS_PATH path attribute, it is REQUIRED to never use the AS_SET or AS_CONFED_SET in FC-BGP according to what {{RFC6472}} says.
-
-The format of the FC path attribute is shown in {{figure1}}.
+The format of the FC path attribute is shown in {{figure1}} and {{figure2}}.
 
 ~~~~
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -135,13 +133,13 @@ Flags (1 octet):
 : The current value is 0b11010000, representing the FC attribute as optional, transitive, partial, and extended-length.
 
 Type (1 octet):
-: The current value is TBD, which is waiting for the IANA assignment. Refer to {{iana-considerations}}.
+: The current value is TBD, which is waiting for the IANA assignment. Refer to {{iana-considerations}} for more information.
 
 FCList Length (2 octets):
 : The value is the total length of the FCList in bytes.
 
 FCList (variable length):
-: The value is a sequence of FCs, in order. The definition of the FC signed code format is shown in {{figure2}}.
+: The value is a sequence of FCs, in order. The definition of the FC signed code format is shown in {{figure2}}. It does not conflict with the AS_PATH attribute. They can coexist in the same FC-BGP UPDATE message.
 
 ~~~~
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -163,34 +161,36 @@ FCList (variable length):
 
 In FC-BGP, all ASes MUST use 4-byte AS numbers. Existing 2-byte AS numbers are converted into 4-byte AS numbers by setting the two high-order octets of the 4-octet field to 0 {{RFC6793}}.
 
-FC signed code includes the following parts.
+FC's signed code includes the following parts. (See {{fcbgp-update}} for more details on populating these fields.)
 
+<!-- TODO: prove that insertion of 0 does not include route loop/BGP dispute in security consideration. Question asked by Keyur. See [Discussions: IETF119](https://github.com/FCBGP/fcbgp-protocol/discussions/10) for more information. -->
 Previous Autonomous System Number (PASN, 4 octets):
-: The AS number of the previous AS. If the current AS has no previous AS hop, it MUST be filled with 0.
+: The AS number of the previous AS. If the current AS has no previous AS hop, it MUST be filled with 0. We would discuss about it at {{security-considerations}}.
 
 Current Autonomous System Number (CASN, 4 octets):
-: The AS number of the current AS.
+: The AS number of the current AS to which the FC-BGP speaker belongs.
 
 Nexthop Autonomous System Number (NASN, 4 octets):
 : The AS number of the next hop AS to whom the current AS will send the BGP UPDATE message.
 
 Subject Key Identifier (SKI, 20 octets):
-: It exists in the RPKI router certificate, used to uniquely identify the public key for signature verification.
+: It exists in the RPKI router certificate, used to identify the public key for signature verification uniquely.
 
-<!-- TODO: Different from BGPsec as each FC has its algorithm ID, there is no need to set more than one FC for each hop. -->
+<!-- TODO: Different from BGPsec as each FC has its algorithm ID, there is no need to set more than one FC for each hop. Hope so. -->
 Algorithm ID (1 octet):
 : The current assigned value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in {{RFC8208}} and its updates. As each FC has its Algorithm ID, so no need to worry about that one suddenly changing its algorithm suite.
 
+<!-- TODO: Flags in BGPsec used to indicate the AS_CONFED_SEQUENCE. -->
 Flags (1 octet):
-: Its value MUST be 0. None of these bits are assigned values.
+: Its value MUST be 0. None of these bits are assigned values in this document.
 
 Signature Length (2 octets):
-: It indicates the signature length in bytes.
+: It indicates the signature length in bytes. It only contains the Signature field length, not includes other fields.
 
 Signature (variable length):
 : The signature content and order are Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix)), where the Prefix is the IP address prefix which is encapsulated in the BGP UPDATE, and only one prefix is used each time. For hashing and signing, it uses the full IP address and IP prefix length. The full IP address uses 4 bytes for IPv4 and 16 bytes for IPv6.
 
-# FC-BGP UPDATE Messages
+# FC-BGP UPDATE Messages {#fcbgp-update}
 
 TBD.
 
@@ -202,7 +202,7 @@ Upon receiving a BGP UPDATE message carrying FC path attributes, an AS will perf
 2. BGP best path selection.
 3. Update the FC path attributes and continue advertising the BGP route.
 
-The AS that originates a BGP UPDATE message with the FC path attributes only performs the third step. An AS which no longer propagates a BGP UPDATE only completes the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
+The AS that originates a BGP UPDATE message with the FC path attributes only performs the third step. An AS that no longer propagates a BGP UPDATE only completes the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
 
 ## Verify the AS-Path Attribute
 
@@ -258,7 +258,7 @@ TBD.
 
 TBD.
 
-# Security Considerations
+# Security Considerations {#security-considerations}
 
 The security considerations of {{RFC8205}} and {{RFC4272}} also apply to FC-BGP.
 
