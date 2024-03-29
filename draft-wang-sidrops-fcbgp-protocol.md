@@ -116,7 +116,7 @@ FC-BGP is NOT REQUIRED to negotiate with peers as it is defined as a transitive 
 
 Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended length path attribute. So, it isn't necessary to negotiate this capability in the BGP OPEN message.
 
-This document registers a new attribute type code for this attribute: TBD, see {{iana-consideration}} for more information.
+This document registers a new attribute type code for this attribute: TBD, see {{iana-considerations}} for more information.
 
 The FC path attribute includes the digital signatures that protect the pathlet information. We refer to those update messages that contain the FC path attribute as "FC-BGP UPDATE messages". Although FC-BGP would not modify the AS_PATH path attribute, it is REQUIRED to never use the AS_SET or AS_CONFED_SET in FC-BGP according to what {{RFC6472}} says.
 
