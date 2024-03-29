@@ -222,7 +222,7 @@ When an FC-BGP speaker receives an FC-BGP UPDATE message containing an FC path a
 
 To generate the FC path attribute on the ongoing UPDATE message, the FC-BGP speaker first generates a new FC Segment and adds it to the FCList of the outer format defined in {{figure1}}. Note that if the FC-BGP speaker is not the origin AS and there is an existing FC path attribute, then the FC-BGP speaker prepends its new FC segment (placed in first position) onto the FCList of the existing FC path attribute.
 
-The Current AS number (CASN) in this FC segment MUST match the AS number in the Subject field of the RPKI router certificate that will be used to verify the digital signature constructed by this BGPsec speaker (see {{Section 3.1.1 in RFC8209}} and {{RFC6487}}).
+The Current AS number (CASN) in this FC segment MUST match the AS number in the Subject field of the RPKI router certificate that will be used to verify the digital signature constructed by this BGPsec speaker (see {{Section 3.1.1 of RFC8209}} and {{RFC6487}}).
 
 The Subject Key Identifier field in the new FC segment is populated with the identifier contained in the Subject Key Identifier extension of the RPKI router certificate corresponding to the FC-BGP speaker {{RFC8209}}.  This Subject Key Identifier will be used by recipients of the route advertisement to identify the proper certificate to use in verifying the signature.
 
