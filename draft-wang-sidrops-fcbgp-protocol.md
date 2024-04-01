@@ -67,7 +67,6 @@ normative:
   RFC4271:
   RFC5492:
   RFC6482:
-  RFC6483:
   RFC6487:
   RFC6793:
   RFC6811:
@@ -75,11 +74,13 @@ normative:
   RFC8205:
   RFC8208:
   RFC8209:
+  RFC8210:
   RFC8635:
 
 informative:
   RFC4272:
   RFC6472:
+  RFC6483:
 
 
 --- abstract
@@ -244,13 +245,29 @@ The Signature field in the new FC segment contains a digital signature that bind
 
 Upon receiving an FC-BGP UPDATE message from an external (eBGP) peer carrying the FC path attribute, an FC-BGP speaker will perform the following three steps:
 
-1. Verify the AS-Path attribute.
+1. Verify the AS_PATH and FC path attributes.
 2. BGP best path selection.
 3. Update the FC path attributes and continue advertising the BGP route.
 
-The AS that originates a BGP UPDATE message with the FC path attributes only performs the third step. An AS that no longer propagates a BGP UPDATE only completes the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
+Same as BGPsec, an FC-BGP speaker will wish to perform origin validation (see {{RFC6483}} and {{RFC6811}}) on an incoming FC-BGP UPDATE message, but such validation is independent of the validation described in this section.
 
-## Verify the AS-Path Attribute
+The FC-BGP speaker that originates the FC-BGP UPDATE message only performs the third step. An FC-BGP speaker SHOULD no longer propagate an FC-BGP UPDATE message only after completing the first two steps. For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.2.0/24, with an originating AS of 65536 and a next hop of 65538. All three ASes support FC-BGP.
+
+## Overview of FC-BGP Validation
+
+The RPKI router certificates provide the data including the triplet <AS Number, Public Key, Subject Key Identifier> to verify the AS_PATH and FC path attributes. The recipient SHOULD have access to these RPKI router certificates.
+
+Note that the FC-BGP speaker could perform the validation of RPKI router certificates on its own and extract the required data, or it could receive the same data from a trusted cache that performs RPKI validation on behalf of (some set of) FC-BGP speakers. (For example, the trusted cache could deliver the necessary validity information to the FC-BGP speaker by using the Router Key PDU (Protocol Data Unit) for the RPKI-Router protocol {{RFC8210}}.)
+
+To validate an FC-BGP UPDATE message containing the FC path attribute, the recipient performs the validation steps specified in {{validation-algo}}. The validation procedure results in one of two states: 'Valid' and 'Not Valid'.
+
+<!-- TODO: BGP route selection. -->
+It is expected that the output of the validation procedure will be used as an input to BGP route selection. That said, the BGP route selection, and thus the handling of the validation states, is a matter of local policy and is handled using local policy mechanisms. Implementations SHOULD enable operators to set such local policy on a per-session basis.  (That is, it is expected that some operators will choose to treat FC-BGP validation status differently for UPDATE messages received over different BGP sessions.)
+
+<!-- TODO -->
+FC-BGP validation need only be performed at the eBGP edge. The validation status of an FC-BGP signed/unsigned UPDATE message MAY be conveyed via iBGP from an ingress edge router to an egress edge router via some mechanism, according to local policy within an AS. As discussed in {{fcbgp-update}}, when an FC-BGP speaker chooses to forward a (syntactically correct) FC-BGP UPDATE message, it SHOULD be forwarded with its FC path attribute intact (regardless of the validation state of the UPDATE message). Based entirely on local policy, an egress router receiving an FC-BGP UPDATE message from within its own AS MAY choose to perform its own validation.
+
+## Validation Algorithm {#validation-algo}
 
 The FC-BGP speaker in AS 65537, upon receiving an UPDATE message, retrieves the FC path attribute and extracts the FC list. It then finds the FC with CASN = 65536 and checks if NASN is equal to 65537. If so, it uses the SKI field to find the public key and calculates the signature using the algorithm specified in the Algorithm ID. If the calculated signature matches the signature in the message, then the AS-Path hop associated with the AS 65536 is verified. This process repeats for all FCs and AS-Paths in the FC list. If AS 65537 does not support FC-BGP, it simply forwards the BGP UPDATE to its neighbors when propagating this BGP route.
 
