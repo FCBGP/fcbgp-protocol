@@ -227,14 +227,23 @@ The Current AS number (CASN) in this FC segment MUST match the AS number in the 
 
 The Subject Key Identifier field in the new FC segment is populated with the identifier contained in the Subject Key Identifier extension of the RPKI router certificate corresponding to the FC-BGP speaker {{RFC8209}}.  This Subject Key Identifier will be used by recipients of the route advertisement to identify the proper certificate to use in verifying the signature.
 
-<!-- TODO: Flags or pCount -->
+<!-- TODO: Flags or pCount
+The following several paragraphs discuss these two fields in BGPsec.
+But, we don't need pCount field if it only means for multiple AS in AS_PATH.
+Because the AS_PATH attribute has remained in FC-BGP.
+We should separate Flags into different bits for different usages.
+The lowest/rightmost one is representative of pCount in RR. -->
 
-To prevent unnecessary processing load in the validation of FC segments, a FC-BGP speaker SHOULD NOT produce multiple consecutive FC segments with the same AS number. This means that to achieve the semantics of prepending the same AS number k times, a FC-BGP speaker SHOULD only produce a single FC segment with a pCount of k.
+To prevent unnecessary processing load in the validation of FC segments, an FC-BGP speaker SHOULD NOT produce multiple consecutive FC segments with the same AS number. This means that to achieve the semantics of prepending the same AS number k times, an FC-BGP speaker SHOULD produce a single FC segment once.
 
-A route server (RR) that participates in the BGP control plane but does not act as a transit AS in the data plane may choose to set pCount to 0. This option enables the route server to participate in FC-BGP and obtain the associated security guarantees without increasing the length of the AS path. (Note that FC-BGP speakers compute the length of the AS path by summing the pCount values in the FC attribute.) However, when a route server sets the pCount value to 0, it still inserts its AS number into the FC segment, as this information is needed to validate the signature added by the route server.
-<!-- TODO: The following definitions in BGPsec {{RFC8205}} also applies to this document. See {{RFC8206}} for a discussion of setting pCount to 0 to facilitate AS Number migration. Also, see Section 4.3 for the use of pCount=0 in the context of an AS confederation.  See Section 7.2 for operational guidance for configuring a BGPsec router for setting pCount=0 and/or accepting pCount=0 from a peer.-->
+<!-- TODO The last sentence is not really. It is correct in BGPsec but not in FC-BGP.
+It needs more discussion for RR. -->
+A route server (RR) that participates in the BGP control plane but does not act as a transit AS in the data plane may choose to set Flags to 1. This option enables the route server to participate in FC-BGP and obtain the associated security guarantees without increasing the length of the AS path. However, when a route server sets the Flags value to 1, it still inserts its AS number into the FC segment, as this information is needed to validate the signature added by the route server.
 
-In FC-BGP, it only supports one algorithm suite. If it transits from one algorithm suite to another, the FC-BGP speaker MUST place its router certificate in the RPKI repository first and then specify the Algorithm ID in the FC segment.
+<!-- TODO: the following parts are copied from BGPsec. We may not need to consider AS migration, carefully.
+The following definitions in BGPsec {{RFC8205}} also apply to this document. See {{RFC8206}} for a discussion of setting pCount to 0 to facilitate AS Number migration. Also, see Section 4.3 for the use of pCount=0 in the context of an AS confederation.  See Section 7.2 for operational guidance for configuring a BGPsec router for setting pCount=0 and/or accepting pCount=0 from a peer.-->
+
+In FC-BGP, it only supports one algorithm suite defined in {{RFC8208}}. If it transits from one algorithm suite to another, the FC-BGP speaker MUST place its router certificate in the RPKI repository first and then specify the Algorithm ID in the FC segment.
 
 The Signature field in the new FC segment contains a digital signature that binds the prefix and <PASN, CASN, NASN> to the RPKI router certificate corresponding to the FC-BGP speaker. The digital signature is computed as follows: Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix, Prefix Length))
 <!-- TODO: this is not a good way to clarify the calculation of Signature. More details are needed, such as AFI, SAFI, and NLRI in Figure 8 in RFC8205. -->
@@ -294,7 +303,7 @@ FC-BGP speakers need to generate different UPDATE messages for different peers. 
 When the AS-PATH uses AS_SEQUENCE in the BGP UPDATE, the FC-BGP function will not be enabled. In other cases, the FC-BGP speaker router will enable the FC-BGP function and update the FC path attribute after verifying AS-Path Attribute and selecting the preferable BGP path.
 All FC-BGP UPDATE messages must comply with the maximum BGP message size. If the final message exceeds the maximum message size, then it must follow the processing of {{Section 9.2 of RFC4271}}.
 
-The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key. Afterwards, AS65537 will prepend its own FC on the top of the FC List. The FC path attribute uses the message format shown in {{figure1}} and {{figure2}} and should be signed with the RPKI router certificate. When signing the FC attribute, the FC-BGP speaker computes the  SHA256 hash in the order of (PASN ( 0 if absent), CASN, NASN, IP Prefix Address, and IP Prefix Length) firstly. Afterwards, the FC-BGP speaker should calculate the digest information Digest, sign the Digest with ECDSA, and then fill the Signature field and FC fields. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
+The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key. Afterwards, AS65537 will prepend its own FC on the top of the FC List. The FC path attribute uses the message format shown in {{figure1}} and {{figure2}} and should be signed with the RPKI router certificate. When signing the FC attribute, the FC-BGP speaker computes the  SHA256 hash in the order of (PASN ( 0 if absent), CASN, NASN, IP Prefix Address, and IP Prefix Length) firstly. Afterward, the FC-BGP speaker should calculate the digest information Digest, sign the Digest with ECDSA, and then fill the Signature field and FC fields. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
 
 # Algorithms and Extensibility
 
