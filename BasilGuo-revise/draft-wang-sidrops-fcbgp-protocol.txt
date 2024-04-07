@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 3 October 2024                                            Q. Li
+Expires: 9 October 2024                                            Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                            1 April 2024
+                                                            7 April 2024
 
 
                      FC-BGP Protocol Specification
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 October 2024.
+   This Internet-Draft will expire on 9 October 2024.
 
 Copyright Notice
 
@@ -346,26 +346,24 @@ Table of Contents
    verifying the signature.
 
    To prevent unnecessary processing load in the validation of FC
-   segments, a FC-BGP speaker SHOULD NOT produce multiple consecutive FC
-   segments with the same AS number.  This means that to achieve the
-   semantics of prepending the same AS number k times, a FC-BGP speaker
-   SHOULD only produce a single FC segment with a pCount of k.
+   segments, an FC-BGP speaker SHOULD NOT produce multiple consecutive
+   FC segments with the same AS number.  This means that to achieve the
+   semantics of prepending the same AS number k times, an FC-BGP speaker
+   SHOULD produce a single FC segment once.
 
    A route server (RR) that participates in the BGP control plane but
    does not act as a transit AS in the data plane may choose to set
-   pCount to 0.  This option enables the route server to participate in
+   Flags to 1.  This option enables the route server to participate in
    FC-BGP and obtain the associated security guarantees without
-   increasing the length of the AS path.  (Note that FC-BGP speakers
-   compute the length of the AS path by summing the pCount values in the
-   FC attribute.)  However, when a route server sets the pCount value to
-   0, it still inserts its AS number into the FC segment, as this
-   information is needed to validate the signature added by the route
-   server.
+   increasing the length of the AS path.  However, when a route server
+   sets the Flags value to 1, it still inserts its AS number into the FC
+   segment, as this information is needed to validate the signature
+   added by the route server.
 
-   In FC-BGP, it only supports one algorithm suite.  If it transits from
-   one algorithm suite to another, the FC-BGP speaker MUST place its
-   router certificate in the RPKI repository first and then specify the
-   Algorithm ID in the FC segment.
+   In FC-BGP, it only supports one algorithm suite defined in [RFC8208].
+   If it transits from one algorithm suite to another, the FC-BGP
+   speaker MUST place its router certificate in the RPKI repository
+   first and then specify the Algorithm ID in the FC segment.
 
    The Signature field in the new FC segment contains a digital
    signature that binds the prefix and <PASN, CASN, NASN> to the RPKI
@@ -481,7 +479,7 @@ Table of Contents
    Figure 1 and Figure 2 and should be signed with the RPKI router
    certificate.  When signing the FC attribute, the FC-BGP speaker
    computes the SHA256 hash in the order of (PASN ( 0 if absent), CASN,
-   NASN, IP Prefix Address, and IP Prefix Length) firstly.  Afterwards,
+   NASN, IP Prefix Address, and IP Prefix Length) firstly.  Afterward,
    the FC-BGP speaker should calculate the digest information Digest,
    sign the Digest with ECDSA, and then fill the Signature field and FC
    fields.  At this point, the processing of FC path attributes by the
