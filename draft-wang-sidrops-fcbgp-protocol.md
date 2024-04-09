@@ -81,6 +81,7 @@ normative:
 
 informative:
   RFC4272:
+  RFC5065:
   RFC6472:
   RFC6480:
   RFC6483:
@@ -471,7 +472,10 @@ TBD. Regist Flags.
 --- back
 
 # Appendix
+
 ## Comparison with BGPsec {#comparison}
+
+TBD.
 
 ### Similarities and Differences
 
