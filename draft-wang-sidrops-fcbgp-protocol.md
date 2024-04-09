@@ -65,6 +65,7 @@ author:
 
 normative:
   RFC4271:
+  RFC4724:
   RFC5492:
   RFC5656:
   RFC6482:
@@ -289,7 +290,7 @@ To incorporate or create a new FC segment for an FC-BGP UPDATE message using a s
 
 The RPKI allows the legitimate holder of IP address prefix(es) to issue a digitally signed object known as a Route Origin Authorization (ROA). This ROA authorizes a specific AS to originate routes for a particular set of prefixes {{RFC6482}}. It is anticipated that most Relying Parties (RPs) will combine FC-BGP with origin validation {{RFC6483}} and {{RFC6811}}. Therefore, it is strongly RECOMMENDED that an FC-BGP speaker only advertises a route for a given prefix in an FC-BGP UPDATE message if there is a valid ROA that authorizes the FC-BGP speaker's AS to originate routes for that specific prefix.
 
-If an FC-BGP router receives a non-FC-BGP UPDATE message from an external neighbor, meaning that the origin BGP speaker does not support FC-BGP, the router processes the UPDATE message as a regular BGP UPDATE message. In this case, it SHOULD NOT add its own FC segment to the UPDATE message. On the other hand, when the FC-BGP speaker advertises routes belonging to its local AS and receives them from an internal neighbor, it MUST add its FC segment to the UPDATE message if it decides to propagate those routes. Furthermore, if the FC-BGP router receives an FC-BGP UPDATE message from a neighbor for a specific prefix and chooses to propagate that neighbor's route for the prefix, it MUST propagate the route as an FC-BGP UPDATE message containing the FC path attribute.
+If an FC-BGP router receives a non-FC-BGP UPDATE message from an external neighbor, meaning that the origin BGP speaker does not support FC-BGP, the router processes the UPDATE message as a regular BGP UPDATE message typically. In this case, it SHOULD NOT add its own FC segment to the UPDATE message. On the other hand, when the FC-BGP speaker advertises routes belonging to its local AS and receives them from an internal neighbor, it MUST add its FC segment to the UPDATE message if it decides to propagate those routes. Furthermore, if the FC-BGP router receives an FC-BGP UPDATE message from a neighbor for a specific prefix and chooses to propagate that neighbor's route for the prefix, it MUST propagate the route as an FC-BGP UPDATE message containing the FC path attribute.
 
 <!-- TODO: if an received UPDATE message contains AS_SET or AS_CONFED_SET, how can FC-BGP speaker processes that message. IN BGPSEC: the BGPsec speaker MUST remove any existing BGPsec_PATH in the received advertisement(s) for this prefix and produce a traditional (non-BGPsec) UPDATE message. What's more, in the mixed scenario, both AS_SET and FC path attributes are contained in one UPDATE message, how to process it. The second issue pertains to the aggregation of routes following the setting of the FC path attribute. -->
 
@@ -378,15 +379,6 @@ The content of Algorithm Suite Considerations defined in {{Section 6.1 of RFC820
 
 But the algorithm suite transition in FC-BGP is straightforward: As each FC segment has an Algorithm ID field, just populate this field with a feasible and consensus value that all FC-BGP speaker supports when transitioning.
 
-## Defering Validation
-
-When an FC-BGP speaker receives incredibly enormous UPDATE messages at once, it is better to defer the validation of incoming FC-BGP UPDATE messages. It depends on the local policy of the FC-BGP speaker. However, the deferment of validation and status of deferred messages SHOULD be visible to the operator in an implementation.
-
-## BGP route selection {#BGP-route-selection}
-
-<!-- TODO: An expert says the ROV takes the highest level in BGP route selection. Need confirmation. -->
-It is not the intent of FC-BGP to modify the BGP route selection, though it indeed modifies the BGP route selection from the aspect of the result. However, it is a matter of local policy and is handled using local policy mechanisms to perform the BGP route selection and the handling of the validation states. Implementations SHOULD enable operators to set such local policy on a per-session basis.  (That is, it is expected that some operators will choose to treat FC-BGP validation status differently for UPDATE messages received over different BGP sessions.) We recommend the implementation treat the priority of FC-BGP UPDATE messages at the same level as ROV.
-
 ## Speedup and Early Termination of Signature Verification
 
 It is advantageous for an implementation to establish a parallel verification process for FC-BGP if the router's processor supports such operations. As each FC segment contains the integral data that needs to be verified, parallel verification can significantly enhance the efficiency and speed of the validation process. By utilizing parallel processing capabilities, an implementation can simultaneously verify multiple FC segments, thereby reducing the overall verification time. This is particularly beneficial in scenarios where the FC path attribute contains a substantial number of segments or in high-traffic networks with a large volume of FC-BGP UPDATE messages. Implementations that leverage parallel verification take advantage of the processing power available in modern router processors. This allows for more efficient and faster verification, ensuring that the FC-BGP UPDATE messages are promptly validated and routed accordingly.
@@ -399,44 +391,56 @@ Additionally, an FC-BGP UPDATE message is considered as 'Not Valid' if at least 
 
 By incorporating these observations, an FC-BGP implementation can achieve significant performance improvements and reduce the computational burden on the route processor. It allows for more efficient validation of FC-BGP UPDATE messages, ensuring the integrity and security of the routing information while maximizing system resources.
 
+## Defering Validation
+
+When an FC-BGP speaker receives an exceptionally large number of UPDATE messages simultaneously, though it can use parallel verification to speed up the validation, it can be beneficial to defer the validation of incoming FC-BGP UPDATE messages. The decision to defer the validation process may depend on the local policy of the FC-BGP speaker, taking into account factors such as available resources and system load.
+
+By deferring the validation of these messages, the FC-BGP speaker can prioritize its processing power and resources to handle other critical tasks or ongoing operations. Deferring the validation allows the FC-BGP speaker to temporarily postpone the resource-intensive validation process until it can allocate sufficient resources to handle the influx of incoming messages effectively.
+
+The implementation SHOULD provide visibility to the operator regarding the deferment of validation and the status of the deferred messages. This visibility enables the operator to have awareness of the deferred messages and understand the current state of the system. This information is crucial for monitoring and managing the FC-BGP speaker's behavior, ensuring that the operator can make informed decisions based on the system's status.
+
+## BGP Route Selection {#BGP-route-selection}
+
+<!-- TODO: An expert says the ROV takes the highest level in BGP route selection. Need confirmation. -->
+
+While FC-BGP does modify the BGP route selection result, it is not the primary intention of FC-BGP to modify the BGP route selection process itself. Instead, FC-BGP focuses on providing an additional layer of validation and verification for BGP UPDATE messages.
+
+However, the handling of FC-BGP validation states, as well as the integration of FC-BGP with the BGP route selection, is indeed a matter of local policy. FC-BGP implementations SHOULD provide mechanisms that allow operators to define and configure their own local policies on a per-session basis. This flexibility enables operators to customize the behavior of FC-BGP based on their specific requirements and preferences.
+
+By allowing operators to set local policies, FC-BGP implementations empower them to control how the validation status of FC-BGP UPDATE messages influences the BGP route selection process. Operators may choose to treat FC-BGP validation status differently for UPDATE messages received over different BGP sessions, based on their network's needs and security considerations.
+
+To ensure consistency and interoperability, it is RECOMMENDED that FC-BGP implementations treat the priority of FC-BGP UPDATE messages at the same level as Route Origin Validation (ROV). This means that the validation status of FC-BGP UPDATE messages should be considered alongside other route selection criteria, such as path attributes, AS path length, and local preference.
 
 ## Non-deterministic Signature Algorithms
 
-Many signature algorithms are non-deterministic. That is, many signature algorithms will produce different signatures each time they are run (even when they are signing the same data with the same key). Therefore, if an FC-BGP router receives an FC-BGP UPDATE message from a peer and later receives a second FC-BGP UPDATE message from the same peer for the same prefix with the same FC path attribute and SKIs, the second UPDATE message MAY differ from the first UPDATE message in the signature fields (for a non-deterministic signature algorithm).
+The non-deterministic nature of many signature algorithms can introduce variations in the signatures produced, even when signing the same data with the same key. This means that if an FC-BGP router receives two FC-BGP UPDATE messages from the same peer, for the same prefix, with the same FC path attribute except the signature fields, the signature fields MAY differ when using a non-deterministic signature algorithm. Note that if the sender caches and reuses the previous signature, the two sets of signature fields will not differ. This applies specifically to deterministic signature algorithms, where the signature fields between the two UPDATE messages MUST be identical.
 
-However, the two sets of signature fields will not differ if the sender caches and reuses the previous signature. For a deterministic signature algorithm, the signature fields MUST be identical between the two UPDATE messages.
+Considering these observations, an FC-BGP implementation MAY incorporate optimizations in the UPDATE validation processing. These optimizations can take advantage of the non-deterministic nature of signature algorithms to reduce computational overhead. For example, if an FC-BGP router has already validated an FC segment and its corresponding signature in a previous UPDATE message from the same peer, it may choose to cache and reuse the previous validation result. This can help avoid redundant computations for subsequent UPDATE messages with the same FC path attribute and SKIs, as long as the sender does not generate new signatures.
 
-Based on these observations, an implementation MAY incorporate optimizations in update validation processing.
-
-<!-- TODO: check and rewrite the following parts copied from BGPsec -->
+By incorporating such optimizations, an implementation can reduce the computational load and processing time needed for validating FC-BGP UPDATE messages. However, it is important to ensure that the implementation adheres to the requirements and specifications of the FC-BGP protocol while considering the performance benefits of these optimizations.
 
 ## Private AS Numbers
 
-A stub customer of an ISP may employ a private AS number. Such a stub customer cannot publish a ROA in the Global RPKI for the private AS number and the prefixes that they use. Also, the Global RPKI cannot support private AS numbers (i.e., FC-BGP speakers   in private ASs cannot be issued router certificates in the Global RPKI). For interactions between the stub customer (with the private AS number) and the ISP, the following two scenarios are possible:
-
-1. The stub customer sends an unsigned BGP UPDATE message for a prefix to the ISP's AS.  An edge FC-BGP speaker in the ISP's AS may choose to propagate the prefix to its non-FC-BGP and FC-BGP peers. If so, the ISP's edge FC-BGP speaker MUST strip the AS_PATH with the private AS number and then (a) re-originate the prefix without any signatures towards its non-FC-BGP peer and       (b) re-originate the prefix including its own signature towards its FC-BGP peer. In both cases (i.e., (a) and (b)), the prefix MUST have a ROA in the Global RPKI authorizing the ISP's AS to originate it.
-
-2. The ISP and the stub customer may use a local RPKI repository (using a mechanism such as one of the mechanisms described in {{RFC8416}}). Then, there can be a ROA for the prefix originated by the stub AS, and the eBGP speaker in the stub AS can be an FC-BGP speaker having a router certificate, albeit the ROA and router certificate are valid only locally. With this arrangement, the stub AS sends a signed UPDATE message for the prefix to the ISP's AS.  An edge BGPsec speaker in the ISP's AS validates the UPDATE message, using RPKI data based on the local RPKI view.  Further, it may choose to propagate the prefix to its non-FC-BGP and FC-BGP peers.  If so, the ISP's edge FC-BGP speaker MUST strip the FC segment received from the stub AS with the private AS number and then (a) re-originate the prefix without any signatures towards its non-FC-BGP peer and (b) re-originate the prefix including its signature towards its FC-BGP peer.  In both cases (i.e., (a) and (b)), the prefix MUST have a ROA in the Global RPKI authorizing the ISP's AS to originate it.
-
-Private AS numbers may be used in an AS confederation {{RFC5065}}. The BGPsec protocol requires that when a    BGPsec UPDATE message propagates through a confederation, each Member-AS that forwards it to a peer Member-AS MUST sign the UPDATE message (see Section 4.3).  However, the Global RPKI cannot support private AS numbers.  For the BGPsec speakers in Member-ASes with private AS numbers to have digital certificates, there MUST be a mechanism in place in the confederation that allows the establishment of a local, customized view of the RPKI, augmenting the Global RPKI repository data as needed.  Since this mechanism (for augmenting and maintaining a local image of RPKI data) operates locally within an AS or AS confederation, it need not be standard-based.  However, a standard-based mechanism can be used (see {{RFC8416}).  Recall that to prevent exposure of the internals of AS confederations, a BGPsec speaker exporting to a non-member removes all intra-confederation Secure_Path Segments and Signatures (see Section 4.3).
+<!-- TODO: need more study about AS confederation and private AS number -->
+The process of Private AS Numbers used in BGPsec speaker defined in {{Section 7.5. of RFC8205}} also applies here.
 
 ## Robustness Considerations for Accessing RPKI Data
 
-The deployment structure, technologies, and best practices concerning Global RPKI data to reach routers (via local RPKI caches) are described in [RFC6810], [RFC8210], [RFC8181], [RFC7115], [RFC8207], and [RFC8182]. For example, Serial-Number-based incremental update mechanisms are used for efficient transfer of just the data records that have changed since the last update [RFC6810] [RFC8210].  The update notification file is used by Relying Parties (RPs) to discover whether any changes exist between the state of the Global RPKI repository and the RP's cache [RFC8182].  The notification describes the location of (1) the files containing the snapshot and (2) incremental deltas, which can be used by the RP to synchronize with the repository.  Making use of these and best practices results in enabling robustness, efficiency, and better security for the BGPsec routers and RPKI caches in terms of the flow of RPKI data from repositories to RPKI caches to routers.  With these mechanisms, it is believed that an attacker wouldn't be able to meaningfully correlate RPKI data flows with BGPsec RP (or router) actions, thus avoiding attacks that may attempt to determine the set of ASes interacting with an RP via the interactions between the RP and RPKI servers.
+As there is a mature RPKI to Router protocol {{RFC8210}}, the implementation is REQUIRED to use this protocol to access the RPKI data. The content defined in {{Section 7.6. of RFC8205}} also applies here.
 
 ## Graceful Restart
 
-During Graceful Restart (GR), restarting and receiving BGPsec speakers MUST follow the procedures specified in [RFC4724] for restarting and receiving BGP speakers, respectively.  In particular, the behavior of retaining the forwarding state for the routes in the Loc-RIB [RFC4271] and marking them as stale, as well as not differentiating between stale routing information and other information during forwarding, will be the same as the behavior specified in [RFC4724].
+During Graceful Restart (GR), restarting and receiving FC-BGP speakers MUST follow the procedures specified in {{RFC4724}} for restarting and receiving BGP speakers, respectively. In particular, the behavior of retaining the forwarding state for the routes in the Loc-RIB {{RFC4271}} and marking them as stale, as well as not differentiating between stale routing information and other information during forwarding, will be the same as the behavior specified in {{RFC4724}}.
 
 ## Robustness of Secret Random Number in ECDSA
 
-The Elliptic Curve Digital Signature Algorithm (ECDSA) with curve P-256 is used for signing UPDATE messages in BGPsec [RFC8208].  For ECDSA, it is stated in Section 6.3 of [FIPS186-4] that a new secret random number "k" shall be generated prior to the generation of each digital signature.  A high-entropy random bit generator (RBG) must be used for generating "k", and any potential bias in the "k" generation algorithm must be mitigated (see the methods described in [FIPS186-4] and [SP800-90A]).
+As both FC-BGP and BGPsec use ECDSA, the content of Robustness of Secret Random Number in ECDSA defined in {{Section 7.8. of RFC8205}} applies here.
+
+<!-- TODO: check and rewrite the following parts copied from BGPsec -->
 
 ## Incremental/Partial Deployment Considerations
 
-What will migration from BGP to BGPsec look like?  What are the benefits for the first adopters?  Initially, small groups of contiguous ASes would be doing BGPsec.  There would possibly be one or more such groups in different geographic regions of the global Internet.  Only the routes that originated within each group and propagated within its borders would get the benefits of cryptographic AS path protection.  As BGPsec adoption grows, each group grows in size, and eventually, they join together to form even larger BGPsec-capable groups of contiguous ASes.  The benefit for early adopters starts with AS path security within the regions of contiguous ASes spanned by their respective groups.  Over time, they would see those regions of contiguous ASes grow much larger.
-
-During partial deployment, if an AS in the path doesn't support BGPsec, then BGP goes back to traditional mode, i.e., BGPsec UPDATE messages are converted to unsigned UPDATE messages before forwarding to that AS (see Section 4.4).  At this point, the assurance that the UPDATE message propagated via the sequence of ASes listed is lost. In other words, for the BGPsec routers residing in the ASes starting from the origin AS to the AS before the one not supporting BGPsec, the assurance can still be provided, but not beyond that (for the UPDATE messages in consideration).
+TBD.
 
 # Security Considerations {#security-considerations}
 
@@ -471,6 +475,8 @@ TBD. Regist Flags.
 
 --- back
 
+<!-- TODO: This chapter can be dropped totally but carefully. There are lots of chapters referred to the {#comparison}.
+The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment. But it can be compared in the 'Incremental/Partial Deployment Considerations' section. -->
 # Appendix
 
 ## Comparison with BGPsec {#comparison}
