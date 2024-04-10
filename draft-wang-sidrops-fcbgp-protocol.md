@@ -446,10 +446,7 @@ TBD.
 
 ## Security Guarantees
 
-TBD.
-
-## On the Removal of the FC path attribute
-
+<!-- TODO: Here these guarantees are different with BGPsec, from path to path segment -->
 TBD.
 
 ## Mitigation of Denial-of-Service Attacks
@@ -471,7 +468,7 @@ For a discussion of the BGPsec threat model and related security considerations,
 # IANA Considerations {#iana-considerations}
 
 TBD. Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
-TBD. Regist Flags.
+TBD. Regist Flags. The rightmost/last bit is the Flags-RS bit in this document.
 
 --- back
 
