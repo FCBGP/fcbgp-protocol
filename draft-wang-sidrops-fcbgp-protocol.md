@@ -474,6 +474,7 @@ TBD. Regist Flags. The rightmost/last bit is the Flags-RS bit in this document.
 
 <!-- TODO: This chapter can be dropped totally but carefully. There are lots of chapters that refer to the comparison.
 The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment. But it can be compared in the 'Incremental/Partial Deployment Considerations' section. -->
+
 # Appendix
 
 ## Comparison with BGPsec {#comparison}
@@ -494,6 +495,7 @@ TBD.
 TBD.
 
 # Acknowledgments
+
 {:numbered="false"}
 
 <!-- It is better to update this part gradually with the completion of this document. -->
