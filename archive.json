@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-04-09T00:51:05.440173+00:00",
+  "timestamp": "2024-04-11T00:51:48.729455+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -29,11 +29,6 @@
       "color": "7057ff"
     },
     {
-      "name": "help wanted",
-      "description": "Extra attention is needed",
-      "color": "008672"
-    },
-    {
       "name": "invalid",
       "description": "This doesn't seem right",
       "color": "e4e669"
@@ -42,6 +37,11 @@
       "name": "question",
       "description": "Further information is requested",
       "color": "d876e3"
+    },
+    {
+      "name": "TODO",
+      "description": "Extra attention is needed",
+      "color": "008672"
     },
     {
       "name": "wontfix",
@@ -60,7 +60,7 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "help wanted",
+        "TODO",
         "question"
       ],
       "body": "In our current design, there is only one Signature in each FC.\r\nFC carries the Algorithm ID field together with the Signature field.\r\nSo IMHO, it does not need to hold more than one Signature Block in FC.",
@@ -79,7 +79,7 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "help wanted",
+        "TODO",
         "question"
       ],
       "body": "- We use the FC path attribute to indicate the path attribute we defined in this document.\r\n- We use the FC to indicate the new segment the FC-BGP speaker added to the FC-BGP UPDATE message.\r\n- We use the FCList to indicate all the FCs added to the FC-BGP UPDATE message.\r\n\r\n**But they are easily confusible.** So how can we separate them? By which terms?",
@@ -106,12 +106,48 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "help wanted",
+        "TODO",
         "question"
       ],
       "body": "We don't use pCount but we use Flags field, though we don't assign a single value to Flags.\r\n\r\nThe pCount field in BGPsec is for TE. If pCount > 1, it means there are pCount times ASN in the AS_PATH/BGPsec_PATH for TE. But it only needs one Signature Segment.\r\n\r\nThe Flags field in BGPsec is for Confed_Segment. The leftmost (i.e., the most significant) bit of the Flags field is the Confed_Segment flag. The remaining 7 bits of the Flags field are unassigned.\r\n\r\nWe do need to consider TE but we don't know if we should consider about Confed_Segment.",
       "createdAt": "2024-03-29T07:01:17Z",
       "updatedAt": "2024-03-29T07:01:17Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOK4QgQc6FMYgk",
+      "title": "Use cases",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/15",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "TODO"
+      ],
+      "body": "Many scenarios should be considered carefully including:\r\n\r\n1. IXP Route Server.\r\n2. AS Confederation.",
+      "createdAt": "2024-04-10T02:09:34Z",
+      "updatedAt": "2024-04-10T02:09:35Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOK4QgQc6FMd-V",
+      "title": "Comparison with BGPsec",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/16",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "TODO"
+      ],
+      "body": "- Performance\r\n- Incremental/Partial Deployment Considerations\r\n- better secure than BGPsec, prove that. #10",
+      "createdAt": "2024-04-10T02:34:03Z",
+      "updatedAt": "2024-04-10T02:34:03Z",
       "closedAt": null,
       "comments": []
     }
@@ -320,24 +356,26 @@
       "id": "PR_kwDOK4QgQc5q5_eO",
       "title": "update: revise the draft making it more detailed",
       "url": "https://github.com/FCBGP/fcbgp-protocol/pull/11",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "BasilGuo",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-03-27T10:12:57Z",
-      "updatedAt": "2024-04-08T09:59:43Z",
+      "updatedAt": "2024-04-10T02:04:18Z",
       "baseRepository": "FCBGP/fcbgp-protocol",
       "baseRefName": "main",
       "baseRefOid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff",
       "headRepository": "FCBGP/fcbgp-protocol",
       "headRefName": "BasilGuo-revise",
-      "headRefOid": "13f98680eb25e883269790eb6ed9aa654607e6d2",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "02495aae348b25285a1d345976b22380d2b6c120",
+      "closedAt": "2024-04-10T02:04:18Z",
+      "mergedAt": "2024-04-10T02:04:18Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "0940d43a623db7060f1f60b72f2939f020843bc4"
+      },
       "comments": [],
       "reviews": [
         {
