@@ -461,7 +461,7 @@ As both FC-BGP and BGPsec use ECDSA, the content of Robustness of Secret Random 
 
 ## Incremental/Partial Deployment Considerations {#comparison}
 
-In {{Section 5.1.1 of ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in {{Section 5.1.2 of ARXIV}}, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
+In Section 5.1.1 of {{ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in Section 5.1.2 of {{ARXIV}}, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
 
 # Security Considerations {#security-considerations}
 
