@@ -152,46 +152,68 @@ Table of Contents
 
    The following terms are used with a specific meaning:
 
-   BGP neighbor:  Also just 'neighbor'.  Two BGP speakers that
-      communicate using the BGP protocols are neighbors.  It can be
-      divided into iBGP neighbor and eBGP neighbor.
+   +==========+========================================================+
+   | Term     | Description                                            |
+   +==========+========================================================+
+   | BGP      | Also just 'neighbor'.  Two BGP speakers                |
+   | neighbor | that communicate using the BGP protocols               |
+   |          | are neighbors.  It can be divided into                 |
+   |          | iBGP neighbor and eBGP neighbor.                       |
+   +----------+--------------------------------------------------------+
+   | BGP      | A device, usually a router, exchanging                 |
+   | speaker  | routes with other BGP speakers using the               |
+   |          | BGP protocol.                                          |
+   +----------+--------------------------------------------------------+
+   | BGP      | The message is generated with several                  |
+   | UPDATE   | path attributes to advertise routes.                   |
+   +----------+--------------------------------------------------------+
+   | iBGP     | iBGP neighbor, internal BGP neighbor, or               |
+   |          | internal neighbor.  Internal neighbors                 |
+   |          | are in the same AS.                                    |
+   +----------+--------------------------------------------------------+
+   | eBGP     | eBGP neighbor, external BGP neighbor, or               |
+   |          | external neighbor.  External neighbors                 |
+   |          | are in different ASs.                                  |
+   +----------+--------------------------------------------------------+
+   | Router   | In this document, the router always                    |
+   |          | refers to a BGP speaker.                               |
+   +----------+--------------------------------------------------------+
 
-   BGP speaker:  A device, usually a router, exchanging routes with
-      other BGP speakers using the BGP protocol.
-
-   BGP UPDATE:  The message is generated with several path attributes to
-      advertise routes.
-
-   iBGP:  iBGP neighbor, internal BGP neighbor, or internal neighbor.
-      Internal neighbors are in the same AS.
-
-   eBGP:  eBGP neighbor, external BGP neighbor, or external neighbor.
-      External neighbors are in different ASs.
-
-   Router:  In this document, the router always refers to a BGP speaker.
+                                  Table 1
 
    In addition to the list above, the following terms are used in this
    document:
 
-   FC:  Forwarding Commitment, i.e., FC segment.  It contains several
-      fields and a digital signature to protect the current path.
+      +===========+=================================================+
+      | Term      | Description                                     |
+      +===========+=================================================+
+      | FC        | Forwarding Commitment, i.e., FC segment.  It    |
+      |           | contains several fields and a digital signature |
+      |           | to protect the current path.                    |
+      +-----------+-------------------------------------------------+
+      | FCList    | An ordered list of FC segments to protect the   |
+      |           | whole AS-Path in the BGP UPDATE message.  The   |
+      |           | order of FCs follows the order of AS numbers in |
+      |           | the AS-Path.  All FC-BGP-enabled BGP speakers   |
+      |           | SHOULD add their FCs to the BGP UPDATE message. |
+      +-----------+-------------------------------------------------+
+      | FC path   | The optional, transitive, extended length path  |
+      | attribute | attribute is defined in this document to obtain |
+      |           | BGP security.                                   |
+      +-----------+-------------------------------------------------+
+      | FC-BGP    | A BGP UPDATE message carries the FC path        |
+      | UPDATE    | attribute.                                      |
+      +-----------+-------------------------------------------------+
+      | FC-BGP    | A BGP speaker that enables the FC-BGP feature.  |
+      | speaker   | It can generate, propagate, and validate FC-BGP |
+      |           | UPDATE messages.                                |
+      +-----------+-------------------------------------------------+
 
-   FCList:  An ordered list of FC segments to protect the whole AS-Path
-      in the BGP UPDATE message.  The order of FCs follows the order of
-      AS numbers in the AS-Path.  All FC-BGP-enabled BGP speakers SHOULD
-      add their FCs to the BGP UPDATE message.
-
-   FC path attribute:  The optional, transitive, extended length path
-      attribute is defined in this document to obtain BGP security.
-
-   FC-BGP UPDATE:  a BGP UPDATE message carries the FC path attribute.
-
-   FC-BGP speaker:  a BGP speaker that enables the FC-BGP feature.  It
-      can generate, propagate, and validate FC-BGP UPDATE messages.
+                                  Table 2
 
 2.  FC-BGP Negotiation
 
-   FC-BGP doesn't need to negotiate with neighbors since it is
+   FC-BGP does not need to negotiate with neighbors since it is
    considered a transitive path attribute within the BGP UPDATE message.
    BGP speakers that do not recognize the FC path attribute or do not
    support FC-BGP, SHOULD still transmit the FC path attribute to their
@@ -298,7 +320,7 @@ Table of Contents
       suite.  The key in FC-BGP uses the BGPsec Router Key, so its
       generation and management follow [RFC8635].
 
-   Flags (1 octet):  Several flag bits. - The leftmost bit of the Flags
+   Flags (1 octet):  Several flag bits.  The leftmost bit of the Flags
       field in Figure 2 is the Confed_Segment flag (Flags-CS).  The
       Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that
       constructed this FC segment is sending the UPDATE message to a
@@ -306,11 +328,11 @@ Table of Contents
       sequence of consecutive Confed_Segment flags are set in an FC-BGP
       UPDATE message whenever, in a non-FC-BGP UPDATE message, an
       AS_PATH segment of type AS_CONFED_SEQUENCE occurs.)  In all other
-      cases, the Flags-CS flag is set to 0. - The second rightmost bit
+      cases, the Flags-CS flag is set to 0.  The second rightmost bit
       (i.e., the second highest) of the Flags field in Figure 2 is the
       Route_Server flag (Flags-RS).  The Flags-RS flag is set to 1 to
       indicate that the FC segment is added by a route server, but the
-      AS number will never appear in the AS_PATH attribute. - The
+      AS number will never appear in the AS_PATH attribute.  The
       remaining 6-bit of the Flags field are unassigned.  They MUST be
       set to 0 by the sender and ignored by the receiver.
 
@@ -440,7 +462,7 @@ Table of Contents
 
    Any BGP speaker should propagate the optional transitive FC path
    attribute encapsulated in the FC-BGP UPDATE message, even though they
-   don't support the FC-BGP feature.  However, it is important to note
+   do not support the FC-BGP feature.  However, it is important to note
    that an FC-BGP speaker SHOULD NOT make any attestation regarding the
    validation state of the FC-BGP UPDATE message it receives.  They MUST
    verify the FC path attribute themselves.
