@@ -123,6 +123,7 @@ It is worth noting that the FC-BGP framework can be extended to verify data plan
 The following terms are used with a specific meaning:
 
 |    Term      | Description |
+|--------------|-------------|
 | BGP neighbor | Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor. |
 | BGP speaker  | A device, usually a router, exchanging routes with other BGP speakers using the BGP protocol. |
 | BGP UPDATE   | The message is generated with several path attributes to advertise routes. |
@@ -132,6 +133,8 @@ The following terms are used with a specific meaning:
 
 In addition to the list above, the following terms are used in this document:
 
+|    Term      | Description |
+|--------------|-------------|
 | FC           | Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path. |
 | FCList       | An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers SHOULD add their FCs to the BGP UPDATE message. |
 | FC path attribute | The optional, transitive, extended length path attribute is defined in this document to obtain BGP security. |
