@@ -1339,11 +1339,15 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">Â
           <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
 <thead>
             <tr>
-              <th class="text-left" rowspan="1" colspan="1">FC</th>
-              <th class="text-left" rowspan="1" colspan="1">Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.</th>
+              <th class="text-left" rowspan="1" colspan="1">Term</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">FC</td>
+              <td class="text-left" rowspan="1" colspan="1">Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.</td>
+            </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">FCList</td>
               <td class="text-left" rowspan="1" colspan="1">An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers <span class="bcp14">SHOULD</span> add their FCs to the BGP UPDATE message.</td>

@@ -185,10 +185,12 @@ Table of Contents
    document:
 
       +===========+=================================================+
+      | Term      | Description                                     |
+      +===========+=================================================+
       | FC        | Forwarding Commitment, i.e., FC segment.  It    |
       |           | contains several fields and a digital signature |
       |           | to protect the current path.                    |
-      +===========+=================================================+
+      +-----------+-------------------------------------------------+
       | FCList    | An ordered list of FC segments to protect the   |
       |           | whole AS-Path in the BGP UPDATE message.  The   |
       |           | order of FCs follows the order of AS numbers in |
