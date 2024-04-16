@@ -1,12 +1,17 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-04-14T01:09:50.769304+00:00",
+  "timestamp": "2024-04-16T00:51:02.895578+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
       "name": "bug",
       "description": "Something isn't working",
       "color": "d73a4a"
+    },
+    {
+      "name": "design choice",
+      "description": "Extra attention is needed",
+      "color": "008672"
     },
     {
       "name": "documentation",
@@ -39,11 +44,6 @@
       "color": "d876e3"
     },
     {
-      "name": "TODO",
-      "description": "Extra attention is needed",
-      "color": "008672"
-    },
-    {
       "name": "wontfix",
       "description": "This will not be worked on",
       "color": "ffffff"
@@ -55,44 +55,52 @@
       "id": "I_kwDOK4QgQc6D5BjW",
       "title": "Should we align with the BGPsec Signature Block in the design of FC?",
       "url": "https://github.com/FCBGP/fcbgp-protocol/issues/12",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "BasilGuo",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "TODO",
+        "design choice",
         "question"
       ],
       "body": "In our current design, there is only one Signature in each FC.\r\nFC carries the Algorithm ID field together with the Signature field.\r\nSo IMHO, it does not need to hold more than one Signature Block in FC.",
       "createdAt": "2024-03-28T09:37:27Z",
-      "updatedAt": "2024-03-28T09:39:11Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-04-15T09:02:14Z",
+      "closedAt": "2024-04-15T08:56:40Z",
+      "comments": [
+        {
+          "author": "BasilGuo",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Linked with #11 \r\n\r\nFinally, we choose to keep the current design of the signature field of FC. That means, there is only one signature/FC for one AS. If one AS chooses to roll over its algorithm, it could specify the algorithm with Algorithm ID.",
+          "createdAt": "2024-04-15T08:56:38Z",
+          "updatedAt": "2024-04-15T09:02:14Z"
+        }
+      ]
     },
     {
       "number": 13,
       "id": "I_kwDOK4QgQc6D_dmx",
       "title": "The FC, FCList, and FC path attribute",
       "url": "https://github.com/FCBGP/fcbgp-protocol/issues/13",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "BasilGuo",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "TODO",
+        "design choice",
         "question"
       ],
       "body": "- We use the FC path attribute to indicate the path attribute we defined in this document.\r\n- We use the FC to indicate the new segment the FC-BGP speaker added to the FC-BGP UPDATE message.\r\n- We use the FCList to indicate all the FCs added to the FC-BGP UPDATE message.\r\n\r\n**But they are easily confusible.** So how can we separate them? By which terms?",
       "createdAt": "2024-03-29T01:45:24Z",
-      "updatedAt": "2024-03-29T02:04:25Z",
-      "closedAt": null,
+      "updatedAt": "2024-04-15T09:02:42Z",
+      "closedAt": "2024-04-15T08:56:55Z",
       "comments": [
         {
           "author": "BasilGuo",
           "authorAssociation": "COLLABORATOR",
-          "body": "I have chosen the FC segment instead of FC or FC's signed code in this document. And others remain unchanged.",
+          "body": "Linked with #11 \r\n\r\nI have chosen the FC segment instead of FC or FC's signed code in this document. And others remain unchanged.",
           "createdAt": "2024-03-29T02:04:24Z",
-          "updatedAt": "2024-03-29T02:04:24Z"
+          "updatedAt": "2024-04-15T09:02:42Z"
         }
       ]
     },
@@ -106,12 +114,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "TODO",
+        "design choice",
         "question"
       ],
       "body": "We don't use pCount but we use Flags field, though we don't assign a single value to Flags.\r\n\r\nThe pCount field in BGPsec is for TE. If pCount > 1, it means there are pCount times ASN in the AS_PATH/BGPsec_PATH for TE. But it only needs one Signature Segment.\r\n\r\nThe Flags field in BGPsec is for Confed_Segment. The leftmost (i.e., the most significant) bit of the Flags field is the Confed_Segment flag. The remaining 7 bits of the Flags field are unassigned.\r\n\r\nWe do need to consider TE but we don't know if we should consider about Confed_Segment.",
       "createdAt": "2024-03-29T07:01:17Z",
-      "updatedAt": "2024-03-29T07:01:17Z",
+      "updatedAt": "2024-04-15T08:57:43Z",
       "closedAt": null,
       "comments": []
     },
@@ -125,7 +133,7 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "TODO"
+        "design choice"
       ],
       "body": "Many scenarios should be considered carefully including:\r\n\r\n1. IXP Route Server.\r\n2. AS Confederation.",
       "createdAt": "2024-04-10T02:09:34Z",
@@ -143,11 +151,29 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "TODO"
+        "design choice"
       ],
       "body": "- Performance\r\n- Incremental/Partial Deployment Considerations\r\n- better secure than BGPsec, prove that. #10",
       "createdAt": "2024-04-10T02:34:03Z",
       "updatedAt": "2024-04-10T02:34:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOK4QgQc6FssXc",
+      "title": "BGP Route Refresh extension",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/17",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "Is there anything we should take into consideration about the BGP Route Refresh extension?\r\n1. [RFC 2918: Route Refresh Capability for BGP-4](https://www.rfc-editor.org/rfc/rfc2918)\r\n2. [RFC 7313 - Enhanced Route Refresh Capability for BGP-4](https://datatracker.ietf.org/doc/rfc7313/)\r\n",
+      "createdAt": "2024-04-15T08:52:39Z",
+      "updatedAt": "2024-04-15T08:52:39Z",
       "closedAt": null,
       "comments": []
     }
@@ -363,7 +389,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-03-27T10:12:57Z",
-      "updatedAt": "2024-04-10T02:04:18Z",
+      "updatedAt": "2024-04-15T09:03:18Z",
       "baseRepository": "FCBGP/fcbgp-protocol",
       "baseRefName": "main",
       "baseRefOid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff",
