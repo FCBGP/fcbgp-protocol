@@ -122,45 +122,29 @@ It is worth noting that the FC-BGP framework can be extended to verify data plan
 
 The following terms are used with a specific meaning:
 
-BGP neighbor:
-: Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor.
-
-BGP speaker:
-: A device, usually a router, exchanging routes with other BGP speakers using the BGP protocol.
-
-BGP UPDATE:
-: The message is generated with several path attributes to advertise routes.
-
-iBGP:
-: iBGP neighbor, internal BGP neighbor, or internal neighbor. Internal neighbors are in the same AS.
-
-eBGP:
-: eBGP neighbor, external BGP neighbor, or external neighbor. External neighbors are in different ASs.
-
-Router:
-: In this document, the router always refers to a BGP speaker.
+|    Term      | Description |
+|--------------|-------------|
+| BGP neighbor | Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor. |
+| BGP speaker  | A device, usually a router, exchanging routes with other BGP speakers using the BGP protocol. |
+| BGP UPDATE   | The message is generated with several path attributes to advertise routes. |
+| iBGP         | iBGP neighbor, internal BGP neighbor, or internal neighbor. Internal neighbors are in the same AS. |
+| eBGP         | eBGP neighbor, external BGP neighbor, or external neighbor. External neighbors are in different ASs. |
+| Router       | In this document, the router always refers to a BGP speaker. |
 
 In addition to the list above, the following terms are used in this document:
 
-FC:
-: Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.
-
-FCList:
-: An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers SHOULD add their FCs to the BGP UPDATE message.
-
-FC path attribute:
-: The optional, transitive, extended length path attribute is defined in this document to obtain BGP security.
-
-FC-BGP UPDATE:
-: a BGP UPDATE message carries the FC path attribute.
-
-FC-BGP speaker:
-: a BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages.
+|    Term      | Description |
+|--------------|-------------|
+| FC           | Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path. |
+| FCList       | An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers SHOULD add their FCs to the BGP UPDATE message. |
+| FC path attribute | The optional, transitive, extended length path attribute is defined in this document to obtain BGP security. |
+| FC-BGP UPDATE     | A BGP UPDATE message carries the FC path attribute. |
+| FC-BGP speaker    | A BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages. |
 
 # FC-BGP Negotiation
 
 <!-- TODO -->
-FC-BGP doesn't need to negotiate with neighbors since it is considered a transitive path attribute within the BGP UPDATE message. BGP speakers that do not recognize the FC path attribute or do not support FC-BGP, SHOULD still transmit the FC path attribute to their neighbors. As a result, there is no need to establish a new BGP capability as defined in {{RFC5492}}.
+FC-BGP does not need to negotiate with neighbors since it is considered a transitive path attribute within the BGP UPDATE message. BGP speakers that do not recognize the FC path attribute or do not support FC-BGP, SHOULD still transmit the FC path attribute to their neighbors. As a result, there is no need to establish a new BGP capability as defined in {{RFC5492}}.
 
 # FC Path Attribute
 
@@ -236,10 +220,7 @@ Algorithm ID (1 octet):
 
 <!-- TODO: Flags in BGPsec used to indicate the AS_CONFED_SEQUENCE. But the pCount field is omitted here. We may merge Flags field and pCount field. However, in BGPsec, setting the pCount field to a value greater than 1 has the same semantics as repeating an AS number multiple times in the AS_PATH of a non-BGPsec UPDATE message (e.g., for traffic engineering purposes). If 0, it means this is for IXP Route Server. And the leftmost bit in Flags is the Confed_Segment flag to indicate the BGPsec speaker that constructed this Secure_Path Segment is sending the UPDATE message to a peer AS within the same AS confederation [RFC5065]. I have no idea how to deal with Confed_Segment/AS confederation. -->
 Flags (1 octet):
-: Several flag bits.
-- The leftmost bit of the Flags field in {{figure2}} is the Confed_Segment flag (Flags-CS). The Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that constructed this FC segment is sending the UPDATE message to a peer AS within the same AS confederation {{RFC5065}}. (That is, a sequence of consecutive Confed_Segment flags are set in an FC-BGP UPDATE message whenever, in a non-FC-BGP UPDATE message, an AS_PATH segment of type AS_CONFED_SEQUENCE occurs.) In all other cases, the Flags-CS flag is set to 0.
-- The second rightmost bit (i.e., the second highest) of the Flags field in {{figure2}} is the Route_Server flag (Flags-RS). The Flags-RS flag is set to 1 to indicate that the FC segment is added by a route server, but the AS number will never appear in the AS_PATH attribute.
-- The remaining 6-bit of the Flags field are unassigned. They MUST be set to 0 by the sender and ignored by the receiver.
+: Several flag bits. The leftmost bit of the Flags field in {{figure2}} is the Confed_Segment flag (Flags-CS). The Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that constructed this FC segment is sending the UPDATE message to a peer AS within the same AS confederation {{RFC5065}}. (That is, a sequence of consecutive Confed_Segment flags are set in an FC-BGP UPDATE message whenever, in a non-FC-BGP UPDATE message, an AS_PATH segment of type AS_CONFED_SEQUENCE occurs.) In all other cases, the Flags-CS flag is set to 0. The second rightmost bit (i.e., the second highest) of the Flags field in {{figure2}} is the Route_Server flag (Flags-RS). The Flags-RS flag is set to 1 to indicate that the FC segment is added by a route server, but the AS number will never appear in the AS_PATH attribute. The remaining 6-bit of the Flags field are unassigned. They MUST be set to 0 by the sender and ignored by the receiver.
 
 Signature Length (2 octets):
 : It only contains the length of the Signature field in octets, not including other fields.
@@ -290,7 +271,7 @@ All FC-BGP UPDATE messages MUST conform to BGP's maximum message size. If the re
 
 ## Propagation
 
-Any BGP speaker should propagate the optional transitive FC path attribute encapsulated in the FC-BGP UPDATE message, even though they don't support the FC-BGP feature. However, it is important to note that an FC-BGP speaker SHOULD NOT make any attestation regarding the validation state of the FC-BGP UPDATE message it receives. They MUST verify the FC path attribute themselves.
+Any BGP speaker should propagate the optional transitive FC path attribute encapsulated in the FC-BGP UPDATE message, even though they do not support the FC-BGP feature. However, it is important to note that an FC-BGP speaker SHOULD NOT make any attestation regarding the validation state of the FC-BGP UPDATE message it receives. They MUST verify the FC path attribute themselves.
 
 <!-- The last part is for iBGP and eBGP. -->
 To incorporate or create a new FC segment for an FC-BGP UPDATE message using a specific algorithm suite, the FC-BGP speaker MUST possess an appropriate private key capable of generating signatures for that particular algorithm suite. Moreover, this private key MUST correspond to the public key found in a valid RPKI End Entity (EE) certificate. The AS number resource extension within this certificate should include the FC-BGP speaker's AS number as specified in {{RFC8209}}. It is worth noting that these new segments are only prepended to an FC-BGP UPDATE message when the FC-BGP speaker generates the UPDATE message for transmission to an external neighbor. In other words, this occurs when the AS number of the neighbor differs from the AS number of the FC-BGP speaker.
