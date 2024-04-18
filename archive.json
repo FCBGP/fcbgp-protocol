@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-04-16T00:51:02.895578+00:00",
+  "timestamp": "2024-04-18T00:50:51.999514+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -174,6 +174,24 @@
       "body": "Is there anything we should take into consideration about the BGP Route Refresh extension?\r\n1. [RFC 2918: Route Refresh Capability for BGP-4](https://www.rfc-editor.org/rfc/rfc2918)\r\n2. [RFC 7313 - Enhanced Route Refresh Capability for BGP-4](https://datatracker.ietf.org/doc/rfc7313/)\r\n",
       "createdAt": "2024-04-15T08:52:39Z",
       "updatedAt": "2024-04-15T08:52:39Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 18,
+      "id": "I_kwDOK4QgQc6Fz-Gb",
+      "title": "Partial deployment",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/18",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "If an AS has 2 BGP routers with a specific license and decides to upgrade one of its BGP routers to support FC-BGP, will FC-BGP be able to support that deployment? Or do we need to ensure that all BGP routers in one AS must undergo the same upgrade process together to maintain consistency, similar to a transaction in a database?",
+      "createdAt": "2024-04-16T02:58:03Z",
+      "updatedAt": "2024-04-16T04:22:09Z",
       "closedAt": null,
       "comments": []
     }
@@ -425,6 +443,66 @@
           ]
         }
       ]
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOK4QgQc5sxXMQ",
+      "title": "Revise TBD",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/19",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [],
+      "body": "1. AS confederation\r\n2. partial deployment\r\n3. prove no loop when using AS 0\r\n4. security guarantees",
+      "createdAt": "2024-04-16T08:25:42Z",
+      "updatedAt": "2024-04-16T08:35:18Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "0940d43a623db7060f1f60b72f2939f020843bc4",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-tbd",
+      "headRefOid": "7e33525c642380a32a9d7db8f5af73fc55d375c5",
+      "closedAt": "2024-04-16T08:35:18Z",
+      "mergedAt": "2024-04-16T08:35:18Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "4780bcd25311b2763c1565da45d8e080f03a469d"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOK4QgQc5szB_R",
+      "title": "update: table",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/20",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-04-16T12:33:18Z",
+      "updatedAt": "2024-04-16T13:10:00Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "4780bcd25311b2763c1565da45d8e080f03a469d",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-patch-1",
+      "headRefOid": "73140187b0af2c9178ff6a24fa8dfe828742732d",
+      "closedAt": "2024-04-16T13:09:55Z",
+      "mergedAt": "2024-04-16T13:09:55Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "5b9c5c76123c84cda1afc21a0c68196afd73ea6e"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
