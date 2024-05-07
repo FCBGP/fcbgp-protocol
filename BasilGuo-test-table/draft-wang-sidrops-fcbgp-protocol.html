@@ -1468,14 +1468,14 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">Â
 </dd>
       <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="dlParallel" id="section-3-11">
+<span class="break"></span><dl class="dlNewline" id="section-3-11">
         <dt id="section-3-11.1">Algorithm ID (1 octet):</dt>
         <dd style="margin-left: 1.5em" id="section-3-11.2">
           <p id="section-3-11.2.1">The current assigned value is 1, indicating that SHA256 is used to hash the content to be signed, and ECDSA is used for signing. It follows the algorithm suite defined in <span>[<a href="#RFC8208" class="cite xref">RFC8208</a>]</span> and its updates. Each FC segment has an Algorithm ID, so there is no need to worry about sudden changes in its algorithm suite. The key in FC-BGP uses the BGPsec Router Key, so its generation and management follow <span>[<a href="#RFC8635" class="cite xref">RFC8635</a>]</span>.<a href="#section-3-11.2.1" class="pilcrow">Â¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="dlParallel" id="section-3-12">
+<span class="break"></span><dl class="dlNewline" id="section-3-12">
         <dt id="section-3-12.1">Flags (1 octet):</dt>
         <dd style="margin-left: 1.5em" id="section-3-12.2">
           <p id="section-3-12.2.1">Several flag bits. The leftmost bit of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Confed_Segment flag (Flags-CS). The Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that constructed this FC segment is sending the UPDATE message to a peer AS within the same AS confederation <span>[<a href="#RFC5065" class="cite xref">RFC5065</a>]</span>. (That is, a sequence of consecutive Confed_Segment flags are set in an FC-BGP UPDATE message whenever, in a non-FC-BGP UPDATE message, an AS_PATH segment of type AS_CONFED_SEQUENCE occurs.) In all other cases, the Flags-CS flag is set to 0. The second rightmost bit (i.e., the second highest) of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Route_Server flag (Flags-RS). The Flags-RS flag is set to 1 to indicate that the FC segment is added by a route server, but the AS number will never appear in the AS_PATH attribute. The remaining 6-bit of the Flags field are unassigned. They <span class="bcp14">MUST</span> be set to 0 by the sender and ignored by the receiver.<a href="#section-3-12.2.1" class="pilcrow">Â¶</a></p>
@@ -1487,7 +1487,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">Â
 </dd>
       <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="dlParallel" id="section-3-13">
+<span class="break"></span><dl class="dlNewline" id="section-3-13">
         <dt id="section-3-13.1">Signature (variable length):</dt>
         <dd style="margin-left: 1.5em" id="section-3-13.2">
           <p id="section-3-13.2.1">The signature content and order are Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix, Prefix Length)), where the Prefix is the IP address prefix which is encapsulated in the BGP UPDATE, i.e. NLRI, and only one prefix is used each time. When hashing and signing, the full IP address and IP prefix length are used, i.e., IPv4 uses 4 octets and IPv6 uses 16 octets.<a href="#section-3-13.2.1" class="pilcrow">Â¶</a></p>

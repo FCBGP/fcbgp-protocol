@@ -303,39 +303,43 @@ Table of Contents
       the public key used for signature verification.  If the SKI length
       exceeds 20 octets, it should retrieve the leftmost 20 octets.
 
-   Algorithm ID (1 octet):  The current assigned value is 1, indicating
-      that SHA256 is used to hash the content to be signed, and ECDSA is
-      used for signing.  It follows the algorithm suite defined in
-      [RFC8208] and its updates.  Each FC segment has an Algorithm ID,
-      so there is no need to worry about sudden changes in its algorithm
-      suite.  The key in FC-BGP uses the BGPsec Router Key, so its
-      generation and management follow [RFC8635].
+   Algorithm ID (1 octet):
+      The current assigned value is 1, indicating that SHA256 is used to
+      hash the content to be signed, and ECDSA is used for signing.  It
+      follows the algorithm suite defined in [RFC8208] and its updates.
+      Each FC segment has an Algorithm ID, so there is no need to worry
+      about sudden changes in its algorithm suite.  The key in FC-BGP
+      uses the BGPsec Router Key, so its generation and management
+      follow [RFC8635].
 
-   Flags (1 octet):  Several flag bits.  The leftmost bit of the Flags
-      field in Figure 2 is the Confed_Segment flag (Flags-CS).  The
-      Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that
-      constructed this FC segment is sending the UPDATE message to a
-      peer AS within the same AS confederation [RFC5065].  (That is, a
-      sequence of consecutive Confed_Segment flags are set in an FC-BGP
-      UPDATE message whenever, in a non-FC-BGP UPDATE message, an
-      AS_PATH segment of type AS_CONFED_SEQUENCE occurs.)  In all other
-      cases, the Flags-CS flag is set to 0.  The second rightmost bit
-      (i.e., the second highest) of the Flags field in Figure 2 is the
+   Flags (1 octet):
+      Several flag bits.  The leftmost bit of the Flags field in
+      Figure 2 is the Confed_Segment flag (Flags-CS).  The Flags-CS flag
+      is set to 1 to indicate that the FC-BGP speaker that constructed
+      this FC segment is sending the UPDATE message to a peer AS within
+      the same AS confederation [RFC5065].  (That is, a sequence of
+      consecutive Confed_Segment flags are set in an FC-BGP UPDATE
+      message whenever, in a non-FC-BGP UPDATE message, an AS_PATH
+      segment of type AS_CONFED_SEQUENCE occurs.)  In all other cases,
+      the Flags-CS flag is set to 0.  The second rightmost bit (i.e.,
+      the second highest) of the Flags field in Figure 2 is the
       Route_Server flag (Flags-RS).  The Flags-RS flag is set to 1 to
       indicate that the FC segment is added by a route server, but the
       AS number will never appear in the AS_PATH attribute.  The
       remaining 6-bit of the Flags field are unassigned.  They MUST be
       set to 0 by the sender and ignored by the receiver.
 
-   Signature Length (2 octets):  It only contains the length of the
-      Signature field in octets, not including other fields.
+   Signature Length (2 octets):
+      It only contains the length of the Signature field in octets, not
+      including other fields.
 
-   Signature (variable length):  The signature content and order are
-      Signature=ECDSA(SHA256(PASN, CASN, NASN, Prefix, Prefix Length)),
-      where the Prefix is the IP address prefix which is encapsulated in
-      the BGP UPDATE, i.e. NLRI, and only one prefix is used each time.
-      When hashing and signing, the full IP address and IP prefix length
-      are used, i.e., IPv4 uses 4 octets and IPv6 uses 16 octets.
+   Signature (variable length):
+      The signature content and order are Signature=ECDSA(SHA256(PASN,
+      CASN, NASN, Prefix, Prefix Length)), where the Prefix is the IP
+      address prefix which is encapsulated in the BGP UPDATE, i.e. NLRI,
+      and only one prefix is used each time.  When hashing and signing,
+      the full IP address and IP prefix length are used, i.e., IPv4 uses
+      4 octets and IPv6 uses 16 octets.
 
 4.  FC-BGP UPDATE Messages
 
