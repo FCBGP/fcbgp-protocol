@@ -122,16 +122,6 @@ It is worth noting that the FC-BGP framework can be extended to verify data plan
 
 The following terms are used with a specific meaning:
 
-<!--
-|    Term      | Description |
-|--------------|-------------|
-| BGP neighbor | Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor. |
-| BGP speaker  | A device, usually a router, exchanging routes with other BGP speakers using the BGP protocol. |
-| BGP UPDATE   | The message is generated with several path attributes to advertise routes. |
-| iBGP         | iBGP neighbor, internal BGP neighbor, or internal neighbor. Internal neighbors are in the same AS. |
-| eBGP         | eBGP neighbor, external BGP neighbor, or external neighbor. External neighbors are in different ASs. |
-| Router       | In this document, the router always refers to a BGP speaker. |
--->
 
 BGP neighbor:
 : Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor.
