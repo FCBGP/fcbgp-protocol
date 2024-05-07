@@ -145,13 +145,22 @@ Router:
 
 In addition to the list above, the following terms are used in this document:
 
-|    Term      | Description |
-|--------------|-------------|
-| FC           | Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path. |
-| FCList       | An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers SHOULD add their FCs to the BGP UPDATE message. |
-| FC path attribute | The optional, transitive, extended length path attribute is defined in this document to obtain BGP security. |
-| FC-BGP UPDATE     | A BGP UPDATE message carries the FC path attribute. |
-| FC-BGP speaker    | A BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages. |
+{: vspace="0"}
+
+FC:
+: Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.
+
+FCList:
+: An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers SHOULD add their FCs to the BGP UPDATE message.
+
+FC path attribute:
+: The optional, transitive, extended length path attribute is defined in this document to obtain BGP security.
+
+FC-BGP UPDATE:
+: A BGP UPDATE message carries the FC path attribute.
+
+FC-BGP speaker:
+: A BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages.
 
 # FC-BGP Negotiation
 
@@ -178,6 +187,8 @@ The format of the FC path attribute is shown in {{figure1}} and {{figure2}}. {{f
 {: #figure1 title="Format of FC path attribute."}
 
 FC path attribute includes the following parts:
+
+{: vspace="0"}
 
 Flags (1 octet):
 : The current value is 0b11010000, representing the FC path attribute as optional, transitive, partial, and extended-length.
@@ -213,6 +224,8 @@ FCList (variable length):
 In FC-BGP, all ASs MUST use 4-byte AS numbers in FC segments. Existing 2-byte AS numbers are converted into 4-byte AS numbers by setting the two high-order octets of the 4-octet field to 0 {{RFC6793}}.
 
 FC segment includes the following parts. (See {{fcbgp-update}} for more details on populating these fields.)
+
+{: vspace="0"}
 
 Previous Autonomous System Number (PASN, 4 octets):
 : The PASN is the AS number of the previous hop AS from whom the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it MUST be filled with 0. We would discuss more about it at {{sec-three-asn}}.
