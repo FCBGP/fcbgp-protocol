@@ -1332,37 +1332,33 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
         <dd class="break"></dd>
 </dl>
 <p id="section-1.2-3">In addition to the list above, the following terms are used in this document:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
-<table class="center" id="table-1">
-          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
-<thead>
-            <tr>
-              <th class="text-left" rowspan="1" colspan="1">Term</th>
-              <th class="text-left" rowspan="1" colspan="1">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">FC</td>
-              <td class="text-left" rowspan="1" colspan="1">Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">FCList</td>
-              <td class="text-left" rowspan="1" colspan="1">An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers <span class="bcp14">SHOULD</span> add their FCs to the BGP UPDATE message.</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">FC path attribute</td>
-              <td class="text-left" rowspan="1" colspan="1">The optional, transitive, extended length path attribute is defined in this document to obtain BGP security.</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">FC-BGP UPDATE</td>
-              <td class="text-left" rowspan="1" colspan="1">A BGP UPDATE message carries the FC path attribute.</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">FC-BGP speaker</td>
-              <td class="text-left" rowspan="1" colspan="1">A BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages.</td>
-            </tr>
-          </tbody>
-        </table>
+<span class="break"></span><dl class="dlNewline" id="section-1.2-4">
+          <dt id="section-1.2-4.1">FC:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-4.2">
+            <p id="section-1.2-4.2.1">Forwarding Commitment, i.e., FC segment. It contains several fields and a digital signature to protect the current path.<a href="#section-1.2-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-4.3">FCList:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-4.4">
+            <p id="section-1.2-4.4.1">An ordered list of FC segments to protect the whole AS-Path in the BGP UPDATE message. The order of FCs follows the order of AS numbers in the AS-Path. All FC-BGP-enabled BGP speakers <span class="bcp14">SHOULD</span> add their FCs to the BGP UPDATE message.<a href="#section-1.2-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-4.5">FC path attribute:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-4.6">
+            <p id="section-1.2-4.6.1">The optional, transitive, extended length path attribute is defined in this document to obtain BGP security.<a href="#section-1.2-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-4.7">FC-BGP UPDATE:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-4.8">
+            <p id="section-1.2-4.8.1">A BGP UPDATE message carries the FC path attribute.<a href="#section-1.2-4.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-4.9">FC-BGP speaker:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-4.10">
+            <p id="section-1.2-4.10.1">A BGP speaker that enables the FC-BGP feature. It can generate, propagate, and validate FC-BGP UPDATE messages.<a href="#section-1.2-4.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
 </section>
 </div>
 </section>
@@ -1401,7 +1397,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
         </figcaption></figure>
 </div>
 <p id="section-3-5">FC path attribute includes the following parts:<a href="#section-3-5" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3-6">
+<span class="break"></span><dl class="dlNewline" id="section-3-6">
         <dt id="section-3-6.1">Flags (1 octet):</dt>
         <dd style="margin-left: 1.5em" id="section-3-6.2">
           <p id="section-3-6.2.1">The current value is 0b11010000, representing the FC path attribute as optional, transitive, partial, and extended-length.<a href="#section-3-6.2.1" class="pilcrow">¶</a></p>
@@ -1450,7 +1446,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </div>
 <p id="section-3-8">In FC-BGP, all ASs <span class="bcp14">MUST</span> use 4-byte AS numbers in FC segments. Existing 2-byte AS numbers are converted into 4-byte AS numbers by setting the two high-order octets of the 4-octet field to 0 <span>[<a href="#RFC6793" class="cite xref">RFC6793</a>]</span>.<a href="#section-3-8" class="pilcrow">¶</a></p>
 <p id="section-3-9">FC segment includes the following parts. (See <a href="#fcbgp-update" class="auto internal xref">Section 4</a> for more details on populating these fields.)<a href="#section-3-9" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3-10">
+<span class="break"></span><dl class="dlNewline" id="section-3-10">
         <dt id="section-3-10.1">Previous Autonomous System Number (PASN, 4 octets):</dt>
         <dd style="margin-left: 1.5em" id="section-3-10.2">
           <p id="section-3-10.2.1">The PASN is the AS number of the previous hop AS from whom the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it <span class="bcp14">MUST</span> be filled with 0. We would discuss more about it at <a href="#sec-three-asn" class="auto internal xref">Section 7.3.1</a>.<a href="#section-3-10.2.1" class="pilcrow">¶</a></p>
