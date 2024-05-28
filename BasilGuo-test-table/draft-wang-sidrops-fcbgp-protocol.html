@@ -1225,7 +1225,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.6.2.9.1"><a href="#section-6.9" class="auto internal xref">6.9</a>.  <a href="#name-robustness-of-secret-random" class="internal xref">Robustness of Secret Random Number in ECDSA</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.10">
-                <p id="section-toc.1-1.6.2.10.1"><a href="#section-6.10" class="auto internal xref">6.10</a>. <a href="#name-incremental-partial-deploym" class="internal xref">Incremental/Partial Deployment Considerations</a></p>
+                <p id="section-toc.1-1.6.2.10.1"><a href="#section-6.10" class="auto internal xref">6.10</a>. <a href="#name-comparison-with-bgpsec" class="internal xref">Comparison with BGPsec</a></p>
 </li>
             </ul>
 </li>
@@ -1724,10 +1724,12 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </div>
 <div id="comparison">
 <section id="section-6.10">
-        <h3 id="name-incremental-partial-deploym">
-<a href="#section-6.10" class="section-number selfRef">6.10. </a><a href="#name-incremental-partial-deploym" class="section-name selfRef">Incremental/Partial Deployment Considerations</a>
+        <h3 id="name-comparison-with-bgpsec">
+<a href="#section-6.10" class="section-number selfRef">6.10. </a><a href="#name-comparison-with-bgpsec" class="section-name selfRef">Comparison with BGPsec</a>
         </h3>
-<p id="section-6.10-1">In Section 5.1.1 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span>, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in Section 5.1.2 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span>, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.<a href="#section-6.10-1" class="pilcrow">¶</a></p>
+<p id="section-6.10-1">The core difference between FC-BGP and BGPsec is that BGPsec is a path security mechanism but FC-BGP is a pathlet security mechanism. BGPsec initially protects the whole path security, but FC-BGP uses the security of path segments to compose the wholesome security of AS_PATH.<a href="#section-6.10-1" class="pilcrow">¶</a></p>
+<p id="section-6.10-2">In design, FC-BGP does not modify the AS_PATH attribute. It defines a new transitive path attribute to transport the FC segments so that the legacy ASes can forward this attribute to its peers without anything to process. Thus, FC-BGP is natively compatible with the BGP and supports partial deployment. It is different from BGPsec which replaces the AS_PATH attribute with a new Secure_Path information of BGPsec_Path attribute.<a href="#section-6.10-2" class="pilcrow">¶</a></p>
+<p id="section-6.10-3">As for incremental/partial deployment considerations, in Section 5.1.1 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span>, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in Section 5.1.2 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span>, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.<a href="#section-6.10-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1942,7 +1944,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
 <p id="appendix-A-1">TODO acknowledge.
-Many many thanks to BGPsec authors, xxx.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+Many many thanks to BGPsec authors and Keyur Patel.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">

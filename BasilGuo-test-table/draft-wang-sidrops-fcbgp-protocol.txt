@@ -97,7 +97,7 @@ Table of Contents
      6.7.  Robustness Considerations for Accessing RPKI Data
      6.8.  Graceful Restart
      6.9.  Robustness of Secret Random Number in ECDSA
-     6.10. Incremental/Partial Deployment Considerations
+     6.10. Comparison with BGPsec
    7.  Security Considerations
      7.1.  Security Guarantees
      7.2.  Mitigation of Denial-of-Service Attacks
@@ -1006,9 +1006,24 @@ Table of Contents
    Secret Random Number in ECDSA defined in Section 7.8. of [RFC8205]
    applies here.
 
-6.10.  Incremental/Partial Deployment Considerations
+6.10.  Comparison with BGPsec
 
-   In Section 5.1.1 of [ARXIV], we have proved that the adversary cannot
+   The core difference between FC-BGP and BGPsec is that BGPsec is a
+   path security mechanism but FC-BGP is a pathlet security mechanism.
+   BGPsec initially protects the whole path security, but FC-BGP uses
+   the security of path segments to compose the wholesome security of
+   AS_PATH.
+
+   In design, FC-BGP does not modify the AS_PATH attribute.  It defines
+   a new transitive path attribute to transport the FC segments so that
+   the legacy ASes can forward this attribute to its peers without
+   anything to process.  Thus, FC-BGP is natively compatible with the
+   BGP and supports partial deployment.  It is different from BGPsec
+   which replaces the AS_PATH attribute with a new Secure_Path
+   information of BGPsec_Path attribute.
+
+   As for incremental/partial deployment considerations, in
+   Section 5.1.1 of [ARXIV], we have proved that the adversary cannot
    forge a valid AS path when FC-BGP is universally deployed.  And in
    Section 5.1.2 of [ARXIV], we analyze the benefits of FC-BGP in case
    of partial deployment.  The results clearly show that FC-BGP provides
@@ -1259,7 +1274,8 @@ Table of Contents
 
 Acknowledgments
 
-   TODO acknowledge.  Many many thanks to BGPsec authors, xxx.
+   TODO acknowledge.  Many many thanks to BGPsec authors and Keyur
+   Patel.
 
 Authors' Addresses
 
