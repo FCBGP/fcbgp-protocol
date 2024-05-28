@@ -1,4 +1,4 @@
----
+![image](https://github.com/FCBGP/fcbgp-protocol/assets/42705918/b7d97762-86e1-4937-bbfa-9c61d38f6791)---
 title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
@@ -489,9 +489,13 @@ As both FC-BGP and BGPsec use ECDSA, the content of Robustness of Secret Random 
 
 <!-- TODO: check and rewrite the following parts copied from BGPsec -->
 
-## Incremental/Partial Deployment Considerations {#comparison}
+## Comparison with BGPsec {#comparison}
 
-In Section 5.1.1 of {{ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in Section 5.1.2 of {{ARXIV}}, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
+The core difference between FC-BGP and BGPsec is that BGPsec is a path security mechanism but FC-BGP is a pathlet security mechanism. BGPsec initially protects the whole path security, but FC-BGP uses the security of path segments to compose the wholesome security of AS_PATH.
+
+In design, FC-BGP does not modify the AS_PATH attribute. It defines a new transitive path attribute to transport the FC segments so that the legacy ASes can forward this attribute to its peers without anything to process. Thus, FC-BGP is natively compatible with the BGP and supports partial deployment. It is different from BGPsec which replaces the AS_PATH attribute with a new Secure_Path information of BGPsec_Path attribute.
+
+As for incremental/partial deployment considerations, in Section 5.1.1 of {{ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. And in Section 5.1.2 of {{ARXIV}}, we analyze the benefits of FC-BGP in case of partial deployment. The results clearly show that FC-BGP provides strictly more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
 
 # Security Considerations {#security-considerations}
 
@@ -562,4 +566,4 @@ TBD.
 
 <!-- It is better to update this part gradually with the completion of this document. -->
 TODO acknowledge.
-Many many thanks to BGPsec authors, xxx.
+Many many thanks to BGPsec authors and Keyur Patel.
