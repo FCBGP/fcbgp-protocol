@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 29 November 2024                                          Q. Li
+Expires: 5 December 2024                                           Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                             28 May 2024
+                                                             3 June 2024
 
 
                      FC-BGP Protocol Specification
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 November 2024.
+   This Internet-Draft will expire on 5 December 2024.
 
 Copyright Notice
 
@@ -97,7 +97,7 @@ Table of Contents
      6.7.  Robustness Considerations for Accessing RPKI Data
      6.8.  Graceful Restart
      6.9.  Robustness of Secret Random Number in ECDSA
-     6.10. Comparison with BGPsec
+     6.10. Incremental/Partial Deployment Considerations
    7.  Security Considerations
      7.1.  Security Guarantees
      7.2.  Mitigation of Denial-of-Service Attacks
@@ -113,8 +113,8 @@ Table of Contents
 
 1.  Introduction
 
-   The FC-BGP control plane mechanism described in this document aims to
-   ensure that advertised routes in BGP [RFC4271] are authentic.  FC-BGP
+   The FC-BGP mechanism described in this document aims to ensure that
+   advertised routes in BGP [RFC4271] are authentic.  FC-BGP
    accomplishes this by introducing a new optional, transitive, and
    extended length path attribute called FC (Forwarding Commitment) to
    the BGP UPDATE message.  This attribute can be used by an FC-BGP-
@@ -126,15 +126,59 @@ Table of Contents
    BGP UPDATE message to ensure that the advertised path is consistent
    with the AS_PATH attribute.
 
-   FC-BGP is fully compatible with BGP and provides more security
-   benefits in case of partial deployment compared with BGPsec
-   [RFC8205], which we will prove at Section 6.10.  Similar to BGPsec,
-   FC-BGP relies on RPKI to perform route origin validation [RFC6483].
-   Additionally, any FC-BGP speaker that wishes to process the FC path
-   attribute along with BGP UPDATE messages MUST obtain a router
-   certificate and store it in the RPKI repository.  This certificate is
-   associated with its AS number.  The router key generation here
-   follows [RFC8208] and [RFC8635].
+   BGPsec is a path-level authentication approach described in
+   [RFC8205].  It replaces the AS_PATH attribute, which is used to
+   record the sequence of autonomous systems (ASes) that a BGP update
+   has traversed, with the non-transitive BGPsec_Path attribute.
+   However, when a peer does not support BGPsec, the BGPsec_Path
+   attribute will be downgraded to the standard AS_PATH attribute,
+   losing the security benefits provided by BGPsec.  In contrast, FC-BGP
+   (Forwarding Commitment Driven BGP) preserves the AS_PATH attribute
+   and introduces an additional list of signed messages called
+   Forwarding Commitments.  Each Forwarding Commitment (FC) is a
+   publicly verifiable code certifying the correctness of a three-hop
+   pathlet.  FC-BGP builds its path authentication based on these FCs.
+
+   FC-BGP and BGPsec offer different levels of security benefits in the
+   case of partial deployment, even though they achieve the same
+   security benefits when fully deployed.  BGPsec tightly couples path
+   authentication with the BGP path construction process, requiring each
+   AS to iteratively verify the signatures of each prior hop before
+   extending the authentication chain.  Consequently, a single legacy AS
+   that does not support BGPsec can break the authentication chain,
+   preventing subsequent BGPsec-aware ASes from reviving the
+   authentication process.  As a result, in partial deployment
+   scenarios, BGPsec is often downgraded to the legacy BGP protocol,
+   losing its security benefits.
+
+   In contrast to BGPsec, FC-BGP treats partial deployability as a
+   first-class citizen.  It adopts a pathlet-driven authentication
+   paradigm, in which the authenticity of an AS-path can be
+   incrementally built based on authenticated pathlets.  This design
+   ensures that downstream FC-BGP-aware ASes can use the authenticated
+   pathlets provided by upstream upgraded ASes, even if the full AS-path
+   traverses legacy ASes that do not support FC-BGP.  By allowing the
+   authentication of sub-paths, FC-BGP enables incremental deployment
+   and provides security benefits to the FC-BGP-aware ASes, regardless
+   of the deployment status of other ASes on the path.
+
+   Similar to BGPsec, FC-BGP relies on RPKI to perform route origin
+   validation [RFC6483].  Additionally, any FC-BGP speaker that wishes
+   to process the FC path attribute along with BGP UPDATE messages MUST
+   obtain a router certificate and store it in the RPKI repository.
+   This certificate is associated with its AS number.  The router key
+   generation here follows [RFC8208] and [RFC8635].
+
+   It is NOT RECOMMENDED to enable both BGPsec and FC-BGP simultaneously
+   in a BGP network.  However, if a BGP update message contains both
+   BGPsec and FC-BGP features, the BGP speaker should process the
+   message properly.  In such cases, the BGP speaker should prioritize
+   BGPsec over FC-BGP.  This means that if a BGP update message includes
+   the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec
+   and FC-BGP should use the Secure_Path instead of the AS_PATH to
+   generate or verify the FC segments.  This prioritization ensures that
+   the security benefits of BGPsec are not compromised by the presence
+   of FC-BGP in the same update message.
 
 1.1.  Requirements Language
 
@@ -321,13 +365,9 @@ Table of Contents
       second highest) of the Flags field in Figure 2 is the Route_Server
       flag (Flags-RS).  The Flags-RS flag is set to 1 to indicate that
       the FC segment is added by a route server, but the AS number will
-      never appear in the AS_PATH attribute.  The third leftmost bit of
-      the Flags field in Figure 2 is the BGPsec flag (Flags-B).  The
-      Flags-B flag is set to 1 to indicate that the BGPsec extension is
-      enabled.  The router MUST use Secure_Path information wrapped in
-      the BGPsec_Path attribute if it cannot find the AS_PATH attribute.
-      The remaining 5 bits of the Flags field are unassigned.  They MUST
-      be set to 0 by the sender and ignored by the receiver.
+      never appear in the AS_PATH attribute.  The remaining 6-bit of the
+      Flags field are unassigned.  They MUST be set to 0 by the sender
+      and ignored by the receiver.
 
    Signature Length (2 octets):
       It only contains the length of the Signature field in octets, not
@@ -411,19 +451,6 @@ Table of Contents
    SHOULD aim to produce a single FC segment once, even if the intention
    is to achieve the semantics of prepending the same AS number multiple
    times.
-
-   BGPsec removes the AS_PATH attribute and replaces it with the
-   Secure_Path information wrapped in BGPsec_PATH attribute as defined
-   in Section 3 of [RFC8205].  Though the FC-BGP does not modify the
-   AS_PATH attribute, it relies upon the AS_PATH attribute to construct
-   and verify the FC segments.  When a BGP speaker supports both BGPsec
-   and FC-BGP, the BGP speaker SHOULD set the Flags-B flag (BGPsec flag)
-   to 1 for the newly generated FC segment.  It means when constructing
-   FC segments, the FC-BGP speaker SHOULD first find the three AS
-   numbers (PASN, CASN, and NASN) in the AS_PATH attribute.  If these AS
-   numbers cannot be found in the AS_PATH attribute, or there is no
-   AS_PATH attribute in the FC-BGP UPDATE message, it SHOULD find them
-   in the Secure_Path of the BGPsec_Path attribute next.
 
    The Algorithm ID field is set to 1.  FC-BGP only supports one
    algorithm suite in this document as BGPsec Algorithm defined in
@@ -568,7 +595,7 @@ Table of Contents
 
    1.  Starting with the most recently added FC segment, remove FC
        segments whose Flags-CS bit is 1.  Stop this process once an FC
-       segment that has its Confed_Segment flag set to 0 is reached.
+       segment that has its Confed_Segment flags set to 0 is reached.
 
    2.  Add an FC segment containing, in the CASN field, the AS
        Confederation Identifier (the public AS number of the
@@ -678,15 +705,6 @@ Table of Contents
    validation performed at the egress router helps ensure the integrity
    and security of the received FC-BGP UPDATE message.
 
-   Secure_Path of the BGPsec_Path attribute would be reverted to the
-   AS_PATH attribute when the next-hop AS does not support BGPsec.  To
-   speed up the validation process, the FC-BGP speaker would first look
-   up three AS numbers in the AS_PATH attribute.  It SHOULD query
-   whether the FC-BGP speaker supports BGPsec before validating the FC
-   path attribute.  If the AS_PATH attribute does not appear in this FC-
-   BGP UPDATE message, then it will look up in the Secure_Path of the
-   BGPsec_Path attribute.
-
 5.2.1.  Validation Algorithm
 
    This section specifies the concrete validation algorithm of FC-BGP
@@ -704,44 +722,33 @@ Table of Contents
    UPDATE message is propagated to an internal FC-BGP neighbor.  The
    error checks specified in Section 6.3. of [RFC4271] are performed,
    except that for FC-BGP UPDATE messages the checks on the FC path
-   attribute do not apply instead.  It checks to ensure that the entire
-   FC path attribute is syntactically correct (conforms to the
-   specification in this document).
+   attribute do not apply and instead, the following checks on the FC
+   path attribute are performed:
 
-   Next, the FC-BGP speaker iterates through the FC segments, which can
-   be speeded up with parallel checks on each FC segment.
+   1.  Check to ensure that the entire FC path attribute is
+       syntactically correct (conforms to the specification in this
+       document).
 
-   1.  Check that each FC segment contains one signature with the
-       supported Algorithm ID.  More details are described in the
-       following part of this section.
+   2.  Check that the triplet <PASN, CASN, NASN> fields in each FC
+       segment follow the order in AS_PATH.
 
-   2.  If the UPDATE message was received from an FC-BGP neighbor that
+   3.  Check that each FC segment contains one signature with the
+       supported Algorithm ID.
+
+   4.  If the UPDATE message was received from an FC-BGP neighbor that
        is not a member of the FC-BGP speaker's AS confederation, check
        to ensure that none of the FC Segments contain a Flags field with
        the Confed_Segment flag set to 1.
 
-   3.  If the UPDATE message was received from an FC-BGP neighbor that
+   5.  If the UPDATE message was received from an FC-BGP neighbor that
        is a member of the FC-BGP speaker's AS confederation, check to
        ensure that the FC Segment corresponding to that peer contains a
        Flags field with the Confed_Segment flag set to 1.
 
-   4.  If the UPDATE message was received from a neighbor that is not
+   6.  If the UPDATE message was received from a neighbor that is not
        expected to set Flags-RS bit to 1 (see Section 4), then check to
        ensure that the Flags-RS bit in the most recently added FC
        Segment is not equal to 0.
-
-   5.  If the FC-BGP speaker supports BGPsec and the UPDATE message was
-       received from a neighbor that also supports BGPsec, check to
-       ensure that its relevant FC segment, i.e. the CASN field in one
-       FC segment is equal to the AS number of the neighbor, sets the
-       Flags-B bit to 1.  Otherwise, if the FC-BGP speaker does not
-       support BGPsec, check to ensure that the neighbor's relevant FC
-       segment sets the Flags-B bit to 0.
-
-   6.  Check that the triplet <PASN, CASN, NASN> fields in each FC
-       segment follow the order in AS_PATH or Secure_Path of
-       BGPsec_Path.  It depends on whether the FC-BGP speaker supports
-       BGPsec or not.
 
    If any of the checks for the FC path attribute fail, indicating a
    syntactical or protocol error, it is considered an error.  In such
@@ -756,20 +763,21 @@ Table of Contents
    included as part of the loop-detection mechanism mentioned earlier in
    the specification.
 
-   Once the FC-BGP speaker has examined the signature field in the FC
-   attribute, it proceeds to validate the signature using the supported
-   algorithm suites.  However, if the FC-BGP speaker encounters a
-   signature corresponding to an algorithm suite indexed by an Algorithm
-   ID that it does not support, that particular signature is not
-   considered in the validation process.  If there are no signatures
-   corresponding to any algorithm suites supported by the FC-BGP
-   speaker, a specific action is taken to ensure the continuity of the
-   route selection process.  To consider the UPDATE message in the route
-   selection process, the FC-BGP speaker has to treat the message as if
-   it were received as an unsigned BGP UPDATE message.  By treating the
-   UPDATE message as unsigned, the FC-BGP speaker acknowledges that it
-   cannot verify the integrity and authenticity of the message through
-   the provided signatures.  However, it still allows the message to be
+   Next, the FC-BGP speaker iterates through the FC segments.  Once the
+   FC-BGP speaker has examined the signature field in the FC attribute,
+   it proceeds to validate the signature using the supported algorithm
+   suites.  However, if the FC-BGP speaker encounters a signature
+   corresponding to an algorithm suite indexed by an Algorithm ID that
+   it does not support, that particular signature is not considered in
+   the validation process.  If there are no signatures corresponding to
+   any algorithm suites supported by the FC-BGP speaker, a specific
+   action is taken to ensure the continuity of the route selection
+   process.  To consider the UPDATE message in the route selection
+   process, the FC-BGP speaker has to treat the message as if it were
+   received as an unsigned BGP UPDATE message.  By treating the UPDATE
+   message as unsigned, the FC-BGP speaker acknowledges that it cannot
+   verify the integrity and authenticity of the message through the
+   provided signatures.  However, it still allows the message to be
    considered for route selection, ensuring that important routing
    information is not disregarded solely due to the lack of supported
    signature algorithms.
@@ -785,7 +793,7 @@ Table of Contents
       certificate data and look up all valid <AS Number, Public Key,
       Subject Key Identifier> triples in which the AS matches the
       Current AS Number (CASN) in the corresponding FC segment.  Of
-      these triples that match the AS number, check whether there is an
+      these triples that match the AS number, check whether there is a
       SKI that matches the value in the Subject Key Identifier field of
       the FC segment.  If this check finds no such matching SKI value,
       then mark the entire FC segment as 'Not Valid' and stop.
@@ -1006,31 +1014,29 @@ Table of Contents
    Secret Random Number in ECDSA defined in Section 7.8. of [RFC8205]
    applies here.
 
-6.10.  Comparison with BGPsec
+6.10.  Incremental/Partial Deployment Considerations
 
    The core difference between FC-BGP and BGPsec is that BGPsec is a
-   path security mechanism but FC-BGP is a pathlet security mechanism.
-   BGPsec initially protects the whole path security, but FC-BGP uses
-   the security of path segments to compose the wholesome security of
-   AS_PATH.
+   path-level authentication approach whereas FC-BGP is a pathlet-driven
+   authentication approach.
 
    In design, FC-BGP does not modify the AS_PATH attribute.  It defines
    a new transitive path attribute to transport the FC segments so that
-   the legacy ASes can forward this attribute to its peers without
-   anything to process.  Thus, FC-BGP is natively compatible with the
-   BGP and supports partial deployment.  It is different from BGPsec
-   which replaces the AS_PATH attribute with a new Secure_Path
-   information of BGPsec_Path attribute.
+   the legacy ASes can forward this attribute to its peers.  Thus, FC-
+   BGP is natively compatible with the BGP and supports partial
+   deployment.  It differs from BGPsec which replaces the AS_PATH
+   attribute with a new Secure_Path information of BGPsec_Path
+   attribute.
 
    As for incremental/partial deployment considerations, in
    Section 5.1.1 of [ARXIV], we have proved that the adversary cannot
-   forge a valid AS path when FC-BGP is universally deployed.  And in
-   Section 5.1.2 of [ARXIV], we analyze the benefits of FC-BGP in case
-   of partial deployment.  The results clearly show that FC-BGP provides
-   strictly more benefits than BGPsec in partial deployment.  As a
-   result, attackers are forced to pretend to be at least two hops away
-   from the destination AS, which reduces the probability of successful
-   path hijacks.
+   forge a valid AS path when FC-BGP is universally deployed.
+   Section 5.1.2 of [ARXIV] analyzes the benefits of FC-BGP in case of
+   partial deployment.  The results show that FC-BGP provides more
+   benefits than BGPsec in partial deployment.  As a result, attackers
+   are forced to pretend to be at least two hops away from the
+   destination AS, which reduces the probability of successful path
+   hijacks.
 
 7.  Security Considerations
 
@@ -1127,9 +1133,9 @@ Table of Contents
 
    TBD.  Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
 
-   TBD.  Regist Flags.  The leftmost bit is the Confed_Segment flag, the
-   second highest/leftmost bit is the Route_Server flag, and the third
-   leftmost bit is the BGPsec flag in this document.
+   TBD.  Regist Flags.  The leftmost bit is the Confed_Segment flag and
+   the second highest/leftmost bit is the Route_Server flag in this
+   document.
 
    AS number 0 is used here to populate the PASN in an FC segment where
    there is no previous hop for an AS, i.e., the origin AS when adding
