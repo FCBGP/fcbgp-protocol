@@ -557,4 +557,4 @@ TBD.
 
 <!-- It is better to update this part gradually with the completion of this document. -->
 TODO acknowledge.
-Many many thanks to BGPsec authors and Keyur Patel.
+Many many thanks to Keyur Patel and BGPsec authors.
