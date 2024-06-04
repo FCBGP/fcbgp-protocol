@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 5 December 2024                                           Q. Li
+Expires: 6 December 2024                                           Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                             3 June 2024
+                                                             4 June 2024
 
 
                      FC-BGP Protocol Specification
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 December 2024.
+   This Internet-Draft will expire on 6 December 2024.
 
 Copyright Notice
 
@@ -1280,8 +1280,8 @@ Table of Contents
 
 Acknowledgments
 
-   TODO acknowledge.  Many many thanks to BGPsec authors and Keyur
-   Patel.
+   TODO acknowledge.  Many many thanks to Keyur Patel and BGPsec
+   authors.
 
 Authors' Addresses
 
