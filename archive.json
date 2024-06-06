@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-04T00:55:54.434532+00:00",
+  "timestamp": "2024-06-06T00:55:18.346729+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -516,7 +516,7 @@
       "labels": [],
       "body": "1. remove data plane.\r\n2. add comparison with BGPsec.",
       "createdAt": "2024-06-03T12:10:11Z",
-      "updatedAt": "2024-06-03T12:11:13Z",
+      "updatedAt": "2024-06-04T01:06:51Z",
       "baseRepository": "FCBGP/fcbgp-protocol",
       "baseRefName": "main",
       "baseRefOid": "5b9c5c76123c84cda1afc21a0c68196afd73ea6e",
