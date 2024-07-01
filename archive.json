@@ -1,0 +1,556 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-06-30T01:01:30.517270+00:00",
+  "repo": "FCBGP/fcbgp-protocol",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "design choice",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 12,
+      "id": "I_kwDOK4QgQc6D5BjW",
+      "title": "Should we align with the BGPsec Signature Block in the design of FC?",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/12",
+      "state": "CLOSED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice",
+        "question"
+      ],
+      "body": "In our current design, there is only one Signature in each FC.\r\nFC carries the Algorithm ID field together with the Signature field.\r\nSo IMHO, it does not need to hold more than one Signature Block in FC.",
+      "createdAt": "2024-03-28T09:37:27Z",
+      "updatedAt": "2024-04-15T09:02:14Z",
+      "closedAt": "2024-04-15T08:56:40Z",
+      "comments": [
+        {
+          "author": "BasilGuo",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Linked with #11 \r\n\r\nFinally, we choose to keep the current design of the signature field of FC. That means, there is only one signature/FC for one AS. If one AS chooses to roll over its algorithm, it could specify the algorithm with Algorithm ID.",
+          "createdAt": "2024-04-15T08:56:38Z",
+          "updatedAt": "2024-04-15T09:02:14Z"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOK4QgQc6D_dmx",
+      "title": "The FC, FCList, and FC path attribute",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/13",
+      "state": "CLOSED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice",
+        "question"
+      ],
+      "body": "- We use the FC path attribute to indicate the path attribute we defined in this document.\r\n- We use the FC to indicate the new segment the FC-BGP speaker added to the FC-BGP UPDATE message.\r\n- We use the FCList to indicate all the FCs added to the FC-BGP UPDATE message.\r\n\r\n**But they are easily confusible.** So how can we separate them? By which terms?",
+      "createdAt": "2024-03-29T01:45:24Z",
+      "updatedAt": "2024-04-15T09:02:42Z",
+      "closedAt": "2024-04-15T08:56:55Z",
+      "comments": [
+        {
+          "author": "BasilGuo",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Linked with #11 \r\n\r\nI have chosen the FC segment instead of FC or FC's signed code in this document. And others remain unchanged.",
+          "createdAt": "2024-03-29T02:04:24Z",
+          "updatedAt": "2024-04-15T09:02:42Z"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOK4QgQc6EAv0M",
+      "title": "pCount and Flags",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/14",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice",
+        "question"
+      ],
+      "body": "We don't use pCount but we use Flags field, though we don't assign a single value to Flags.\r\n\r\nThe pCount field in BGPsec is for TE. If pCount > 1, it means there are pCount times ASN in the AS_PATH/BGPsec_PATH for TE. But it only needs one Signature Segment.\r\n\r\nThe Flags field in BGPsec is for Confed_Segment. The leftmost (i.e., the most significant) bit of the Flags field is the Confed_Segment flag. The remaining 7 bits of the Flags field are unassigned.\r\n\r\nWe do need to consider TE but we don't know if we should consider about Confed_Segment.",
+      "createdAt": "2024-03-29T07:01:17Z",
+      "updatedAt": "2024-04-15T08:57:43Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOK4QgQc6FMYgk",
+      "title": "Use cases",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/15",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "Many scenarios should be considered carefully including:\r\n\r\n1. IXP Route Server.\r\n2. AS Confederation.",
+      "createdAt": "2024-04-10T02:09:34Z",
+      "updatedAt": "2024-04-10T02:09:35Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOK4QgQc6FMd-V",
+      "title": "Comparison with BGPsec",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/16",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "- Performance\r\n- Incremental/Partial Deployment Considerations\r\n- better secure than BGPsec, prove that. #10",
+      "createdAt": "2024-04-10T02:34:03Z",
+      "updatedAt": "2024-04-10T02:34:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOK4QgQc6FssXc",
+      "title": "BGP Route Refresh extension",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/17",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "Is there anything we should take into consideration about the BGP Route Refresh extension?\r\n1. [RFC 2918: Route Refresh Capability for BGP-4](https://www.rfc-editor.org/rfc/rfc2918)\r\n2. [RFC 7313 - Enhanced Route Refresh Capability for BGP-4](https://datatracker.ietf.org/doc/rfc7313/)\r\n",
+      "createdAt": "2024-04-15T08:52:39Z",
+      "updatedAt": "2024-04-15T08:52:39Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 18,
+      "id": "I_kwDOK4QgQc6Fz-Gb",
+      "title": "Partial deployment",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/18",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "design choice"
+      ],
+      "body": "If an AS has 2 BGP routers with a specific license and decides to upgrade one of its BGP routers to support FC-BGP, will FC-BGP be able to support that deployment? Or do we need to ensure that all BGP routers in one AS must undergo the same upgrade process together to maintain consistency, similar to a transaction in a database?",
+      "createdAt": "2024-04-16T02:58:03Z",
+      "updatedAt": "2024-04-16T04:22:09Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 22,
+      "id": "I_kwDOK4QgQc6N3PCa",
+      "title": "[Operational Considerations] FC-BGP Secure Downgrade",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/22",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [
+        "design choice"
+      ],
+      "body": "As verifying signatures would introduce a heavy load on FC-BGP-enabled routers, FC-BGP should design a mechanism for secure downgrade. This means FC-BGP should signal that it can defer the verification when the router is overloaded. This should be an adaptive mechanism.\r\n\r\nLearned from the design of hashtables, `load factor` is proposed. 0.75 may be a proper threshold. Need more engineering practice.",
+      "createdAt": "2024-06-28T10:06:25Z",
+      "updatedAt": "2024-06-28T10:06:25Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOK4QgQc5hpPCy",
+      "title": "Update and rename draft-todo-yourname-protocol.md to draft-sidrops-wang-fcbgp.md",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/1",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "init repo",
+      "createdAt": "2023-12-11T07:06:11Z",
+      "updatedAt": "2023-12-15T13:08:21Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "086f3f67a2f79b8aca68b3043e05c122365bfff2",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-init",
+      "headRefOid": "89322965b5c2f54ad05c32ec4be09142c87e2d7a",
+      "closedAt": "2023-12-11T07:06:48Z",
+      "mergedAt": "2023-12-11T07:06:48Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "e67890c7ca562a6c92483ffd871540dafe48f62e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOK4QgQc5hpRYr",
+      "title": "Update draft-sidrops-wang-fcbgp.md",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/2",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [],
+      "body": "update: metadata",
+      "createdAt": "2023-12-11T07:14:00Z",
+      "updatedAt": "2023-12-15T13:08:23Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "15b48c05236ea30cf809cfd62bb06df48a1136b1",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-patch-2",
+      "headRefOid": "111265de8f3c962340d0a27958eae56b23fcdbd0",
+      "closedAt": "2023-12-11T07:14:32Z",
+      "mergedAt": "2023-12-11T07:14:32Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "970e7277ddb14068c5825a5d2f06d9e4a1ab7373"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOK4QgQc5h2xlN",
+      "title": "Update draft-sidrops-wang-fcbgp-protocol.md",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/3",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "update author information",
+      "createdAt": "2023-12-13T04:37:59Z",
+      "updatedAt": "2023-12-13T04:38:54Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "17788678791e0999375b4b61f16bdd79224a7375",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-authors",
+      "headRefOid": "be9986764d877d55f63c3eb9b2cc4f01820bac84",
+      "closedAt": "2023-12-13T04:38:51Z",
+      "mergedAt": "2023-12-13T04:38:51Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "f2dc09cb2c06878e9a7ce5c57b2707d222d94977"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOK4QgQc5iG-IX",
+      "title": "Update draft-sidrops-wang-fcbgp-protocol.md",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/4",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-12-15T13:01:05Z",
+      "updatedAt": "2023-12-15T13:06:38Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "bdc4ab4324c285919d1e31f3998a3bbeeef516e0",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "WXL-update",
+      "headRefOid": "85a8eecd7395da686c27f8fa649fa9ac3f9795a9",
+      "closedAt": "2023-12-15T13:06:33Z",
+      "mergedAt": "2023-12-15T13:06:33Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "0d1aa3a65baf454608fe0d8954cd35a06968ebd4"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOK4QgQc5iHMPY",
+      "title": "Update draft-sidrops-wang-fcbgp-protocol.md",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/5",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "AS_SET, AS_CONFED_SET, and FCBGP setup.",
+      "createdAt": "2023-12-15T13:44:38Z",
+      "updatedAt": "2023-12-15T13:46:36Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "0d1aa3a65baf454608fe0d8954cd35a06968ebd4",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-fcbgp-setup",
+      "headRefOid": "82608812b8b314e60808d826674c3ac0bd037443",
+      "closedAt": "2023-12-15T13:46:27Z",
+      "mergedAt": "2023-12-15T13:46:27Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "a3996515c23cf36ca1115420de8855073bcbdd88"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOK4QgQc5jjjyj",
+      "title": "Revise draft.",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/6",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "1. Add router key references,\r\n2. terminalize BGP UPDATE, AS_PATH,\r\n3. partly modifies the FC process,\r\n4. standardize requirements language including MUST, SHOULD, MAY, and NOT ones.",
+      "createdAt": "2024-01-09T09:20:08Z",
+      "updatedAt": "2024-03-26T02:17:23Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "76ceb70fde2b798e10686bc78c88cd658683161f",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-check",
+      "headRefOid": "7110bd9cec59acdeebb2fa389485be354890fd72",
+      "closedAt": "2024-01-10T08:11:29Z",
+      "mergedAt": "2024-01-10T08:11:29Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "9e12667be24047f061ec9e75ed9c48400f9128fe"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOK4QgQc5q3h2Q",
+      "title": "Basil guo patch",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/9",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This version is updated by ZTL and XLW and submitted to datatracker as version-00.",
+      "createdAt": "2024-03-27T02:01:09Z",
+      "updatedAt": "2024-03-27T02:40:55Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "9e12667be24047f061ec9e75ed9c48400f9128fe",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-patch",
+      "headRefOid": "acf84861a61398e9ceb0eaeff00200243264f839",
+      "closedAt": "2024-03-27T02:40:10Z",
+      "mergedAt": "2024-03-27T02:40:10Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOK4QgQc5q5_eO",
+      "title": "update: revise the draft making it more detailed",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/11",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-27T10:12:57Z",
+      "updatedAt": "2024-04-15T09:03:18Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "2729abf06e1f9402aa3ca7bcb9a37cc3db4853ff",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-revise",
+      "headRefOid": "02495aae348b25285a1d345976b22380d2b6c120",
+      "closedAt": "2024-04-10T02:04:18Z",
+      "mergedAt": "2024-04-10T02:04:18Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "0940d43a623db7060f1f60b72f2939f020843bc4"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOK4QgQc51Tuvh",
+          "commit": {
+            "abbreviatedOid": "5b5f695"
+          },
+          "author": "BasilGuo",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-29T08:31:39Z",
+          "updatedAt": "2024-03-29T08:31:59Z",
+          "comments": [
+            {
+              "originalPosition": 161,
+              "body": "```suggestion\r\nThe Current AS number (CASN) in this FC segment MUST match the AS number in the Subject field of the RPKI router certificate that will be used to verify the digital signature constructed by this BGPsec speaker (see {{Section 3.1.1 of RFC8209}} and {{RFC6487}}).\r\n```",
+              "createdAt": "2024-03-29T08:31:39Z",
+              "updatedAt": "2024-03-29T08:31:59Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOK4QgQc5sxXMQ",
+      "title": "Revise TBD",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/19",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [],
+      "body": "1. AS confederation\r\n2. partial deployment\r\n3. prove no loop when using AS 0\r\n4. security guarantees",
+      "createdAt": "2024-04-16T08:25:42Z",
+      "updatedAt": "2024-04-16T08:35:18Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "0940d43a623db7060f1f60b72f2939f020843bc4",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-tbd",
+      "headRefOid": "7e33525c642380a32a9d7db8f5af73fc55d375c5",
+      "closedAt": "2024-04-16T08:35:18Z",
+      "mergedAt": "2024-04-16T08:35:18Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "4780bcd25311b2763c1565da45d8e080f03a469d"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOK4QgQc5szB_R",
+      "title": "update: table",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/20",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "BasilGuo"
+      ],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-04-16T12:33:18Z",
+      "updatedAt": "2024-04-16T13:10:00Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "4780bcd25311b2763c1565da45d8e080f03a469d",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-patch-1",
+      "headRefOid": "73140187b0af2c9178ff6a24fa8dfe828742732d",
+      "closedAt": "2024-04-16T13:09:55Z",
+      "mergedAt": "2024-04-16T13:09:55Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "5b9c5c76123c84cda1afc21a0c68196afd73ea6e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOK4QgQc5xSn6r",
+      "title": "update: for SIDROPS chair's advice",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/21",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "1. remove data plane.\r\n2. add comparison with BGPsec.",
+      "createdAt": "2024-06-03T12:10:11Z",
+      "updatedAt": "2024-06-04T01:06:51Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "5b9c5c76123c84cda1afc21a0c68196afd73ea6e",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "BasilGuo-test-table",
+      "headRefOid": "ebb04b811a1000308a728fc7b531610827482b70",
+      "closedAt": "2024-06-03T12:11:13Z",
+      "mergedAt": "2024-06-03T12:11:13Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "1221d9bae6a05c327e7769e24da8eb0751724648"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
