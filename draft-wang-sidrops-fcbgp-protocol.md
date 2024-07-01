@@ -16,8 +16,8 @@ venue:
 #  type: Working Group
 #  mail: WG@example.com
 #  arch: https://example.com/WG
-  github: "BasilGuo/fcbgp-protocol"
-  latest: "https://BasilGuo.github.io/fcbgp-protocol/draft-sidrops-wang-fcbgp-protocol.html"
+  github: "FCBGP/fcbgp-protocol"
+  latest: "https://FCBGP.github.io/fcbgp-protocol/draft-wang-sidrops-fcbgp-protocol.html"
 
 pi:    # can use array (if all yes) or hash here
 
