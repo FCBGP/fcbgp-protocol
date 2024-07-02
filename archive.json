@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-30T01:01:30.517270+00:00",
+  "timestamp": "2024-07-02T00:57:10.418716+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -548,6 +548,34 @@
       "mergedBy": "BasilGuo",
       "mergeCommit": {
         "oid": "1221d9bae6a05c327e7769e24da8eb0751724648"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 23,
+      "id": "PR_kwDOK4QgQc50BZux",
+      "title": "publish: version 00",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/23",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Version 00 Summary (compared with <https://datatracker.ietf.org/doc/draft-sidrops-wang-fcbgp-protocol/>):\r\n1. Add comparisons with BGPsec, especially in partial deployment.\r\n2. Describe explicitly the needlessness for the negotiation of new capability.\r\n3. Enrich the protocol details concerning sending/receiving BGP-UPDATE messages.\r\n4. Corner cases of AS Confederation/ISP Router Server.\r\n5. Some considerations about operations/security/IANA.\r\n",
+      "createdAt": "2024-07-01T06:13:10Z",
+      "updatedAt": "2024-07-01T06:14:43Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "61a5885f70d1186dbed034126be18cc931a17296",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "version-00",
+      "headRefOid": "89816d710c19d9f2d649c8709698233782b5db37",
+      "closedAt": "2024-07-01T06:14:43Z",
+      "mergedAt": "2024-07-01T06:14:43Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "264dff8d470fd087e95a3db26907a92f212a046c"
       },
       "comments": [],
       "reviews": []
