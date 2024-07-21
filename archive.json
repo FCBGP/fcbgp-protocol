@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-18T00:57:29.675204+00:00",
+  "timestamp": "2024-07-21T01:02:38.582733+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -212,6 +212,38 @@
       "body": "As verifying signatures would introduce a heavy load on FC-BGP-enabled routers, FC-BGP should design a mechanism for secure downgrade. This means FC-BGP should signal that it can defer the verification when the router is overloaded. This should be an adaptive mechanism.\r\n\r\nLearned from the design of hashtables, `load factor` is proposed. 0.75 may be a proper threshold. Need more engineering practice.",
       "createdAt": "2024-06-28T10:06:25Z",
       "updatedAt": "2024-06-28T10:06:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 24,
+      "id": "I_kwDOK4QgQc6P8bra",
+      "title": "[Operational Consideration] Coexistence",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/24",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Coexistence with BGPsec.",
+      "createdAt": "2024-07-18T01:34:42Z",
+      "updatedAt": "2024-07-18T01:34:42Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 25,
+      "id": "I_kwDOK4QgQc6P8cNB",
+      "title": "[Security Consideration]",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/issues/25",
+      "state": "OPEN",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "1. SKI. Someone modifies the SKI size or modifies the SKI.",
+      "createdAt": "2024-07-18T01:37:21Z",
+      "updatedAt": "2024-07-18T01:37:22Z",
       "closedAt": null,
       "comments": []
     }
