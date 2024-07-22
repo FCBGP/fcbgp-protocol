@@ -1130,12 +1130,13 @@ Table of Contents
    mechanism is reduced, similar to other partial deployment scenarios.
 
    When an RS chooses not to insert its ASN into the AS_PATH attribute,
-   it also represents a partial deployment scenario.  In this case, the
-   RS's ASN is missed in the AS path but it may add one FC Segment in
-   FCList.  Though it still suffers from path attacks, it can be more
-   secure than typically partial deployment scenarios if the
-   implementations check the ASNs of two FCs as introduced in
-   Section 5.2.1.  This check is RECOMMENDED.
+   the RS's ASN is missed in the AS path but it may add one FC Segment
+   in FCList.  The FCList is complete with coherent pathlet information
+   if the RS populates its FC Segment, so it is secure.  Otherwise, it
+   is a partial deployment scenario and at the risk of path-tampering
+   attacks.  It can be more secure than typical partial deployment
+   scenarios if the implementations check the ASNs of two FCs as
+   introduced in Section 5.2.1.  This check is RECOMMENDED.
 
 7.4.  Additional Security Considerations
 
