@@ -1,4 +1,4 @@
----
+![image](https://github.com/user-attachments/assets/608ed71f-ecba-4b51-830d-5fa28dbb87cc)---
 title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
@@ -386,6 +386,8 @@ First, the integrity of the FC-BGP UPDATE message MUST be checked. Both syntacti
 
 If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are REQUIRED to handle these errors using the "treat-as-withdraw" approach as defined in {{RFC7606}}. This approach means that the FC-BGP speaker SHOULD treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.
 
+However, almost no RSes insert ASN in AS_PATH attribute so FC-BGP allows one FC whose Flags-RS bit is set to 1 to have no corresponding ASN. This FC is respected as added by an FC-BGP-enabled RS. But if such FC is missed, it SHOULD be considered as a partial deployment scenario. The FCs of two continuous ASes, where RS does not insert ASN into them, SHOULD have an equal Nexthop ASN and Previous ASN, i.e., the Nexthop ASN of the former FC is equal to the Previous ASN of the latter FC if they both deployed FC-BGP.
+
 <!-- TODO: in BGPsec, it will extract and reconstruct the AS_PATH attribute when it encounters an unsupported algorithm, i.e., downgrade from BGPsec to BGP. How about FC-BGP? Downgrade or propagate? -->
 Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.
 
@@ -513,6 +515,14 @@ To reduce the impact of DoS attacks, FC-BGP speakers SHOULD employ an UPDATE val
 
 Moreover, the transmission of UPDATE messages with the FC path attribute, which entails a multitude of signatures, is a potential vector for denial-of-service attacks. To counter this, implementations of the validation algorithm must cease signature verification immediately upon encountering an invalid signature. This prevents prolonged sequences of invalid signatures from being exploited for DoS purposes. Additionally, implementations can further mitigate such attacks by limiting validation efforts to only those UPDATE messages that, if found to be valid, would be chosen as the best path. In other words, if an UPDATE message includes a route that would be disqualified by the best path selection process for some reason (such as an excessively long AS path), it is OPTIONALLY to determine its FC-BGP validity status.
 
+## Route Server
+
+When a Router Server (RS) inserts its ASN into the AS_PATH attribute, it acts like a transitive AS. In this scenario, the RS should also insert its FC Segment into the FC path attribute if it supports the FC-BGP mechanism. This ensures that the security of the routing information is maintained as it traverses through the RS. However, if the RS does not support FC-BGP, it becomes a partial deployment case. In this situation, the security capability of the FC-BGP mechanism is reduced, similar to other partial deployment scenarios.
+
+When an RS chooses not to insert its ASN into the AS_PATH attribute, it also represents a partial deployment scenario. However, this scenario offers a higher level of security compared to the typical partial deployment case. The absence of the RS's ASN in the AS path, coupled with the potential presence of its FC Segment in the FC path attribute, provides an additional layer of security.
+
+To enhance security further, it is recommended that implementations check the Nexthop ASN with the previous FC Segment and the Previous ASN with the latter FC Segment when both the former AS and the latter AS of the RS deploy the FC-BGP mechanism. In this case, the two fields' ASNs of the former and later FC should be equal. This cross-checking helps to validate the authenticity of the routing information and mitigate potential security risks. Finally, it is worth noting that the most secure approach is for the RS to populate its own FC Segment, even when it does not include its ASN in the AS_PATH attribute. This ensures that the RS contributes to the overall security of the FC-BGP path and maintains a high level of trust in the routing information as the pathlet information remains coherent.
+
 ## Additional Security Considerations
 
 ### Three AS Numbers {#sec-three-asn}
@@ -542,15 +552,11 @@ AS number 0 is used here to populate the PASN in an FC segment where there is no
 <!-- TODO: This chapter can be dropped totally but carefully. There are lots of chapters that refer to the comparison.
 The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment. But it can be compared in the 'Incremental/Partial Deployment Considerations' section. -->
 
-<!--
-# Appendix
+# Implementation Status
 
-## Comparison with BGPsec {#comparison}
+We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verification of the FC path attribute upon receiving BGP UPDATE messages, as well as adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.0.2 installed.
 
-### Partial Deployment and Full Deployment
-
-TBD.
--->
+TBD: github repo.
 
 # Acknowledgments
 {:numbered="false"}
