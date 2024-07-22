@@ -527,7 +527,7 @@ Moreover, the transmission of UPDATE messages with the FC path attribute, which 
 
 When a Router Server (RS) inserts its ASN into the AS_PATH attribute, it acts like a transitive AS. In this scenario, the RS should also insert its FC Segment into the FC path attribute if it supports the FC-BGP mechanism. This ensures that the security of the routing information is maintained as it traverses through the RS. However, if the RS does not support FC-BGP, it becomes a partial deployment case. In this situation, the security capability of the FC-BGP mechanism is reduced, similar to other partial deployment scenarios.
 
-When an RS chooses not to insert its ASN into the AS_PATH attribute, it also represents a partial deployment scenario. In this case, the RS's ASN is missed in the AS path but it may add one FC Segment in FCList.  Though it still suffers from path attacks, it can be more secure than typically partial deployment scenarios if the implementations check the ASNs of two FCs as introduced in {{validation-steps}}. This check is RECOMMENDED.
+When an RS chooses not to insert its ASN into the AS_PATH attribute, the RS's ASN is missed in the AS path but it may add one FC Segment in FCList. The FCList is complete with coherent pathlet information if the RS populates its FC Segment, so it is secure. Otherwise, it is a partial deployment scenario and at the risk of path-tampering attacks. It can be more secure than typical partial deployment scenarios if the implementations check the ASNs of two FCs as introduced in {{validation-steps}}. This check is RECOMMENDED.
 
 ## Additional Security Considerations
 
