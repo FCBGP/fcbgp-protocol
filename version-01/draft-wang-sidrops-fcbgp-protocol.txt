@@ -448,9 +448,10 @@ Table of Contents
    Figure 3 as an example where AS A advertises a BGP UPDATE to AS C and
    RS connects AS A and AS B.  When RS supports the FC-BGP mechanism, AS
    A adds its FC segment: FC(NULL, A, RS), RS adds its FC segment: FC(A,
-   RS, B), and AS B adds its FC segment: FC(RS, B, C).  If RS does not
-   support the FC-BGP mechanism, FC(A, RS, B) is missed, which SHOULD be
-   considered as a partial deployment scenario.
+   RS, B, Flags-RS), and AS B adds its FC segment: FC(RS, B, C).  If RS
+   does not support the FC-BGP mechanism, FC(A, RS, B, Flags-RS) is
+   missed in FCList, which SHOULD be considered as a partial deployment
+   scenario.
 
    +--------+     +--------+     +--------+     +--------+
    |    A   | --> |   RS   | --> |    B   | --> |    C   |
