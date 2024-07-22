@@ -290,6 +290,15 @@ Typically, the Flags field is set to 0.
 
 A route server (RS) is a third-party brokering system that interconnects three or more BGP-speaking routers using eBGP in IXPs {{RFC7947}}. Typically, RS performs like a transit AS except that it does not insert its AS number to the AS_PATH attribute. The route server also can participate in the FC-BGP process. If the RS is an FC-BGP-enabled RS, it may choose to set the Flags-RS bit to 1 when it populates its FC segment. However, when the RS chooses to add its AS number to the AS_PATH attribute, the Flags-RS bit SHOULD be set to 0. If the RS is a non-FC-BGP RS, it propagates the FC-BGP UPDATE message directly. Anyway, the AS number of RS would be used in the FC segment no matter if it appears in the AS_PATH attribute.
 
+Typically, the route server does not insert ASN into AS_PATH. Take {{fig-rs-ex}} as an example where AS A advertises a BGP UPDATE to AS C and RS connects AS A and AS B. When RS supports the FC-BGP mechanism, AS A adds its FC segment: FC(NULL, A, RS), RS adds its FC segment: FC(A, RS, B), and AS B adds its FC segment: FC(RS, B, C). If RS does not support the FC-BGP mechanism, FC(A, RS, B) is missed, which SHOULD be considered as a partial deployment scenario.
+
+~~~~~~
++--------+     +--------+     +--------+     +--------+
+|    A   | --> |   RS   | --> |    B   | --> |    C   |
++--------+     +--------+     +--------+     +--------+
+~~~~~~
+{: #fig-rs-ex title="A network topology with Router Server linked two ASes."}
+
 AS Path Prepending is a traffic engineering mechanism in BGP to deprioritize a route or alternate path, which will prepend the local AS number multiple times to the AS_PATH attribute {{ASPP}}. To minimize unnecessary processing load during the validation of FC segments, an FC-BGP speaker SHOULD NOT generate multiple consecutive FC segments with the same AS number. Instead, the FC-BGP speaker SHOULD aim to produce a single FC segment once, even if the intention is to achieve the semantics of prepending the same AS number multiple times.
 
 <!-- TODO: It is difficult to guarantee its neighbors support multiple algorithm suites.
@@ -385,16 +394,6 @@ First, the integrity of the FC-BGP UPDATE message MUST be checked. Both syntacti
 6. If the UPDATE message was received from a neighbor that is not expected to set Flags-RS bit to 1 (see {{fcbgp-update}}), then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0. <!-- TODO: (Note: See Section XXX for router configuration guidance related to this item.) -->
 
 If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are REQUIRED to handle these errors using the "treat-as-withdraw" approach as defined in {{RFC7606}}. This approach means that the FC-BGP speaker SHOULD treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.
-
-However, almost no RSes insert ASN in AS_PATH attribute so FC-BGP allows one FC whose Flags-RS bit is set to 1 to have no corresponding ASN. This FC is respected as added by an FC-BGP-enabled RS. But if such FC is missed, it SHOULD be considered as a partial deployment scenario. The FCs of two continuous ASes in AS_PATH, where RS does not insert ASN into them, SHOULD have an equal Nexthop ASN and Previous ASN. For instance, there is a network topology like the following diagram {{fig-rs-ex}} where A and B are both FC-BGP enabled AS. In this case, the Nexthop ASN field of FC Segment added by AS A MUST be equal to the Previous ASN field of FC Segment added by AS B.
-
-~~~~~~
-+--------+     +--------+     +--------+
-|    A   | --- |   RS   | --- |    B   |
-+--------+     +--------+     +--------+
-~~~~~~
-{: #fig-rs-ex title="A network topology with Router Server linked two ASes."}
-
 
 <!-- TODO: in BGPsec, it will extract and reconstruct the AS_PATH attribute when it encounters an unsupported algorithm, i.e., downgrade from BGPsec to BGP. How about FC-BGP? Downgrade or propagate? -->
 Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.
@@ -525,9 +524,10 @@ Moreover, the transmission of UPDATE messages with the FC path attribute, which 
 
 ## Route Server
 
-When a Router Server (RS) inserts its ASN into the AS_PATH attribute, it acts like a transitive AS. In this scenario, the RS should also insert its FC Segment into the FC path attribute if it supports the FC-BGP mechanism. This ensures that the security of the routing information is maintained as it traverses through the RS. However, if the RS does not support FC-BGP, it becomes a partial deployment case. In this situation, the security capability of the FC-BGP mechanism is reduced, similar to other partial deployment scenarios.
+When the Route Server populates its FC Segment into the FC path attribute, it is secure as the path is fully deployed.
 
-When an RS chooses not to insert its ASN into the AS_PATH attribute, the RS's ASN is missed in the AS path but it may add one FC Segment in FCList. The FCList is complete with coherent pathlet information if the RS populates its FC Segment, so it is secure. Otherwise, it is a partial deployment scenario and at the risk of path-tampering attacks. It can be more secure than typical partial deployment scenarios if the implementations check the ASNs of two FCs as introduced in {{validation-steps}}. This check is RECOMMENDED.
+When the Route Server fails to insert FC Segment, no matter whether its ASN is listed in the AS path, it is considered a partial deployment which poses a risk of path forgery.
+
 
 ## Additional Security Considerations
 
