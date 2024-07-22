@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/608ed71f-ecba-4b51-830d-5fa28dbb87cc)---
 title: "FC-BGP Protocol Specification"
 abbrev: "FC-BGP"
 category: std
