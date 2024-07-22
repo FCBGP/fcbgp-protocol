@@ -15,22 +15,21 @@
        
  This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the Border Gateway Protocol (BGP). FC-BGP provides security for the path of Autonomous Systems (ASs) through which a BGP UPDATE message passes. Forwarding Commitment (FC) is a cryptographically signed segment to certify an AS's routing intent on its directly connected hops. Based on FC, FC-BGP aims to build a secure inter-domain system that can simultaneously authenticate the AS_PATH attribute in the BGP UPDATE message. The extension is backward compatible, which means a router that supports the extension can interoperate with a router that doesn't support the extension. 
     " name="description">
-<meta content="xml2rfc 3.21.0" name="generator">
+<meta content="xml2rfc 3.22.0" name="generator">
 <meta content="draft-wang-sidrops-fcbgp-protocol-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.21.0
-    Python 3.11.9
+  xml2rfc 3.22.0
+    Python 3.12.3
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
     intervaltree 3.1.0
-    Jinja2 3.1.2
-    lxml 4.9.3
-    platformdirs 4.2.1
+    Jinja2 3.1.4
+    lxml 4.9.4
+    platformdirs 4.2.2
     pycountry 22.3.5
     PyYAML 6.0.1
-    requests 2.31.0
-    setuptools 68.2.2
-    six 1.16.0
+    requests 2.32.3
+    setuptools 69.5.1
     wcwidth 0.2.13
 -->
 <link href="draft-wang-sidrops-fcbgp-protocol.xml" rel="alternate" type="application/rfc+xml">
@@ -1030,11 +1029,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">FC-BGP</td>
-<td class="right">June 2024</td>
+<td class="right">July 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Xu, et al.</td>
-<td class="center">Expires 6 December 2024</td>
+<td class="center">Expires 23 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1047,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wang-sidrops-fcbgp-protocol-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-06-04" class="published">4 June 2024</time>
+<time datetime="2024-07-22" class="published">22 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-12-06">6 December 2024</time></dd>
+<dd class="expires"><time datetime="2025-01-23">23 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1117,7 +1116,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 6 December 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1238,13 +1237,16 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-mitigation-of-denial-of-ser" class="internal xref">Mitigation of Denial-of-Service Attacks</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-additional-security-conside" class="internal xref">Additional Security Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3.2.1">
-                    <p id="section-toc.1-1.7.2.3.2.1.1"><a href="#section-7.3.1" class="auto internal xref">7.3.1</a>.  <a href="#name-three-as-numbers" class="internal xref">Three AS Numbers</a></p>
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-route-server" class="internal xref">Route Server</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3.2.2">
-                    <p id="section-toc.1-1.7.2.3.2.2.1"><a href="#section-7.3.2" class="auto internal xref">7.3.2</a>.  <a href="#name-misc" class="internal xref">MISC</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-additional-security-conside" class="internal xref">Additional Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4.2.1">
+                    <p id="section-toc.1-1.7.2.4.2.1.1"><a href="#section-7.4.1" class="auto internal xref">7.4.1</a>.  <a href="#name-three-as-numbers" class="internal xref">Three AS Numbers</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4.2.2">
+                    <p id="section-toc.1-1.7.2.4.2.2.1"><a href="#section-7.4.2" class="auto internal xref">7.4.2</a>.  <a href="#name-misc" class="internal xref">MISC</a></p>
 </li>
                 </ul>
 </li>
@@ -1265,10 +1267,13 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1452,7 +1457,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <span class="break"></span><dl class="dlNewline" id="section-3-10">
         <dt id="section-3-10.1">Previous Autonomous System Number (PASN, 4 octets):</dt>
         <dd style="margin-left: 1.5em" id="section-3-10.2">
-          <p id="section-3-10.2.1">The PASN is the AS number of the previous hop AS from whom the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it <span class="bcp14">MUST</span> be filled with 0. It will be discussed more at <a href="#sec-three-asn" class="auto internal xref">Section 7.3.1</a>.<a href="#section-3-10.2.1" class="pilcrow">¶</a></p>
+          <p id="section-3-10.2.1">The PASN is the AS number of the previous hop AS from whom the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it <span class="bcp14">MUST</span> be filled with 0. It will be discussed more at <a href="#sec-three-asn" class="auto internal xref">Section 7.4.1</a>.<a href="#section-3-10.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-10.3">Current Autonomous System Number (CASN, 4 octets):</dt>
@@ -1613,20 +1618,21 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </li>
           </ol>
 <p id="section-5.2.1-4">If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are <span class="bcp14">REQUIRED</span> to handle these errors using the "treat-as-withdraw" approach as defined in <span>[<a href="#RFC7606" class="cite xref">RFC7606</a>]</span>. This approach means that the FC-BGP speaker <span class="bcp14">SHOULD</span> treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.<a href="#section-5.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-5">Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.<a href="#section-5.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-6">For each remaining signature corresponding to an algorithm suite supported by the FC-BGP speaker, the FC-BGP speaker processes FC-BGP UPDATE message validation with the following steps. As different FC segments are independent, it is recommended to verify FC segments parallelly.<a href="#section-5.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-5">However, almost no RSes insert ASN in AS_PATH attribute so FC-BGP allows one FC whose Flags-RS bit is set to 1 to have no corresponding ASN. This FC is respected as added by an FC-BGP-enabled RS. But if such FC is missed, it <span class="bcp14">SHOULD</span> be considered as a partial deployment scenario. The FCs of two continuous ASes, where RS does not insert ASN into them, <span class="bcp14">SHOULD</span> have an equal Nexthop ASN and Previous ASN, i.e., the Nexthop ASN of the former FC is equal to the Previous ASN of the latter FC if they both deployed FC-BGP.<a href="#section-5.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-6">Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.<a href="#section-5.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-7">For each remaining signature corresponding to an algorithm suite supported by the FC-BGP speaker, the FC-BGP speaker processes FC-BGP UPDATE message validation with the following steps. As different FC segments are independent, it is recommended to verify FC segments parallelly.<a href="#section-5.2.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.2.1-7.1">
-              <p id="section-5.2.1-7.1.1">Step 1: Locate the public key needed to verify the signature in the current FC segment. To do this, consult the valid RPKI router certificate data and look up all valid &lt;AS Number, Public Key, Subject Key Identifier&gt; triples in which the AS matches the Current AS Number (CASN) in the corresponding FC segment. Of these triples that match the AS number, check whether there is a SKI that matches the value in the Subject Key Identifier field of the FC segment.  If this check finds no such matching SKI value, then mark the entire FC segment as 'Not Valid' and stop.<a href="#section-5.2.1-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.2.1-8.1">
+              <p id="section-5.2.1-8.1.1">Step 1: Locate the public key needed to verify the signature in the current FC segment. To do this, consult the valid RPKI router certificate data and look up all valid &lt;AS Number, Public Key, Subject Key Identifier&gt; triples in which the AS matches the Current AS Number (CASN) in the corresponding FC segment. Of these triples that match the AS number, check whether there is a SKI that matches the value in the Subject Key Identifier field of the FC segment.  If this check finds no such matching SKI value, then mark the entire FC segment as 'Not Valid' and stop.<a href="#section-5.2.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.2.1-7.2">
-              <p id="section-5.2.1-7.2.1">Step 2: Compute the digest function (for the given algorithm suite) on the appropriate data. To verify the digital signature in the FC segment, construct the sequence of octets to be hashed. Note that this sequence is the same sequence that was used by AS that created the FC Segment (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>). The elements in this sequence <span class="bcp14">MUST</span> be ordered exactly as shown in the generation process. Note that if an FC-BGP speaker uses multiple AS Numbers (e.g., the FC-BGP speaker is a member of a confederation), the AS number used here <span class="bcp14">MUST</span> be the AS number announced in the OPEN message for the BGP session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.<a href="#section-5.2.1-7.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.2.1-8.2">
+              <p id="section-5.2.1-8.2.1">Step 2: Compute the digest function (for the given algorithm suite) on the appropriate data. To verify the digital signature in the FC segment, construct the sequence of octets to be hashed. Note that this sequence is the same sequence that was used by AS that created the FC Segment (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>). The elements in this sequence <span class="bcp14">MUST</span> be ordered exactly as shown in the generation process. Note that if an FC-BGP speaker uses multiple AS Numbers (e.g., the FC-BGP speaker is a member of a confederation), the AS number used here <span class="bcp14">MUST</span> be the AS number announced in the OPEN message for the BGP session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.<a href="#section-5.2.1-8.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.2.1-7.3">
-              <p id="section-5.2.1-7.3.1">Step 3: Use the signature validation algorithm (for the given algorithm suite) to verify the signature in the current segment. That is, invoke the signature validation algorithm on the following three inputs: the value of the signature field in the current FC segment, the digest value computed in Step 2 above, and the public key obtained from the valid RPKI data in Step 1 above. If the signature validation algorithm determines that the signature is invalid, then mark the entire FC segment as 'Not Valid' and stop.  If the signature validation algorithm determines that the signature is valid, then the FC segment is marked as 'Valid' and continues to process the following FC segments.<a href="#section-5.2.1-7.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.2.1-8.3">
+              <p id="section-5.2.1-8.3.1">Step 3: Use the signature validation algorithm (for the given algorithm suite) to verify the signature in the current segment. That is, invoke the signature validation algorithm on the following three inputs: the value of the signature field in the current FC segment, the digest value computed in Step 2 above, and the public key obtained from the valid RPKI data in Step 1 above. If the signature validation algorithm determines that the signature is invalid, then mark the entire FC segment as 'Not Valid' and stop.  If the signature validation algorithm determines that the signature is valid, then the FC segment is marked as 'Valid' and continues to process the following FC segments.<a href="#section-5.2.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.2.1-8">If all FC segments are marked as 'Valid', then the validation algorithm terminates and the FC-BGP UPDATE message is deemed 'Valid'. Otherwise, the FC-BGP UPDATE message is deemed 'Not Valid'.<a href="#section-5.2.1-8" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-9">If all FC segments are marked as 'Valid', then the validation algorithm terminates and the FC-BGP UPDATE message is deemed 'Valid'. Otherwise, the FC-BGP UPDATE message is deemed 'Not Valid'.<a href="#section-5.2.1-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1770,27 +1776,37 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-7.2-3">Moreover, the transmission of UPDATE messages with the FC path attribute, which entails a multitude of signatures, is a potential vector for denial-of-service attacks. To counter this, implementations of the validation algorithm must cease signature verification immediately upon encountering an invalid signature. This prevents prolonged sequences of invalid signatures from being exploited for DoS purposes. Additionally, implementations can further mitigate such attacks by limiting validation efforts to only those UPDATE messages that, if found to be valid, would be chosen as the best path. In other words, if an UPDATE message includes a route that would be disqualified by the best path selection process for some reason (such as an excessively long AS path), it is OPTIONALLY to determine its FC-BGP validity status.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="additional-security-considerations">
+<div id="route-server">
 <section id="section-7.3">
+        <h3 id="name-route-server">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-route-server" class="section-name selfRef">Route Server</a>
+        </h3>
+<p id="section-7.3-1">When a Router Server (RS) inserts its ASN into the AS_PATH attribute, it acts like a transitive AS. In this scenario, the RS should also insert its FC Segment into the FC path attribute if it supports the FC-BGP mechanism. This ensures that the security of the routing information is maintained as it traverses through the RS. However, if the RS does not support FC-BGP, it becomes a partial deployment case. In this situation, the security capability of the FC-BGP mechanism is reduced, similar to other partial deployment scenarios.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-2">When an RS chooses not to insert its ASN into the AS_PATH attribute, it also represents a partial deployment scenario. However, this scenario offers a higher level of security compared to the typical partial deployment case. The absence of the RS's ASN in the AS path, coupled with the potential presence of its FC Segment in the FC path attribute, provides an additional layer of security.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">To enhance security further, it is recommended that implementations check the Nexthop ASN with the previous FC Segment and the Previous ASN with the latter FC Segment when both the former AS and the latter AS of the RS deploy the FC-BGP mechanism. In this case, the two fields' ASNs of the former and later FC should be equal. This cross-checking helps to validate the authenticity of the routing information and mitigate potential security risks. Finally, it is worth noting that the most secure approach is for the RS to populate its own FC Segment, even when it does not include its ASN in the AS_PATH attribute. This ensures that the RS contributes to the overall security of the FC-BGP path and maintains a high level of trust in the routing information as the pathlet information remains coherent.<a href="#section-7.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="additional-security-considerations">
+<section id="section-7.4">
         <h3 id="name-additional-security-conside">
-<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-additional-security-conside" class="section-name selfRef">Additional Security Considerations</a>
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-additional-security-conside" class="section-name selfRef">Additional Security Considerations</a>
         </h3>
 <div id="sec-three-asn">
-<section id="section-7.3.1">
+<section id="section-7.4.1">
           <h4 id="name-three-as-numbers">
-<a href="#section-7.3.1" class="section-number selfRef">7.3.1. </a><a href="#name-three-as-numbers" class="section-name selfRef">Three AS Numbers</a>
+<a href="#section-7.4.1" class="section-number selfRef">7.4.1. </a><a href="#name-three-as-numbers" class="section-name selfRef">Three AS Numbers</a>
           </h4>
-<p id="section-7.3.1-1">An FC segment contains only partial path information and FCs in the FCList are independent. To prevent BGP Path Splicing attacks, we propose to use the triplet &lt;Previous AS Number, Current AS Number, Nexthop AS Number&gt; to locate the pathlet information.<a href="#section-7.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.3.1-2">But if there is no previous hop, i.e., this is the origin AS that tries to add its FC segment to the BGP UPDATE message, the Previous AS Number <span class="bcp14">SHOULD</span> be populated with 0. But, carefully, AS 0 <span class="bcp14">SHOULD</span> only be used in this case.<a href="#section-7.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-7.3.1-3">In the context of BGP <span>[<a href="#RFC4271" class="cite xref">RFC4271</a>]</span>, to detect an AS routing loop, it scans the full AS path (as specified in the AS_PATH attribute) and checks that the autonomous system number of the local system does not appear in the AS path. As outlined in <span>[<a href="#RFC7607" class="cite xref">RFC7607</a>]</span>, Autonomous System 0 was listed in the IANA Autonomous System Number Registry as "Reserved - May be used to identify non-routed networks". So, there should be no AS 0 in the AS_PATH attribute of the BGP UPDATE message. Therefore, AS 0 could be used to populate the PASN field when no previous AS hops in the AS path.<a href="#section-7.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.4.1-1">An FC segment contains only partial path information and FCs in the FCList are independent. To prevent BGP Path Splicing attacks, we propose to use the triplet &lt;Previous AS Number, Current AS Number, Nexthop AS Number&gt; to locate the pathlet information.<a href="#section-7.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.4.1-2">But if there is no previous hop, i.e., this is the origin AS that tries to add its FC segment to the BGP UPDATE message, the Previous AS Number <span class="bcp14">SHOULD</span> be populated with 0. But, carefully, AS 0 <span class="bcp14">SHOULD</span> only be used in this case.<a href="#section-7.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.4.1-3">In the context of BGP <span>[<a href="#RFC4271" class="cite xref">RFC4271</a>]</span>, to detect an AS routing loop, it scans the full AS path (as specified in the AS_PATH attribute) and checks that the autonomous system number of the local system does not appear in the AS path. As outlined in <span>[<a href="#RFC7607" class="cite xref">RFC7607</a>]</span>, Autonomous System 0 was listed in the IANA Autonomous System Number Registry as "Reserved - May be used to identify non-routed networks". So, there should be no AS 0 in the AS_PATH attribute of the BGP UPDATE message. Therefore, AS 0 could be used to populate the PASN field when no previous AS hops in the AS path.<a href="#section-7.4.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="misc">
-<section id="section-7.3.2">
+<section id="section-7.4.2">
           <h4 id="name-misc">
-<a href="#section-7.3.2" class="section-number selfRef">7.3.2. </a><a href="#name-misc" class="section-name selfRef">MISC</a>
+<a href="#section-7.4.2" class="section-number selfRef">7.4.2. </a><a href="#name-misc" class="section-name selfRef">MISC</a>
           </h4>
-<p id="section-7.3.2-1">For a discussion of the BGPsec threat model and related security considerations, please see <span>[<a href="#RFC7132" class="cite xref">RFC7132</a>]</span>. The security considerations of <span>[<a href="#RFC4272" class="cite xref">RFC4272</a>]</span> also apply to FC-BGP.<a href="#section-7.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.4.2-1">For a discussion of the BGPsec threat model and related security considerations, please see <span>[<a href="#RFC7132" class="cite xref">RFC7132</a>]</span>. The security considerations of <span>[<a href="#RFC4272" class="cite xref">RFC4272</a>]</span> also apply to FC-BGP.<a href="#section-7.4.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1807,6 +1823,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-8-3">AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.<a href="#section-8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="sec-combined-references">
 <section id="section-9">
       <h2 id="name-references">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-references" class="section-name selfRef">References</a>
@@ -1928,7 +1945,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <dd class="break"></dd>
 <dt id="ASPP">[ASPP]</dt>
         <dd>
-<span class="refAuthor">McBride, M.</span>, <span class="refAuthor">Madory, D.</span>, <span class="refAuthor">Tantsura, J.</span>, <span class="refAuthor">Raszuk, R.</span>, <span class="refAuthor">Li, H.</span>, <span class="refAuthor">Heitz, J.</span>, and <span class="refAuthor">G. S. Mishra</span>, <span class="refTitle">"AS Path Prepending"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-grow-as-path-prepending-12</span>, <time datetime="2024-02-07" class="refDate">7 February 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-12">https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-12</a>&gt;</span>. </dd>
+<span class="refAuthor">McBride, M.</span>, <span class="refAuthor">Madory, D.</span>, <span class="refAuthor">Tantsura, J.</span>, <span class="refAuthor">Raszuk, R.</span>, <span class="refAuthor">Li, H.</span>, <span class="refAuthor">Heitz, J.</span>, and <span class="refAuthor">G. S. Mishra</span>, <span class="refTitle">"AS Path Prepending"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-grow-as-path-prepending-13</span>, <time datetime="2024-06-20" class="refDate">20 June 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-13">https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ARXIV">[ARXIV]</dt>
       <dd>
@@ -1938,17 +1955,27 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </section>
 </div>
 </section>
-<div id="acknowledgments">
+</div>
+<div id="implementation-status">
 <section id="appendix-A">
+      <h2 id="name-implementation-status">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-implementation-status" class="section-name selfRef">Implementation Status</a>
+      </h2>
+<p id="appendix-A-1">We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verification of the FC path attribute upon receiving BGP UPDATE messages, as well as adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.0.2 installed.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">TBD: github repo.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-B">
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">TODO acknowledge.
-Many many thanks to Keyur Patel and BGPsec authors.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-1">TODO acknowledge.
+Many many thanks to Keyur Patel and BGPsec authors.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-C">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
