@@ -769,10 +769,18 @@ Table of Contents
    allows one FC whose Flags-RS bit is set to 1 to have no corresponding
    ASN.  This FC is respected as added by an FC-BGP-enabled RS.  But if
    such FC is missed, it SHOULD be considered as a partial deployment
-   scenario.  The FCs of two continuous ASes, where RS does not insert
-   ASN into them, SHOULD have an equal Nexthop ASN and Previous ASN,
-   i.e., the Nexthop ASN of the former FC is equal to the Previous ASN
-   of the latter FC if they both deployed FC-BGP.
+   scenario.  The FCs of two continuous ASes in AS_PATH, where RS does
+   not insert ASN into them, SHOULD have an equal Nexthop ASN and
+   Previous ASN.  For instance, there is a network topology like the
+   following diagram Figure 3 where A and B are both FC-BGP enabled AS.
+   In this case, the Nexthop ASN field of FC Segment added by AS A MUST
+   be equal to the Previous ASN field of FC Segment added by AS B.
+
+   +--------+     +--------+     +--------+
+   |    A   | --- |   RS   | --- |    B   |
+   +--------+     +--------+     +--------+
+
+      Figure 3: A network topology with Router Server linked two ASes.
 
    Next, the FC-BGP speaker iterates through the FC segments.  Once the
    FC-BGP speaker has examined the signature field in the FC attribute,
@@ -1122,25 +1130,12 @@ Table of Contents
    mechanism is reduced, similar to other partial deployment scenarios.
 
    When an RS chooses not to insert its ASN into the AS_PATH attribute,
-   it also represents a partial deployment scenario.  However, this
-   scenario offers a higher level of security compared to the typical
-   partial deployment case.  The absence of the RS's ASN in the AS path,
-   coupled with the potential presence of its FC Segment in the FC path
-   attribute, provides an additional layer of security.
-
-   To enhance security further, it is recommended that implementations
-   check the Nexthop ASN with the previous FC Segment and the Previous
-   ASN with the latter FC Segment when both the former AS and the latter
-   AS of the RS deploy the FC-BGP mechanism.  In this case, the two
-   fields' ASNs of the former and later FC should be equal.  This cross-
-   checking helps to validate the authenticity of the routing
-   information and mitigate potential security risks.  Finally, it is
-   worth noting that the most secure approach is for the RS to populate
-   its own FC Segment, even when it does not include its ASN in the
-   AS_PATH attribute.  This ensures that the RS contributes to the
-   overall security of the FC-BGP path and maintains a high level of
-   trust in the routing information as the pathlet information remains
-   coherent.
+   it also represents a partial deployment scenario.  In this case, the
+   RS's ASN is missed in the AS path but it may add one FC Segment in
+   FCList.  Though it still suffers from path attacks, it can be more
+   secure than typically partial deployment scenarios if the
+   implementations check the ASNs of two FCs as introduced in
+   Section 5.2.1.  This check is RECOMMENDED.
 
 7.4.  Additional Security Considerations
 
