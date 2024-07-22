@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 6 December 2024                                           Q. Li
+Expires: 23 January 2025                                           Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                             4 June 2024
+                                                            22 July 2024
 
 
                      FC-BGP Protocol Specification
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 December 2024.
+   This Internet-Draft will expire on 23 January 2025.
 
 Copyright Notice
 
@@ -101,13 +101,15 @@ Table of Contents
    7.  Security Considerations
      7.1.  Security Guarantees
      7.2.  Mitigation of Denial-of-Service Attacks
-     7.3.  Additional Security Considerations
-       7.3.1.  Three AS Numbers
-       7.3.2.  MISC
+     7.3.  Route Server
+     7.4.  Additional Security Considerations
+       7.4.1.  Three AS Numbers
+       7.4.2.  MISC
    8.  IANA Considerations
    9.  References
      9.1.  Normative References
      9.2.  Informative References
+   Appendix A.  Implementation Status
    Acknowledgments
    Authors' Addresses
 
@@ -328,7 +330,7 @@ Table of Contents
       The PASN is the AS number of the previous hop AS from whom the FC-
       BGP speaker receives the FC-BGP UPDATE message.  If the current AS
       has no previous AS hop, it MUST be filled with 0.  It will be
-      discussed more at Section 7.3.1.
+      discussed more at Section 7.4.1.
 
    Current Autonomous System Number (CASN, 4 octets):
       The CASN is the AS number of the FC-BGP speaker that added this FC
@@ -763,6 +765,15 @@ Table of Contents
    included as part of the loop-detection mechanism mentioned earlier in
    the specification.
 
+   However, almost no RSes insert ASN in AS_PATH attribute so FC-BGP
+   allows one FC whose Flags-RS bit is set to 1 to have no corresponding
+   ASN.  This FC is respected as added by an FC-BGP-enabled RS.  But if
+   such FC is missed, it SHOULD be considered as a partial deployment
+   scenario.  The FCs of two continuous ASes, where RS does not insert
+   ASN into them, SHOULD have an equal Nexthop ASN and Previous ASN,
+   i.e., the Nexthop ASN of the former FC is equal to the Previous ASN
+   of the latter FC if they both deployed FC-BGP.
+
    Next, the FC-BGP speaker iterates through the FC segments.  Once the
    FC-BGP speaker has examined the signature field in the FC attribute,
    it proceeds to validate the signature using the supported algorithm
@@ -1099,9 +1110,41 @@ Table of Contents
    some reason (such as an excessively long AS path), it is OPTIONALLY
    to determine its FC-BGP validity status.
 
-7.3.  Additional Security Considerations
+7.3.  Route Server
 
-7.3.1.  Three AS Numbers
+   When a Router Server (RS) inserts its ASN into the AS_PATH attribute,
+   it acts like a transitive AS.  In this scenario, the RS should also
+   insert its FC Segment into the FC path attribute if it supports the
+   FC-BGP mechanism.  This ensures that the security of the routing
+   information is maintained as it traverses through the RS.  However,
+   if the RS does not support FC-BGP, it becomes a partial deployment
+   case.  In this situation, the security capability of the FC-BGP
+   mechanism is reduced, similar to other partial deployment scenarios.
+
+   When an RS chooses not to insert its ASN into the AS_PATH attribute,
+   it also represents a partial deployment scenario.  However, this
+   scenario offers a higher level of security compared to the typical
+   partial deployment case.  The absence of the RS's ASN in the AS path,
+   coupled with the potential presence of its FC Segment in the FC path
+   attribute, provides an additional layer of security.
+
+   To enhance security further, it is recommended that implementations
+   check the Nexthop ASN with the previous FC Segment and the Previous
+   ASN with the latter FC Segment when both the former AS and the latter
+   AS of the RS deploy the FC-BGP mechanism.  In this case, the two
+   fields' ASNs of the former and later FC should be equal.  This cross-
+   checking helps to validate the authenticity of the routing
+   information and mitigate potential security risks.  Finally, it is
+   worth noting that the most secure approach is for the RS to populate
+   its own FC Segment, even when it does not include its ASN in the
+   AS_PATH attribute.  This ensures that the RS contributes to the
+   overall security of the FC-BGP path and maintains a high level of
+   trust in the routing information as the pathlet information remains
+   coherent.
+
+7.4.  Additional Security Considerations
+
+7.4.1.  Three AS Numbers
 
    An FC segment contains only partial path information and FCs in the
    FCList are independent.  To prevent BGP Path Splicing attacks, we
@@ -1123,7 +1166,7 @@ Table of Contents
    Therefore, AS 0 could be used to populate the PASN field when no
    previous AS hops in the AS path.
 
-7.3.2.  MISC
+7.4.2.  MISC
 
    For a discussion of the BGPsec threat model and related security
    considerations, please see [RFC7132].  The security considerations of
@@ -1270,13 +1313,24 @@ Table of Contents
    [ASPP]     McBride, M., Madory, D., Tantsura, J., Raszuk, R., Li, H.,
               Heitz, J., and G. S. Mishra, "AS Path Prepending", Work in
               Progress, Internet-Draft, draft-ietf-grow-as-path-
-              prepending-12, 7 February 2024,
+              prepending-13, 20 June 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-
-              path-prepending-12>.
+              path-prepending-13>.
 
    [ARXIV]    "Secure Inter-domain Routing and Forwarding via Verifiable
               Forwarding Commitments", September 2023,
               <https://arxiv.org/abs/2309.13271>.
+
+Appendix A.  Implementation Status
+
+   We implement the FC-BGP mechanism with FRR version 9.0.1.  The
+   implementation includes verification of the FC path attribute upon
+   receiving BGP UPDATE messages, as well as adding and signing the FC
+   path attribute when sending BGP UPDATE messages.  The development and
+   testing of this implementation were conducted on Ubuntu 22.04 with
+   OpenSSL 3.0.2 installed.
+
+   TBD: github repo.
 
 Acknowledgments
 
