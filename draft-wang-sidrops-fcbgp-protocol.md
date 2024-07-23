@@ -290,6 +290,15 @@ Typically, the Flags field is set to 0.
 
 A route server (RS) is a third-party brokering system that interconnects three or more BGP-speaking routers using eBGP in IXPs {{RFC7947}}. Typically, RS performs like a transit AS except that it does not insert its AS number to the AS_PATH attribute. The route server also can participate in the FC-BGP process. If the RS is an FC-BGP-enabled RS, it may choose to set the Flags-RS bit to 1 when it populates its FC segment. However, when the RS chooses to add its AS number to the AS_PATH attribute, the Flags-RS bit SHOULD be set to 0. If the RS is a non-FC-BGP RS, it propagates the FC-BGP UPDATE message directly. Anyway, the AS number of RS would be used in the FC segment no matter if it appears in the AS_PATH attribute.
 
+Typically, the route server does not insert ASN into AS_PATH. Take {{fig-rs-ex}} as an example where AS A advertises a BGP UPDATE to AS C and RS connects AS A and AS B. When RS supports the FC-BGP mechanism, AS A adds its FC segment: FC(NULL, A, RS), RS adds its FC segment: FC(A, RS, B, Flags-RS), and AS B adds its FC segment: FC(RS, B, C). If RS does not support the FC-BGP mechanism, FC(A, RS, B, Flags-RS) is missed in FCList, which SHOULD be considered as a partial deployment scenario.
+
+~~~~~~
++--------+     +--------+     +--------+     +--------+
+|    A   | --> |   RS   | --> |    B   | --> |    C   |
++--------+     +--------+     +--------+     +--------+
+~~~~~~
+{: #fig-rs-ex title="A network topology with Router Server linked two ASes."}
+
 AS Path Prepending is a traffic engineering mechanism in BGP to deprioritize a route or alternate path, which will prepend the local AS number multiple times to the AS_PATH attribute {{ASPP}}. To minimize unnecessary processing load during the validation of FC segments, an FC-BGP speaker SHOULD NOT generate multiple consecutive FC segments with the same AS number. Instead, the FC-BGP speaker SHOULD aim to produce a single FC segment once, even if the intention is to achieve the semantics of prepending the same AS number multiple times.
 
 <!-- TODO: It is difficult to guarantee its neighbors support multiple algorithm suites.
@@ -513,6 +522,13 @@ To reduce the impact of DoS attacks, FC-BGP speakers SHOULD employ an UPDATE val
 
 Moreover, the transmission of UPDATE messages with the FC path attribute, which entails a multitude of signatures, is a potential vector for denial-of-service attacks. To counter this, implementations of the validation algorithm must cease signature verification immediately upon encountering an invalid signature. This prevents prolonged sequences of invalid signatures from being exploited for DoS purposes. Additionally, implementations can further mitigate such attacks by limiting validation efforts to only those UPDATE messages that, if found to be valid, would be chosen as the best path. In other words, if an UPDATE message includes a route that would be disqualified by the best path selection process for some reason (such as an excessively long AS path), it is OPTIONALLY to determine its FC-BGP validity status.
 
+## Route Server
+
+When the Route Server populates its FC Segment into the FC path attribute, it is secure as the path is fully deployed.
+
+When the Route Server fails to insert FC Segment, no matter whether its ASN is listed in the AS path, it is considered a partial deployment which poses a risk of path forgery.
+
+
 ## Additional Security Considerations
 
 ### Three AS Numbers {#sec-three-asn}
@@ -542,15 +558,11 @@ AS number 0 is used here to populate the PASN in an FC segment where there is no
 <!-- TODO: This chapter can be dropped totally but carefully. There are lots of chapters that refer to the comparison.
 The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment. But it can be compared in the 'Incremental/Partial Deployment Considerations' section. -->
 
-<!--
-# Appendix
+# Implementation Status
 
-## Comparison with BGPsec {#comparison}
+We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verification of the FC path attribute upon receiving BGP UPDATE messages, as well as adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.0.2 installed.
 
-### Partial Deployment and Full Deployment
-
-TBD.
--->
+TBD: github repo.
 
 # Acknowledgments
 {:numbered="false"}
