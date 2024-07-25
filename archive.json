@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-23T00:58:37.375026+00:00",
+  "timestamp": "2024-07-25T00:58:38.895039+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -608,6 +608,34 @@
       "mergedBy": "BasilGuo",
       "mergeCommit": {
         "oid": "264dff8d470fd087e95a3db26907a92f212a046c"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 26,
+      "id": "PR_kwDOK4QgQc52J95F",
+      "title": "Version 01",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/26",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-07-23T01:39:19Z",
+      "updatedAt": "2024-07-23T01:39:38Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "264dff8d470fd087e95a3db26907a92f212a046c",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "version-01",
+      "headRefOid": "0a027c8ea892586fb59a4aea65dd53ad1c6beb8d",
+      "closedAt": "2024-07-23T01:39:37Z",
+      "mergedAt": "2024-07-23T01:39:37Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "814b59dae8a244feaba4d36063ea3c0a05107663"
       },
       "comments": [],
       "reviews": []
