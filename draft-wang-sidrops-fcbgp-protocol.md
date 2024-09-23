@@ -66,7 +66,7 @@ author:
 normative:
   RFC4271: # BGP protocol
   RFC4724: # Graceful Restart Mechanism for BGP
-  RFC4750: # Multiprotocol Extensions for BGP-4
+  RFC4760: # Multiprotocol Extensions for BGP-4
   RFC5656: # EC algo for secure shell transport layer
   RFC6480: # RPKI infrastructure
   RFC6482: # ROA profile
