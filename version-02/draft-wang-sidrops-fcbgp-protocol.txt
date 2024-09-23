@@ -181,7 +181,8 @@ Table of Contents
    and FC-BGP should use the Secure_Path instead of the AS_PATH to
    generate or verify the FC segments.  This prioritization ensures that
    the presence of FC-BGP does not compromise the security benefits of
-   BGPsec in the same update message.
+   BGPsec in the same update message.  More discussion is at
+   Section 6.11.
 
 1.1.  Requirements Language
 
@@ -1065,24 +1066,25 @@ Table of Contents
    When an FC-BGP speaker also enables the BGPsec feature, it MUST also
    properly process the BGPsec UPDATE message as follows:
 
-   General Principle:  The BGP speaker SHOULD prioritize BGPsec over FC-
-      BGP.  When both features are enabled, the BGP speaker processes
+   *  General Principle.  The BGP speaker SHOULD prioritize BGPsec over
+      FC-BGP.  When both features are enabled, the BGP speaker processes
       the BGPsec UPDATE message first, then processes the FC-BGP UPDATE
       message.
 
-   FC-BGP UPDATE Message Generation:  The BGP speaker SHOULD prioritize
-      the BGPsec_Path attribute over the AS_PATH attribute.  This means
-      that when broadcasting a BGP UPDATE message, the BGP speaker
-      SHOULD first check if the peer supports BGPsec.  If so, it SHOULD
-      generate a BGPsec-enabled UPDATE message.  In this message,
+   *  FC-BGP UPDATE Message Generation.  The BGP speaker SHOULD
+      prioritize the BGPsec_Path attribute over the AS_PATH attribute.
+      This means that when broadcasting a BGP UPDATE message, the BGP
+      speaker SHOULD first check if the peer supports BGPsec.  If so, it
+      SHOULD generate a BGPsec-enabled UPDATE message.  In this message,
       BGPsec_Path replaces the AS_PATH attribute, and an MP_REACH_NLRI
-      attribute is used for encoding NLRI information.  The generation
-      of the FC Path attribute SHOULD use these attributes to generate
-      FC Segments.  The impact on FC generation is minimal, as it only
-      needs to obtain PASN, CASN, NASN, Prefix Address, and Prefix
-      Length from BGPsec_Path and MP_REACH_NLRI attributes separately.
+      attribute [RFC4760] is used for encoding NLRI information.  The
+      generation of the FC Path attribute SHOULD use these attributes to
+      generate FC Segments.  The impact on FC generation is minimal, as
+      it only needs to obtain PASN, CASN, NASN, Prefix Address, and
+      Prefix Length from BGPsec_Path and MP_REACH_NLRI attributes
+      separately.
 
-   FC-BGP UPDATE Message Validation:  The BGP speaker should also
+   *  FC-BGP UPDATE Message Validation.  The BGP speaker should also
       prioritize the BGPsec_Path over AS_PATH.  After processing the
       BGPsec path attribute, the BGP speaker should decode the
       BGPsec_Path and MP_REACH_NLRI attributes.  So, in the validation
@@ -1222,10 +1224,10 @@ Table of Contents
               DOI 10.17487/RFC4724, January 2007,
               <https://www.rfc-editor.org/rfc/rfc4724>.
 
-   [RFC4750]  Joyal, D., Ed., Galecki, P., Ed., Giacalone, S., Ed.,
-              Coltun, R., and F. Baker, "OSPF Version 2 Management
-              Information Base", RFC 4750, DOI 10.17487/RFC4750,
-              December 2006, <https://www.rfc-editor.org/rfc/rfc4750>.
+   [RFC4760]  Bates, T., Chandra, R., Katz, D., and Y. Rekhter,
+              "Multiprotocol Extensions for BGP-4", RFC 4760,
+              DOI 10.17487/RFC4760, January 2007,
+              <https://www.rfc-editor.org/rfc/rfc4760>.
 
    [RFC5656]  Stebila, D. and J. Green, "Elliptic Curve Algorithm
               Integration in the Secure Shell Transport Layer",
