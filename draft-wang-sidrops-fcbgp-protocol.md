@@ -66,6 +66,7 @@ author:
 normative:
   RFC4271: # BGP protocol
   RFC4724: # Graceful Restart Mechanism for BGP
+  RFC4750: # Multiprotocol Extensions for BGP-4
   RFC5656: # EC algo for secure shell transport layer
   RFC6480: # RPKI infrastructure
   RFC6482: # ROA profile
@@ -110,15 +111,15 @@ This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the B
 
 The FC-BGP mechanism described in this document aims to ensure that advertised routes in BGP {{RFC4271}} are authentic. FC-BGP accomplishes this by introducing a new optional, transitive, and extended length path attribute called FC (Forwarding Commitment) to the BGP UPDATE message. This attribute can be used by an FC-BGP-compliant BGP speaker (referred to hereafter as an FC-BGP speaker) to generate, propagate, and validate BGP UPDATE messages to enhance security. In other words, when the BGP UPDATE message travels through an FC-BGP-enabled AS, it adds a new FC based on the AS order in AS_PATH. Subsequent ASs can then utilize the list of FCs in the BGP UPDATE message to ensure that the advertised path is consistent with the AS_PATH attribute.
 
-BGPsec is a path-level authentication approach described in {{RFC8205}}. It replaces the AS_PATH attribute, which is used to record the sequence of autonomous systems (ASes) that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits provided by BGPsec. In contrast, FC-BGP (Forwarding Commitment Driven BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.
+BGPsec is a path-level authentication approach described in {{RFC8205}}. It replaces the AS_PATH attribute, which is used to record the sequence of autonomous systems (ASes) that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits BGPsec provides. In contrast, FC-BGP (Forwarding Commitment BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.
 
 FC-BGP and BGPsec offer different levels of security benefits in the case of partial deployment, even though they achieve the same security benefits when fully deployed. BGPsec tightly couples path authentication with the BGP path construction process, requiring each AS to iteratively verify the signatures of each prior hop before extending the authentication chain. Consequently, a single legacy AS that does not support BGPsec can break the authentication chain, preventing subsequent BGPsec-aware ASes from reviving the authentication process. As a result, in partial deployment scenarios, BGPsec is often downgraded to the legacy BGP protocol, losing its security benefits.
 
-In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS-path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS-path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path.
+In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path.
 
 Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation {{RFC6483}}. Additionally, any FC-BGP speaker that wishes to process the FC path attribute along with BGP UPDATE messages MUST obtain a router certificate and store it in the RPKI repository. This certificate is associated with its AS number. The router key generation here follows {{RFC8208}} and {{RFC8635}}.
 
-It is NOT RECOMMENDED to enable both BGPsec and FC-BGP simultaneously in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the security benefits of BGPsec are not compromised by the presence of FC-BGP in the same update message.
+It is NOT RECOMMENDED that both BGPsec and FC-BGP simultaneously be enabled in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message.
 
 ## Requirements Language
 
@@ -496,6 +497,23 @@ The core difference between FC-BGP and BGPsec is that BGPsec is a path-level aut
 In design, FC-BGP does not modify the AS_PATH attribute. It defines a new transitive path attribute to transport the FC segments so that the legacy ASes can forward this attribute to its peers. Thus, FC-BGP is natively compatible with the BGP and supports partial deployment. It differs from BGPsec which replaces the AS_PATH attribute with a new Secure_Path information of BGPsec_Path attribute.
 
 As for incremental/partial deployment considerations, in Section 5.1.1 of {{ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. Section 5.1.2 of {{ARXIV}} analyzes the benefits of FC-BGP in case of partial deployment. The results show that FC-BGP provides more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
+
+## Co-existence with BGPsec {#coexist-bgpsec}
+
+It is NOT RECOMMENDED that both BGPsec and FC-BGP be enabled together. However, at the very least, the implementation SHOULD adequately process the coexistence update message.
+
+When an FC-BGP speaker also enables the BGPsec feature, it MUST also properly process the BGPsec UPDATE message as follows:
+
+General Principle:
+: The BGP speaker SHOULD prioritize BGPsec over FC-BGP. When both features are enabled, the BGP speaker processes the BGPsec UPDATE message first, then processes the FC-BGP UPDATE message.
+
+FC-BGP UPDATE Message Generation:
+: The BGP speaker SHOULD prioritize the BGPsec_Path attribute over the AS_PATH attribute. This means that when broadcasting a BGP UPDATE message, the BGP speaker SHOULD first check if the peer supports BGPsec. If so, it SHOULD generate a BGPsec-enabled UPDATE message. In this message, BGPsec_Path replaces the AS_PATH attribute, and an MP_REACH_NLRI attribute is used for encoding NLRI information. The generation of the FC Path attribute SHOULD use these attributes to generate FC Segments. The impact on FC generation is minimal, as it only needs to obtain PASN, CASN, NASN, Prefix Address, and Prefix Length from BGPsec_Path and MP_REACH_NLRI attributes separately.
+
+FC-BGP UPDATE Message Validation:
+: The BGP speaker should also prioritize the BGPsec_Path over AS_PATH. After processing the BGPsec path attribute, the BGP speaker should decode the BGPsec_Path and MP_REACH_NLRI attributes. So, in the validation process, the BGP speaker SHOULD essentially reverse the steps it took during generation. It would first decode the BGPsec_Path and MP_REACH_NLRI attributes to obtain the necessary information (PASN, CASN, NASN, Prefix Address, and Prefix Length). Then, it would use this information to validate the corresponding FC Segment.
+
+In summary, the coexistence of BGPsec and FC-BGP is not overly burdensome.
 
 # Security Considerations {#security-considerations}
 
