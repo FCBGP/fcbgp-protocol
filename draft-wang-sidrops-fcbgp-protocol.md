@@ -119,7 +119,7 @@ In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citi
 
 Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation {{RFC6483}}. Additionally, any FC-BGP speaker that wishes to process the FC path attribute along with BGP UPDATE messages MUST obtain a router certificate and store it in the RPKI repository. This certificate is associated with its AS number. The router key generation here follows {{RFC8208}} and {{RFC8635}}.
 
-It is NOT RECOMMENDED that both BGPsec and FC-BGP simultaneously be enabled in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message.
+It is NOT RECOMMENDED that both BGPsec and FC-BGP simultaneously be enabled in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message. More discussion is at {{coexist_bgpsec}}.
 
 ## Requirements Language
 
@@ -498,20 +498,17 @@ In design, FC-BGP does not modify the AS_PATH attribute. It defines a new transi
 
 As for incremental/partial deployment considerations, in Section 5.1.1 of {{ARXIV}}, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. Section 5.1.2 of {{ARXIV}} analyzes the benefits of FC-BGP in case of partial deployment. The results show that FC-BGP provides more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.
 
-## Co-existence with BGPsec {#coexist-bgpsec}
+## Co-existence with BGPsec {#coexist_bgpsec}
 
 It is NOT RECOMMENDED that both BGPsec and FC-BGP be enabled together. However, at the very least, the implementation SHOULD adequately process the coexistence update message.
 
 When an FC-BGP speaker also enables the BGPsec feature, it MUST also properly process the BGPsec UPDATE message as follows:
 
-General Principle:
-: The BGP speaker SHOULD prioritize BGPsec over FC-BGP. When both features are enabled, the BGP speaker processes the BGPsec UPDATE message first, then processes the FC-BGP UPDATE message.
+- General Principle. The BGP speaker SHOULD prioritize BGPsec over FC-BGP. When both features are enabled, the BGP speaker processes the BGPsec UPDATE message first, then processes the FC-BGP UPDATE message.
 
-FC-BGP UPDATE Message Generation:
-: The BGP speaker SHOULD prioritize the BGPsec_Path attribute over the AS_PATH attribute. This means that when broadcasting a BGP UPDATE message, the BGP speaker SHOULD first check if the peer supports BGPsec. If so, it SHOULD generate a BGPsec-enabled UPDATE message. In this message, BGPsec_Path replaces the AS_PATH attribute, and an MP_REACH_NLRI attribute is used for encoding NLRI information. The generation of the FC Path attribute SHOULD use these attributes to generate FC Segments. The impact on FC generation is minimal, as it only needs to obtain PASN, CASN, NASN, Prefix Address, and Prefix Length from BGPsec_Path and MP_REACH_NLRI attributes separately.
+- FC-BGP UPDATE Message Generation. The BGP speaker SHOULD prioritize the BGPsec_Path attribute over the AS_PATH attribute. This means that when broadcasting a BGP UPDATE message, the BGP speaker SHOULD first check if the peer supports BGPsec. If so, it SHOULD generate a BGPsec-enabled UPDATE message. In this message, BGPsec_Path replaces the AS_PATH attribute, and an MP_REACH_NLRI attribute {{RFC4760}} is used for encoding NLRI information. The generation of the FC Path attribute SHOULD use these attributes to generate FC Segments. The impact on FC generation is minimal, as it only needs to obtain PASN, CASN, NASN, Prefix Address, and Prefix Length from BGPsec_Path and MP_REACH_NLRI attributes separately.
 
-FC-BGP UPDATE Message Validation:
-: The BGP speaker should also prioritize the BGPsec_Path over AS_PATH. After processing the BGPsec path attribute, the BGP speaker should decode the BGPsec_Path and MP_REACH_NLRI attributes. So, in the validation process, the BGP speaker SHOULD essentially reverse the steps it took during generation. It would first decode the BGPsec_Path and MP_REACH_NLRI attributes to obtain the necessary information (PASN, CASN, NASN, Prefix Address, and Prefix Length). Then, it would use this information to validate the corresponding FC Segment.
+- FC-BGP UPDATE Message Validation. The BGP speaker should also prioritize the BGPsec_Path over AS_PATH. After processing the BGPsec path attribute, the BGP speaker should decode the BGPsec_Path and MP_REACH_NLRI attributes. So, in the validation process, the BGP speaker SHOULD essentially reverse the steps it took during generation. It would first decode the BGPsec_Path and MP_REACH_NLRI attributes to obtain the necessary information (PASN, CASN, NASN, Prefix Address, and Prefix Length). Then, it would use this information to validate the corresponding FC Segment.
 
 In summary, the coexistence of BGPsec and FC-BGP is not overly burdensome.
 
