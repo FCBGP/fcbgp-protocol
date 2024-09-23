@@ -15,21 +15,21 @@
        
  This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the Border Gateway Protocol (BGP). FC-BGP provides security for the path of Autonomous Systems (ASs) through which a BGP UPDATE message passes. Forwarding Commitment (FC) is a cryptographically signed segment to certify an AS's routing intent on its directly connected hops. Based on FC, FC-BGP aims to build a secure inter-domain system that can simultaneously authenticate the AS_PATH attribute in the BGP UPDATE message. The extension is backward compatible, which means a router that supports the extension can interoperate with a router that doesn't support the extension. 
     " name="description">
-<meta content="xml2rfc 3.22.0" name="generator">
+<meta content="xml2rfc 3.23.1" name="generator">
 <meta content="draft-wang-sidrops-fcbgp-protocol-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.22.0
-    Python 3.12.3
+  xml2rfc 3.23.1
+    Python 3.12.6
     ConfigArgParse 1.7
-    google-i18n-address 3.1.0
+    google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.4
     lxml 4.9.4
-    platformdirs 4.2.2
+    platformdirs 4.3.6
     pycountry 22.3.5
     PyYAML 6.0.1
     requests 2.32.3
-    setuptools 69.5.1
+    setuptools 70.3.0
     wcwidth 0.2.13
 -->
 <link href="draft-wang-sidrops-fcbgp-protocol.xml" rel="alternate" type="application/rfc+xml">
@@ -1029,11 +1029,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">FC-BGP</td>
-<td class="right">July 2024</td>
+<td class="right">September 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Xu, et al.</td>
-<td class="center">Expires 23 January 2025</td>
+<td class="center">Expires 27 March 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1046,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wang-sidrops-fcbgp-protocol-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-07-22" class="published">22 July 2024</time>
+<time datetime="2024-09-23" class="published">23 September 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-01-23">23 January 2025</time></dd>
+<dd class="expires"><time datetime="2025-03-27">27 March 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 27 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1225,6 +1225,9 @@ svg :is([fill="white"], [fill^="#fff"]) {
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.10">
                 <p id="section-toc.1-1.6.2.10.1"><a href="#section-6.10" class="auto internal xref">6.10</a>. <a href="#name-incremental-partial-deploym" class="internal xref">Incremental/Partial Deployment Considerations</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.11">
+                <p id="section-toc.1-1.6.2.11.1"><a href="#section-6.11" class="auto internal xref">6.11</a>. <a href="#name-co-existence-with-bgpsec" class="internal xref">Co-existence with BGPsec</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
@@ -1285,11 +1288,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">The FC-BGP mechanism described in this document aims to ensure that advertised routes in BGP <span>[<a href="#RFC4271" class="cite xref">RFC4271</a>]</span> are authentic. FC-BGP accomplishes this by introducing a new optional, transitive, and extended length path attribute called FC (Forwarding Commitment) to the BGP UPDATE message. This attribute can be used by an FC-BGP-compliant BGP speaker (referred to hereafter as an FC-BGP speaker) to generate, propagate, and validate BGP UPDATE messages to enhance security. In other words, when the BGP UPDATE message travels through an FC-BGP-enabled AS, it adds a new FC based on the AS order in AS_PATH. Subsequent ASs can then utilize the list of FCs in the BGP UPDATE message to ensure that the advertised path is consistent with the AS_PATH attribute.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">BGPsec is a path-level authentication approach described in <span>[<a href="#RFC8205" class="cite xref">RFC8205</a>]</span>. It replaces the AS_PATH attribute, which is used to record the sequence of autonomous systems (ASes) that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits provided by BGPsec. In contrast, FC-BGP (Forwarding Commitment Driven BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-2">BGPsec is a path-level authentication approach described in <span>[<a href="#RFC8205" class="cite xref">RFC8205</a>]</span>. It replaces the AS_PATH attribute, which is used to record the sequence of autonomous systems (ASes) that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits BGPsec provides. In contrast, FC-BGP (Forwarding Commitment BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">FC-BGP and BGPsec offer different levels of security benefits in the case of partial deployment, even though they achieve the same security benefits when fully deployed. BGPsec tightly couples path authentication with the BGP path construction process, requiring each AS to iteratively verify the signatures of each prior hop before extending the authentication chain. Consequently, a single legacy AS that does not support BGPsec can break the authentication chain, preventing subsequent BGPsec-aware ASes from reviving the authentication process. As a result, in partial deployment scenarios, BGPsec is often downgraded to the legacy BGP protocol, losing its security benefits.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS-path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS-path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-4">In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation <span>[<a href="#RFC6483" class="cite xref">RFC6483</a>]</span>. Additionally, any FC-BGP speaker that wishes to process the FC path attribute along with BGP UPDATE messages <span class="bcp14">MUST</span> obtain a router certificate and store it in the RPKI repository. This certificate is associated with its AS number. The router key generation here follows <span>[<a href="#RFC8208" class="cite xref">RFC8208</a>]</span> and <span>[<a href="#RFC8635" class="cite xref">RFC8635</a>]</span>.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">It is <span class="bcp14">NOT RECOMMENDED</span> to enable both BGPsec and FC-BGP simultaneously in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the security benefits of BGPsec are not compromised by the presence of FC-BGP in the same update message.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-6">It is <span class="bcp14">NOT RECOMMENDED</span> that both BGPsec and FC-BGP simultaneously be enabled in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <div id="requirements-language">
 <section id="section-1.1">
         <h3 id="name-requirements-language">
@@ -1751,6 +1754,33 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-6.10-3">As for incremental/partial deployment considerations, in Section 5.1.1 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span>, we have proved that the adversary cannot forge a valid AS path when FC-BGP is universally deployed. Section 5.1.2 of <span>[<a href="#ARXIV" class="cite xref">ARXIV</a>]</span> analyzes the benefits of FC-BGP in case of partial deployment. The results show that FC-BGP provides more benefits than BGPsec in partial deployment. As a result, attackers are forced to pretend to be at least two hops away from the destination AS, which reduces the probability of successful path hijacks.<a href="#section-6.10-3" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="coexist-bgpsec">
+<section id="section-6.11">
+        <h3 id="name-co-existence-with-bgpsec">
+<a href="#section-6.11" class="section-number selfRef">6.11. </a><a href="#name-co-existence-with-bgpsec" class="section-name selfRef">Co-existence with BGPsec</a>
+        </h3>
+<p id="section-6.11-1">It is <span class="bcp14">NOT RECOMMENDED</span> that both BGPsec and FC-BGP be enabled together. However, at the very least, the implementation <span class="bcp14">SHOULD</span> adequately process the coexistence update message.<a href="#section-6.11-1" class="pilcrow">¶</a></p>
+<p id="section-6.11-2">When an FC-BGP speaker also enables the BGPsec feature, it <span class="bcp14">MUST</span> also properly process the BGPsec UPDATE message as follows:<a href="#section-6.11-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.11-3">
+          <dt id="section-6.11-3.1">General Principle:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.11-3.2">
+            <p id="section-6.11-3.2.1">The BGP speaker <span class="bcp14">SHOULD</span> prioritize BGPsec over FC-BGP. When both features are enabled, the BGP speaker processes the BGPsec UPDATE message first, then processes the FC-BGP UPDATE message.<a href="#section-6.11-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.11-3.3">FC-BGP UPDATE Message Generation:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.11-3.4">
+            <p id="section-6.11-3.4.1">The BGP speaker <span class="bcp14">SHOULD</span> prioritize the BGPsec_Path attribute over the AS_PATH attribute. This means that when broadcasting a BGP UPDATE message, the BGP speaker <span class="bcp14">SHOULD</span> first check if the peer supports BGPsec. If so, it <span class="bcp14">SHOULD</span> generate a BGPsec-enabled UPDATE message. In this message, BGPsec_Path replaces the AS_PATH attribute, and an MP_REACH_NLRI attribute is used for encoding NLRI information. The generation of the FC Path attribute <span class="bcp14">SHOULD</span> use these attributes to generate FC Segments. The impact on FC generation is minimal, as it only needs to obtain PASN, CASN, NASN, Prefix Address, and Prefix Length from BGPsec_Path and MP_REACH_NLRI attributes separately.<a href="#section-6.11-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.11-3.5">FC-BGP UPDATE Message Validation:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.11-3.6">
+            <p id="section-6.11-3.6.1">The BGP speaker should also prioritize the BGPsec_Path over AS_PATH. After processing the BGPsec path attribute, the BGP speaker should decode the BGPsec_Path and MP_REACH_NLRI attributes. So, in the validation process, the BGP speaker <span class="bcp14">SHOULD</span> essentially reverse the steps it took during generation. It would first decode the BGPsec_Path and MP_REACH_NLRI attributes to obtain the necessary information (PASN, CASN, NASN, Prefix Address, and Prefix Length). Then, it would use this information to validate the corresponding FC Segment.<a href="#section-6.11-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-6.11-4">In summary, the coexistence of BGPsec and FC-BGP is not overly burdensome.<a href="#section-6.11-4" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="security-considerations">
@@ -1853,6 +1883,10 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <dt id="RFC4724">[RFC4724]</dt>
         <dd>
 <span class="refAuthor">Sangli, S.</span>, <span class="refAuthor">Chen, E.</span>, <span class="refAuthor">Fernando, R.</span>, <span class="refAuthor">Scudder, J.</span>, and <span class="refAuthor">Y. Rekhter</span>, <span class="refTitle">"Graceful Restart Mechanism for BGP"</span>, <span class="seriesInfo">RFC 4724</span>, <span class="seriesInfo">DOI 10.17487/RFC4724</span>, <time datetime="2007-01" class="refDate">January 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4724">https://www.rfc-editor.org/rfc/rfc4724</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4750">[RFC4750]</dt>
+        <dd>
+<span class="refAuthor">Joyal, D., Ed.</span>, <span class="refAuthor">Galecki, P., Ed.</span>, <span class="refAuthor">Giacalone, S., Ed.</span>, <span class="refAuthor">Coltun, R.</span>, and <span class="refAuthor">F. Baker</span>, <span class="refTitle">"OSPF Version 2 Management Information Base"</span>, <span class="seriesInfo">RFC 4750</span>, <span class="seriesInfo">DOI 10.17487/RFC4750</span>, <time datetime="2006-12" class="refDate">December 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4750">https://www.rfc-editor.org/rfc/rfc4750</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC5656">[RFC5656]</dt>
         <dd>
