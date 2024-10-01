@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-29T01:11:29.926936+00:00",
+  "timestamp": "2024-10-01T01:12:25.061523+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -636,6 +636,34 @@
       "mergedBy": "BasilGuo",
       "mergeCommit": {
         "oid": "814b59dae8a244feaba4d36063ea3c0a05107663"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 27,
+      "id": "PR_kwDOK4QgQc59BIRZ",
+      "title": "Version 02",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/27",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "- update: FC-BGP coexists with BGPsec.",
+      "createdAt": "2024-09-29T07:01:52Z",
+      "updatedAt": "2024-09-29T07:02:17Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "814b59dae8a244feaba4d36063ea3c0a05107663",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "version-02",
+      "headRefOid": "3ff6590ccc1a9dc1b78eb32e25d2d863b9aadb85",
+      "closedAt": "2024-09-29T07:02:17Z",
+      "mergedAt": "2024-09-29T07:02:16Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "550ba2f657f8c920ef9fd9fe62338aa981658eee"
       },
       "comments": [],
       "reviews": []
