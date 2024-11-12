@@ -106,10 +106,13 @@ Table of Contents
      7.4.  Additional Security Considerations
        7.4.1.  Three AS Numbers
        7.4.2.  MISC
-   8.  IANA Considerations
-   9.  References
-     9.1.  Normative References
-     9.2.  Informative References
+   8.  Comparison to Other Technologies
+     8.1.  BGPsec
+     8.2.  ASPA
+   9.  IANA Considerations
+   10. References
+     10.1.  Normative References
+     10.2.  Informative References
    Appendix A.  Implementation Status
    Acknowledgments
    Authors' Addresses
@@ -258,7 +261,7 @@ Table of Contents
    Unlike BGPsec, FC-BGP does not modify the AS_PATH.  Instead, FC is
    enclosed in a BGP UPDATE message as an optional, transitive, and
    extended length path attribute.  This document registers a new
-   attribute type code for this attribute: TBD, see Section 8 for more
+   attribute type code for this attribute: TBD, see Section 9 for more
    information.
 
    The FC path attribute includes the digital signatures that protect
@@ -289,7 +292,7 @@ Table of Contents
       attribute as optional, transitive, partial, and extended-length.
 
    Type (1 octet):
-      The current value is TBD.  Refer to Section 8 for more
+      The current value is TBD.  Refer to Section 9 for more
       information.
 
    FCList Length (2 octets):
@@ -1198,7 +1201,17 @@ Table of Contents
    considerations, please see [RFC7132].  The security considerations of
    [RFC4272] also apply to FC-BGP.
 
-8.  IANA Considerations
+8.  Comparison to Other Technologies
+
+8.1.  BGPsec
+
+   TBD.
+
+8.2.  ASPA
+
+   TBD.
+
+9.  IANA Considerations
 
    TBD.  Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
 
@@ -1206,13 +1219,15 @@ Table of Contents
    the second highest/leftmost bit is the Route_Server flag in this
    document.
 
+   TBD.  A new OID should be assigned for keys used in FC-BGP.
+
    AS number 0 is used here to populate the PASN in an FC segment where
    there is no previous hop for an AS, i.e., the origin AS when adding
    the FC segment to the FC-BGP UPDATE message.
 
-9.  References
+10.  References
 
-9.1.  Normative References
+10.1.  Normative References
 
    [RFC4271]  Rekhter, Y., Ed., Li, T., Ed., and S. Hares, Ed., "A
               Border Gateway Protocol 4 (BGP-4)", RFC 4271,
@@ -1302,7 +1317,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-9.2.  Informative References
+10.2.  Informative References
 
    [RFC4272]  Murphy, S., "BGP Security Vulnerabilities Analysis",
               RFC 4272, DOI 10.17487/RFC4272, January 2006,
@@ -1367,8 +1382,9 @@ Acknowledgments
 
    The authors would like to thank Keyur Patel, Jeffery Hass, Andrew,
    Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx,
-   Susan Hares, Rüdiger Volk, Jun Zhang, and Kotikalapudi Sriram for
-   their review and valuable comments.
+   Susan Hares, Rüdiger Volk, Jun Zhang, Kotikalapudi Sriram, John
+   Scudder, Job Snijders, and Russ Housley for their review and valuable
+   comments.
 
 Authors' Addresses
 
