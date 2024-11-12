@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 27 March 2025                                             Q. Li
+Expires: 16 May 2025                                               Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                       23 September 2024
+                                                        12 November 2024
 
 
                      FC-BGP Protocol Specification
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 March 2025.
+   This Internet-Draft will expire on 16 May 2025.
 
 Copyright Notice
 
@@ -1355,18 +1355,20 @@ Table of Contents
 Appendix A.  Implementation Status
 
    We implement the FC-BGP mechanism with FRR version 9.0.1.  The
-   implementation includes verification of the FC path attribute upon
-   receiving BGP UPDATE messages, as well as adding and signing the FC
-   path attribute when sending BGP UPDATE messages.  The development and
+   implementation includes verifying the FC path attribute upon
+   receiving BGP UPDATE messages and adding and signing the FC path
+   attribute when sending BGP UPDATE messages.  The development and
    testing of this implementation were conducted on Ubuntu 22.04 with
-   OpenSSL 3.0.2 installed.
+   OpenSSL 3.X installed.
 
    TBD: github repo.
 
 Acknowledgments
 
-   TODO acknowledge.  Many many thanks to Keyur Patel and BGPsec
-   authors.
+   The authors would like to thank Keyur Patel, Jeffery Hass, Andrew,
+   Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx,
+   Susan Hares, Rüdiger Volk, Jun Zhang, and Kotikalapudi Sriram for
+   their review and valuable comments.
 
 Authors' Addresses
 
