@@ -99,9 +99,6 @@ informative:
 
 --- abstract
 
-<!-- TODO: Is FC-BGP proposed for AS_PATH security only?
-Then the last sentence says it will process with the data plane.
-It is better to revise this abstract to make it more accurate. -->
 This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the Border Gateway Protocol (BGP). FC-BGP provides security for the path of Autonomous Systems (ASs) through which a BGP UPDATE message passes. Forwarding Commitment (FC) is a cryptographically signed segment to certify an AS's routing intent on its directly connected hops. Based on FC, FC-BGP aims to build a secure inter-domain system that can simultaneously authenticate the AS_PATH attribute in the BGP UPDATE message. The extension is backward compatible, which means a router that supports the extension can interoperate with a router that doesn't support the extension.
 
 
@@ -575,7 +572,7 @@ The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment
 
 # Implementation Status
 
-We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verification of the FC path attribute upon receiving BGP UPDATE messages, as well as adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.0.2 installed.
+We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verifying the FC path attribute upon receiving BGP UPDATE messages and adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.X installed.
 
 TBD: github repo.
 
@@ -583,5 +580,7 @@ TBD: github repo.
 {:numbered="false"}
 
 <!-- It is better to update this part gradually with the completion of this document. -->
-TODO acknowledge.
-Many many thanks to Keyur Patel and BGPsec authors.
+
+The authors would like to thank Keyur Patel, Jeffery Hass, Andrew, Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx, Susan Hares, Rüdiger Volk, Jun Zhang, and Kotikalapudi Sriram for their review and valuable comments.
+
+
