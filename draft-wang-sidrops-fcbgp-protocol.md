@@ -557,18 +557,27 @@ In the context of BGP {{RFC4271}}, to detect an AS routing loop, it scans the fu
 
 For a discussion of the BGPsec threat model and related security considerations, please see {{RFC7132}}. The security considerations of {{RFC4272}} also apply to FC-BGP.
 
+# Comparison to Other Technologies
+
+## BGPsec
+
+TBD.
+
+## ASPA
+
+TBD.
+
 # IANA Considerations {#iana-considerations}
 
 TBD. Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
 
 TBD. Regist Flags. The leftmost bit is the Confed_Segment flag and the second highest/leftmost bit is the Route_Server flag in this document.
 
+TBD. A new OID should be assigned for keys used in FC-BGP.
+
 AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.
 
 --- back
-
-<!-- TODO: This chapter can be dropped totally but carefully. There are lots of chapters that refer to the comparison.
-The biggest advantage of FC-BGP, compared with BGPsec, is the partial deployment. But it can be compared in the 'Incremental/Partial Deployment Considerations' section. -->
 
 # Implementation Status
 
@@ -581,6 +590,6 @@ TBD: github repo.
 
 <!-- It is better to update this part gradually with the completion of this document. -->
 
-The authors would like to thank Keyur Patel, Jeffery Hass, Andrew, Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx, Susan Hares, Rüdiger Volk, Jun Zhang, and Kotikalapudi Sriram for their review and valuable comments.
+The authors would like to thank Keyur Patel, Jeffery Hass, Andrew, Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx, Susan Hares, Rüdiger Volk, Jun Zhang, Kotikalapudi Sriram, John Scudder, Job Snijders, and Russ Housley for their review and valuable comments.
 
 
