@@ -658,9 +658,12 @@ Table of Contents
    may be forged.
 
    When using BGP route leak prevention with FC-BGP, it SHOULD tell the
-   neighbor its BGP Role as Section 4. of [RFC9234].  If the peer's role
-   is Customer, Peer, or RS-Client, the Flags-OTC SHOULD be set to 1.
-   Then, the route SHOULD subsequently go only to the Customers.
+   neighbor its BGP Role as Section 4 of [RFC9234].  If the peer's role
+   is Customer, Peer, or RS-Client, the Flags-OTC MUST be set to 1 on
+   route advertisement.  Then, the route SHOULD subsequently go only to
+   the Customers.  It is worth noting that if the recently added FC
+   Segment already set the Flags-OTC flag, it MUST NOT be propagated to
+   Providers, Peers, or RSes.
 
 5.  Processing a Received FC-BGP UPDATE Message
 
@@ -836,6 +839,18 @@ Table of Contents
    flag to 1 in their corresponding FC Segments.  The Flags-OTC flag is
    set to 1 only when the role of its neighbor, to whom the propagator
    AS sends routes, is Customer, Peer, or RS-Client.
+
+   The following ingress procedure applies to the processing of the
+   Flags-OTC flag on route receipt:
+
+   1.  If a route, with the Flags-OTC flag in the recently added FC
+       Segment, is received from a Customer or an RS-Client, then it is
+       a route leak and MUST be considered ineligible.
+
+   2.  If a route is received from a Peer (i.e., remote AS with a Peer
+       Role) and with the Flags-OTC flag in both two recently
+       consecutively added FC Segments, then it is a route leak and MUST
+       be considered ineligible.
 
    Next, the FC-BGP speaker iterates through the FC segments.  Once the
    FC-BGP speaker has examined the signature field in the FC attribute,
