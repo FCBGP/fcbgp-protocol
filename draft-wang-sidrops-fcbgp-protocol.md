@@ -363,7 +363,7 @@ BGP routing system suffers lots of vulnerabilities. The systemic vulnerability o
 
 {{RFC9234}} can detect and prevent BGP route leaks by adding a new BGP OPEN Role capability and OTC transitive path attribute. However, it may be forged.
 
-When using BGP route leak prevention with FC-BGP, it SHOULD tell the neighbor its BGP Role as {{Section 4. of RFC9234}}. If the peer's role is Customer, Peer, or RS-Client, the Flags-OTC SHOULD be set to 1. Then, the route SHOULD subsequently go only to the Customers.
+When using BGP route leak prevention with FC-BGP, it SHOULD tell the neighbor its BGP Role as {{Section 4 of RFC9234}}. If the peer's role is Customer, Peer, or RS-Client, the Flags-OTC MUST be set to 1 on route advertisement. Then, the route SHOULD subsequently go only to the Customers. It is worth noting that if the recently added FC Segment already set the Flags-OTC flag, it MUST NOT be propagated to Providers, Peers, or RSes.
 
 # Processing a Received FC-BGP UPDATE Message
 
@@ -411,6 +411,11 @@ First, the integrity of the FC-BGP UPDATE message MUST be checked. Both syntacti
 If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are REQUIRED to handle these errors using the "treat-as-withdraw" approach as defined in {{RFC7606}}. This approach means that the FC-BGP speaker SHOULD treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.
 
 When one FC Segment has set the Flags-OTC flag to 1, the subsequent FC Segments added by the following ASes MUST all set the Flags-OTC flag to 1 in their corresponding FC Segments. The Flags-OTC flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Customer, Peer, or RS-Client.
+
+The following ingress procedure applies to the processing of the Flags-OTC flag on route receipt:
+
+1. If a route, with the Flags-OTC flag in the recently added FC Segment, is received from a Customer or an RS-Client, then it is a route leak and MUST be considered ineligible.
+2. If a route is received from a Peer (i.e., remote AS with a Peer Role) and with the Flags-OTC flag in both two recently consecutively added FC Segments, then it is a route leak and MUST be considered ineligible.
 
 <!-- TODO: in BGPsec, it will extract and reconstruct the AS_PATH attribute when it encounters an unsupported algorithm, i.e., downgrade from BGPsec to BGP. How about FC-BGP? Downgrade or propagate? -->
 Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.
