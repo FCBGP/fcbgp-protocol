@@ -613,15 +613,17 @@ AS number 0 is used here to populate the PASN in an FC segment where there is no
 
 One of the core differences between FC-BGP and BGPsec is the partial deployment scenario. It is difficult for FC-BGP and BGPsec to make an entire deployment, which is an evolution process.
 
-The propagation of the BGP UPDATE message can be simplified as a line. Take the following topology as an example.
+The propagation of the BGP UPDATE message can be simplified as a line. Take the following propagation path as an example.
 
 ~~~~~~
 AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
                              \               /
                               \--- AS(m) ---/
 ~~~~~~
+{: #fig-deploy-topo title="An BGP UPDATE propagation path example."}
 
-In this topology, the settings are:
+
+In this propagation path, the settings are:
 - A path from AS(1) to AS(n) with N-1 hops, where FC-BGP is deployed consecutively from AS(1) to AS(k-1). AS(k) is the first legacy AS that doesn't enable FC-BGP.
 - An upgraded AS(n) located after AS(k) tries to validate its received BGP path.
 - A compromised AS(m) intents to hijack the traffic from AS(n) to AS(1).
