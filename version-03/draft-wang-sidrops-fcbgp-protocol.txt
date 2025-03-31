@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 10 July 2025                                              Q. Li
+Expires: 2 October 2025                                            Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                          6 January 2025
+                                                           31 March 2025
 
 
                      FC-BGP Protocol Specification
@@ -57,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 July 2025.
+   This Internet-Draft will expire on 2 October 2025.
 
 Copyright Notice
 
@@ -116,8 +116,10 @@ Table of Contents
    10. References
      10.1.  Normative References
      10.2.  Informative References
-   Appendix A.  Implementation Status
-   Acknowledgments
+   Appendix A.  Attachment
+     A.1.  Deployment Benefits Analysis Compared with BGPsec
+     A.2.  Implementation Status
+     Acknowledgments
    Authors' Addresses
 
 1.  Introduction
@@ -170,7 +172,7 @@ Table of Contents
    traverses legacy ASes that do not support FC-BGP.  By allowing the
    authentication of sub-paths, FC-BGP enables incremental deployment
    and provides security benefits to the FC-BGP-aware ASes, regardless
-   of the deployment status of other ASes on the path.
+   of the deployment status of other ASes on the path Appendix A.1.
 
    Similar to BGPsec, FC-BGP relies on RPKI to perform route origin
    validation [RFC6483].  Additionally, any FC-BGP speaker that wishes
@@ -1448,32 +1450,71 @@ Table of Contents
    [ASPP]     McBride, M., Madory, D., Tantsura, J., Raszuk, R., Li, H.,
               Heitz, J., and G. S. Mishra, "AS Path Prepending", Work in
               Progress, Internet-Draft, draft-ietf-grow-as-path-
-              prepending-13, 20 June 2024,
+              prepending-14, 3 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-
-              path-prepending-13>.
+              path-prepending-14>.
 
    [ASPA-Profile]
               Azimov, A., Uskov, E., Bush, R., Snijders, J., Housley,
               R., and B. Maddison, "A Profile for Autonomous System
               Provider Authorization", Work in Progress, Internet-Draft,
-              draft-ietf-sidrops-aspa-profile-18, 25 June 2024,
+              draft-ietf-sidrops-aspa-profile-19, 6 January 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-
-              aspa-profile-18>.
+              aspa-profile-19>.
 
    [ASPA-Verification]
               Azimov, A., Bogomazov, E., Bush, R., Patel, K., Snijders,
               J., and K. Sriram, "BGP AS_PATH Verification Based on
               Autonomous System Provider Authorization (ASPA) Objects",
               Work in Progress, Internet-Draft, draft-ietf-sidrops-aspa-
-              verification-20, 4 January 2025,
+              verification-22, 23 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-
-              aspa-verification-20>.
+              aspa-verification-22>.
 
    [FC-ARXIV] "Secure Inter-domain Routing and Forwarding via Verifiable
               Forwarding Commitments", September 2023,
               <https://arxiv.org/abs/2309.13271>.
 
-Appendix A.  Implementation Status
+Appendix A.  Attachment
+
+A.1.  Deployment Benefits Analysis Compared with BGPsec
+
+   One of the core differences between FC-BGP and BGPsec is the partial
+   deployment scenario.  It is difficult for FC-BGP and BGPsec to make
+   an entire deployment, which is an evolution process.
+
+   The propagation of the BGP UPDATE message can be simplified as a
+   line.  Take the following propagation path as an example.
+
+   AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
+                                \               /
+                                 \--- AS(m) ---/
+
+             Figure 4: An BGP UPDATE propagation path example.
+
+   In this propagation path, the settings are: - A path from AS(1) to
+   AS(n) with N-1 hops, where FC-BGP is deployed consecutively from
+   AS(1) to AS(k-1).  AS(k) is the first legacy AS that doesn't enable
+   FC-BGP. - An upgraded AS(n) located after AS(k) tries to validate its
+   received BGP path. - A compromised AS(m) intents to hijack the
+   traffic from AS(n) to AS(1).
+
+   Suppose the distance between AS(m), i.e., the compromised AS, and
+   AS(n) is L hops.  The best choice for AS(m) is to pretend to be a
+   neighbor of AS(k) and construct a fake path AS(1)-AS(2)-...-AS(k)-
+   AS(m)-...-AS(n) with length K-1+1+L hops.  AS(m) can successfully
+   hijack the traffic only if N-1>K-1+1+L, which implies that has to be
+   smaller than N-L-1.
+
+   In the full path deployment scenario, i.e., K=N+1, FC-BGP and BGPsec
+   have the same path protection rate.  However, in the partial path
+   deployment scenario, i.e., K<N-L-1, FC-BGP can protect more paths
+   than BGPsec.
+
+   So, the conclusion can be drawn that FC-BGP provides strictly more
+   security benefits than BGPsec in partial/incremental deployment.
+
+A.2.  Implementation Status
 
    We implement the FC-BGP mechanism with FRR version 9.0.1.  The
    implementation includes verifying the FC path attribute upon
@@ -1482,7 +1523,7 @@ Appendix A.  Implementation Status
    testing of this implementation were conducted on Ubuntu 22.04 with
    OpenSSL 3.X installed.
 
-   TBD: github repo.
+   GitHub repository: https://github.com/fcbgp/fcbgp-implementation.
 
 Acknowledgments
 
