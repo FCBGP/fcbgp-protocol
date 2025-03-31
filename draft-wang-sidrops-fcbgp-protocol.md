@@ -116,7 +116,7 @@ BGPsec is a path-level authentication approach described in {{RFC8205}}. It repl
 
 FC-BGP and BGPsec offer different levels of security benefits in the case of partial deployment, even though they achieve the same security benefits when fully deployed. BGPsec tightly couples path authentication with the BGP path construction process, requiring each AS to iteratively verify the signatures of each prior hop before extending the authentication chain. Consequently, a single legacy AS that does not support BGPsec can break the authentication chain, preventing subsequent BGPsec-aware ASes from reviving the authentication process. As a result, in partial deployment scenarios, BGPsec is often downgraded to the legacy BGP protocol, losing its security benefits.
 
-In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path.
+In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citizen. It adopts a pathlet-driven authentication paradigm, in which the authenticity of an AS path can be incrementally built based on authenticated pathlets.  This design ensures that downstream FC-BGP-aware ASes can use the authenticated pathlets provided by upstream upgraded ASes, even if the full AS path traverses legacy ASes that do not support FC-BGP. By allowing the authentication of sub-paths, FC-BGP enables incremental deployment and provides security benefits to the FC-BGP-aware ASes, regardless of the deployment status of other ASes on the path {{DeploymentBenefitsAnalysis}}.
 
 Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation {{RFC6483}}. Additionally, any FC-BGP speaker that wishes to process the FC path attribute along with BGP UPDATE messages MUST obtain a router certificate and store it in the RPKI repository. This certificate is associated with its AS number. The router key generation here follows {{RFC8208}} and {{RFC8635}}.
 
@@ -607,17 +607,42 @@ AS number 0 is used here to populate the PASN in an FC segment where there is no
 
 --- back
 
-# Implementation Status
+# Attachment
+
+## Deployment Benefits Analysis Compared with BGPsec {#DeploymentBenefitsAnalysis}
+
+One of the core differences between FC-BGP and BGPsec is the partial deployment scenario. It is difficult for FC-BGP and BGPsec to make an entire deployment, which is an evolution process.
+
+The propagation of the BGP UPDATE message can be simplified as a line. Take the following topology as an example.
+
+~~~~~~
+AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
+                             \               /
+                              \--- AS(m) ---/
+~~~~~~
+
+In this topology, the settings are:
+- A path from AS(1) to AS(n) with N-1 hops, where FC-BGP is deployed consecutively from AS(1) to AS(k-1). AS(k) is the first legacy AS that doesn't enable FC-BGP.
+- An upgraded AS(n) located after AS(k) tries to validate its received BGP path.
+- A compromised AS(m) intents to hijack the traffic from AS(n) to AS(1).
+
+Suppose the distance between AS(m), i.e., the compromised AS, and AS(n) is L hops. The best choice for AS(m) is to pretend to be a neighbor of AS(k) and construct a fake path AS(1)-AS(2)-...-AS(k)-AS(m)-...-AS(n) with length `K-1+1+L` hops. AS(m) can successfully hijack the traffic only if `N-1>K-1+1+L`, which implies that has to be smaller than `N-L-1`.
+
+In the full path deployment scenario, i.e., `K=N+1`, FC-BGP and BGPsec have the same path protection rate. However, in the partial path deployment scenario, i.e., `K<N-L-1`, FC-BGP can protect more paths than BGPsec.
+
+So, the conclusion can be drawn that FC-BGP provides strictly more security benefits than BGPsec in partial/incremental deployment.
+
+
+## Implementation Status
 
 We implement the FC-BGP mechanism with FRR version 9.0.1. The implementation includes verifying the FC path attribute upon receiving BGP UPDATE messages and adding and signing the FC path attribute when sending BGP UPDATE messages. The development and testing of this implementation were conducted on Ubuntu 22.04 with OpenSSL 3.X installed.
 
-TBD: github repo.
+GitHub repository: https://github.com/fcbgp/fcbgp-implementation.
 
-# Acknowledgments
+## Acknowledgments
 {:numbered="false"}
 
 <!-- It is better to update this part gradually with the completion of this document. -->
 
 The authors would like to thank Keyur Patel, Jeffery Hass, Andrew, Randy Bush, Maria Matejka, Tobias Fiebig, Nan Geng, Tom Strickx, Susan Hares, Rüdiger Volk, Jun Zhang, Kotikalapudi Sriram, John Scudder, Job Snijders, and Russ Housley for their review and valuable comments.
-
 
