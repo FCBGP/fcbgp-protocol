@@ -642,11 +642,11 @@ AS(65536) --> AS(65537) --> AS(65538)
                       \
                        \--> AS(65539)
 ~~~~~~
-{: #fig-rs-ex title="An FC-BGP UPDATE propagation example."}
+{: #fig-atta-ex title="An FC-BGP UPDATE propagation example."}
 
 It is important to note that this example only introduces important steps here and see {{Validation}} for details. What's more,  here ASs are global AS and not RS or AS Confederation. No ASPP is taken into consideration.
 
-For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.2.0/24 from AS 65536 and will send the route to AS 65538 and AS 65539. An FC-BGP speaker SHOULD propagate an FC-BGP UPDATE message to downstream ASs only after completing the validation and best route path selection.
+For the sake of discussion, we assume that AS 65537 receives an FC-BGP UPDATE message for prefix 192.0.2.0/24 from AS 65536 and will send the route to AS 65538 and AS 65539 as {{fig-atta-ex}} shows. An FC-BGP speaker SHOULD propagate an FC-BGP UPDATE message to downstream ASs only after completing the validation and best route path selection.
 
 When the FC-BGP speaker in AS 65536 plans to propagate routes to its downstream AS 65537, it fills the FC path attribute first. The PASN is 0/NULL, the CASN is 65536, and the NASN is 65537. Then it calculates the signature, fills the FC, and forms the FC path attribute and FC-BGP UPDATE message. Then, it sends the UPDATE message out.
 
