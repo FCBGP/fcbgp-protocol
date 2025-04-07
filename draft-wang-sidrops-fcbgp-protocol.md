@@ -619,7 +619,9 @@ Suppose the distance between AS(m), i.e., the compromised AS, and AS(n) is L hop
 
 In the full path deployment scenario, i.e., `K=N+1`, FC-BGP and BGPsec have the same path protection rate. However, in the partial path deployment scenario, i.e., `K<N-L-1`, FC-BGP can protect more paths than BGPsec.
 
-So, the conclusion can be drawn that FC-BGP provides strictly more security benefits than BGPsec in partial/incremental deployment.
+The conclusion can be drawn that FC-BGP provides strictly more security benefits than BGPsec in partial/incremental deployment.
+
+Under full deployment, FC-BGP and BGPsec achieve comparable security benefits as both are capable of preserving the authenticity and immutability of the AS_PATH attribute within BGP UPDATE messages. From a security guarantee perspective, FC-BGP establishes a cryptographic commitment and propagates this commitment across the entire network. Through this mechanism, each BGP router can verify that it has received routes from the preceding AS and has forwarded them to the subsequent AS in the path. This approach ensures security through modular pathlets, which are incrementally validated and aggregated to construct a fully authenticated end-to-end routing path. In contrast, BGPsec does not incorporate such a commitment-based framework, relying instead on cryptographic path validation at each AS hop without modular decomposition of path security.
 
 ### ASPA
 
