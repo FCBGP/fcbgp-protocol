@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-30T01:04:02.880402+00:00",
+  "timestamp": "2025-04-08T01:12:26.373494+00:00",
   "repo": "FCBGP/fcbgp-protocol",
   "labels": [
     {
@@ -664,6 +664,34 @@
       "mergedBy": "BasilGuo",
       "mergeCommit": {
         "oid": "550ba2f657f8c920ef9fd9fe62338aa981658eee"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 31,
+      "id": "PR_kwDOK4QgQc6RiQGP",
+      "title": "Version 03",
+      "url": "https://github.com/FCBGP/fcbgp-protocol/pull/31",
+      "state": "MERGED",
+      "author": "BasilGuo",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is a temporary version, we update that:\r\n1. Flags-OTC,\r\n2. attachment for deployment benefits analysis,\r\n3. FCs removal resistance,\r\n4. and an example.",
+      "createdAt": "2025-04-06T14:05:50Z",
+      "updatedAt": "2025-04-06T14:07:39Z",
+      "baseRepository": "FCBGP/fcbgp-protocol",
+      "baseRefName": "main",
+      "baseRefOid": "550ba2f657f8c920ef9fd9fe62338aa981658eee",
+      "headRepository": "FCBGP/fcbgp-protocol",
+      "headRefName": "version-03",
+      "headRefOid": "124dbd75791fa3b547b6b6969263aa93c1de9e39",
+      "closedAt": "2025-04-06T14:07:39Z",
+      "mergedAt": "2025-04-06T14:07:39Z",
+      "mergedBy": "BasilGuo",
+      "mergeCommit": {
+        "oid": "be1553ac1aced66db779d3c1c867e467a7a63d43"
       },
       "comments": [],
       "reviews": []
