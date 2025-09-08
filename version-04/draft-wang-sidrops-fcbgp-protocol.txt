@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 9 October 2025                                            Q. Li
+Expires: 12 March 2026                                             Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                            7 April 2025
+                                                        8 September 2025
 
 
                      FC-BGP Protocol Specification
@@ -57,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 October 2025.
+   This Internet-Draft will expire on 12 March 2026.
 
 Copyright Notice
 
@@ -375,7 +375,7 @@ Table of Contents
       is set to 1 to indicate that the FC-BGP speaker that constructed
       this FC segment is sending the UPDATE message to a peer AS within
       the same AS confederation [RFC5065].  (That is, a sequence of
-      consecutive Confed_Segment flags are set in an FC-BGP UPDATE
+      consecutive Confed_Segment flags is set in an FC-BGP UPDATE
       message whenever, in a non-FC-BGP UPDATE message, an AS_PATH
       segment of type AS_CONFED_SEQUENCE occurs.)  In all other cases,
       the Flags-CS flag is set to 0.  The second leftmost bit (i.e., the
@@ -384,14 +384,17 @@ Table of Contents
       route server adds this FC segment, but the AS number will never
       appear in the AS_PATH attribute.  If the AS number of a router
       server is inserted into AS_PATH, this Flags-RS flag MUST be set to
-      0.  The third leftmost bit (i.e., the third highest) of the Flags
-      field in Figure 2 is the Only_to_Customer flag (Flags-OTC).  The
-      Flags-OTC flag is set to 1 to indicate that the FC segment's
-      issuer AS sends routes to its customer or peer.  If this Flags-OTC
-      flag is set, the next route propagation will only be permitted to
-      the following customers.  The remaining 5 bits of the Flags field
-      are unassigned.  They MUST be set to 0 by the sender and ignored
-      by the receiver.
+      0.  The third and fourth leftmost bits (i.e., the third highest
+      and fourth highest bits) of the Flags field in Figure 2 are the
+      Provider_to_Customer flag (Flags-P2C) and Peer_to_Peer flag
+      (Flags-P2P) separately.  The Flags-P2C flag is set to 1 to
+      indicate that the FC segment's issuer AS sends routes to its
+      customer, and the Flags-P2P flag is set to 1 to indicate that the
+      FC segment's issuer AS sends routes to its peer.  If the Flags-P2C
+      or Flags-P2P flags are set, the next route propagation will only
+      be permitted to the following customers.  The remaining bits of
+      the Flags field are unassigned.  They MUST be set to 0 by the
+      sender and ignored by the receiver.
 
    Signature Length (2 octets):
       It only contains the length of the Signature field in octets, not
@@ -647,17 +650,18 @@ Table of Contents
    algorithm in Section 5.2.1, the FC-BGP speaker, during the process of
    signature verifications, first checks whether the Confed_Segment flag
    in an FC segment is set to 1.  If the flag is set to 1, the FC-BGP
-   speaker skips the verification for the corresponding signature and
-   immediately moves on to the next FC segment.  It is an error when an
+   speaker skips verification for the corresponding signature and
+   proceeds immediately to the next FC segment.  It is an error when an
    FC-BGP speaker receives, from a neighbor who is not in the same AS
    confederation, an FC-BGP UPDATE message containing a Confed_Segment
    flag set to 1.
 
 4.4.  Processing Instructions for BGP Route Leak Prevention
 
-   BGP routing system suffers lots of vulnerabilities.  The systemic
-   vulnerability of the BGP routing system is known as "route leaks"
-   [RFC7908].  There are 6 types of route leaks defined in [RFC7908].
+   The BGP routing system is susceptible to numerous vulnerabilities.
+   The systemic vulnerability of the BGP routing system is known as
+   "route leaks" [RFC7908].  There are 6 types of route leaks defined in
+   [RFC7908].
 
    [RFC9234] can detect and prevent BGP route leaks by adding a new BGP
    OPEN Role capability and OTC transitive path attribute.  However, it
@@ -665,11 +669,12 @@ Table of Contents
 
    When using BGP route leak prevention with FC-BGP, it SHOULD tell the
    neighbor its BGP Role as Section 4 of [RFC9234].  If the peer's role
-   is Customer, Peer, or RS-Client, the Flags-OTC MUST be set to 1 on
-   route advertisement.  Then, the route SHOULD subsequently go only to
-   the Customers.  It is worth noting that if the recently added FC
-   Segment already set the Flags-OTC flag, it MUST NOT be propagated to
-   Providers, Peers, or RSes.
+   is Customer or RS-Client, the Flags-P2C MUST be set to 1 on route
+   advertisement.  If the peer's role is peer, the Flags-P2P MUST be set
+   to 1 on route advertisement.  Then, the route SHOULD subsequently go
+   only to the Customers.  It is worth noting that if the recently added
+   FC Segment already set the Flags-P2C or Flags-P2P flags to 1, it MUST
+   NOT be propagated to Providers, Peers, or RSes.
 
 5.  Processing a Received FC-BGP UPDATE Message
 
@@ -737,21 +742,21 @@ Table of Contents
    in this document.  The validation result will be used at BGP route
    selection, thus it will be discussed at Section 6.4.
 
-   As the FC-BGP UPDATE message generates at the eBGP router, the FC-BGP
-   validation needs only to be performed at the eBGP router.  The iBGP
-   route plays a crucial role in the FC-BGP UPDATE message propagation
-   and distribution.  The function of iBGP is to convey the validation
-   status of an FC-BGP UPDATE message from an ingress edge router to an
-   egress edge router within an AS.  The specific mechanisms used to
-   convey the validation status can vary depending on the implementation
-   and local policies of the AS.  By propagating this information
-   through iBGP, the eBGP router, and other routers within the AS, can
-   be aware of the validation status of the FC-BGP UPDATE messages and
-   make routing decisions accordingly.  As stated in Section 4, when an
-   FC-BGP speaker decides to forward a syntactically correct FC-BGP
-   UPDATE message, it is RECOMMENDED to do so while preserving the FC
-   path attribute.  This recommendation applies regardless of the
-   validation state of the UPDATE message.
+   As the FC-BGP UPDATE message is generated at the eBGP router, the FC-
+   BGP validation needs only to be performed at the eBGP router.  The
+   iBGP route plays a crucial role in the FC-BGP UPDATE message
+   propagation and distribution.  The function of iBGP is to convey the
+   validation status of an FC-BGP UPDATE message from an ingress edge
+   router to an egress edge router within an AS.  The specific
+   mechanisms used to convey the validation status can vary depending on
+   the implementation and local policies of the AS.  By propagating this
+   information through iBGP, the eBGP router and other routers within
+   the AS can be aware of the validation status of the FC-BGP UPDATE
+   messages and make routing decisions accordingly.  As stated in
+   Section 4, when an FC-BGP speaker decides to forward a syntactically
+   correct FC-BGP UPDATE message, it is RECOMMENDED to do so while
+   preserving the FC path attribute.  This recommendation applies
+   regardless of the validation state of the UPDATE message.
 
    Ultimately, the decision to forward the FC-BGP UPDATE message with
    the FC path intact and the choice to perform independent validation
@@ -782,8 +787,8 @@ Table of Contents
    received from an external FC-BGP neighbor and also when such an
    UPDATE message is propagated to an internal FC-BGP neighbor.  The
    error checks specified in Section 6.3. of [RFC4271] are performed,
-   except that for FC-BGP UPDATE messages the checks on the FC path
-   attribute do not apply and instead, the following checks on the FC
+   except that for FC-BGP UPDATE messages, the checks on the FC path
+   attribute do not apply, and instead, the following checks on the FC
    path attribute are performed:
 
    1.   Check to ensure that the entire FC path attribute is
@@ -821,19 +826,21 @@ Table of Contents
         Segment is not equal to 0.
 
    9.   If the UPDATE message was received from a neighbor that is
-        expected to set Flags-RS bit to 0 (see Section 4), then check to
-        ensure that the Flags-RS bit in the most recently added FC
-        Segment is equal to 0.
+        expected to set the Flags-RS bit to 0 (see Section 4), then
+        check to ensure that the Flags-RS bit in the most recently added
+        FC Segment is equal to 0.
 
    10.  If the UPDATE message was received from a neighbor that is not
-        expected to set Flags-OTC bit to 1 (see Section 4), then check
-        to ensure that the Flags-OTC bit in the most recently added FC
-        Segment is not equal to 1.
+        expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see
+        Section 4), then check to ensure that the Flags-P2C bit or
+        Flags-P2P bit in the most recently added FC Segment is not equal
+        to 1.
 
    11.  If the UPDATE message was received from a neighbor that is
-        expected to set Flags-OTC bit to 1 (see Section 4), then check
-        to ensure that the Flags-OTC bit in the most recently added FC
-        Segment is equal to 1.
+        expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see
+        Section 4), then check to ensure that the Flags-P2C bit or
+        Flags-P2P bit in the most recently added FC Segment is equal to
+        1.
 
    If any of the checks for the FC path attribute fail, indicating a
    syntactical or protocol error, it is considered an error.  In such
@@ -848,27 +855,29 @@ Table of Contents
    included as part of the loop-detection mechanism mentioned earlier in
    the specification.
 
-   When an AS appears on the AS_PATH of a UPDATE message and has
+   When an AS appears on the AS_PATH of an UPDATE message and has
    uploaded router certificates in RPKI, it MUST add its FC segment to
    the FC path attribute.  Otherwise, the downstream ASs SHOULD consider
    that the FC of this AS has been removed by other ASs and the UPDATE
    message is falsified.
 
-   When one FC Segment has set the Flags-OTC flag to 1, the subsequent
-   FC Segments added by the following ASs MUST all set the Flags-OTC
-   flag to 1 in their corresponding FC Segments.  The Flags-OTC flag is
+   When one FC Segment has set the Flags-P2C flag to 1, the subsequent
+   FC Segments added by the following ASs MUST all set the Flags-P2C
+   flag to 1 in their corresponding FC Segments.  The Flags-P2C flag is
    set to 1 only when the role of its neighbor, to whom the propagator
-   AS sends routes, is Customer, Peer, or RS-Client.
+   AS sends routes, is Customer or RS-Client.  The Flags-P2P flag is set
+   to 1 only when the role of its neighbor, to whom the propagator AS
+   sends routes, is Peer.
 
    The following ingress procedure applies to the processing of the
-   Flags-OTC flag on route receipt:
+   Flags-P2C flag and Flags-P2P flag on route receipt:
 
-   1.  If a route, with the Flags-OTC flag in the recently added FC
-       Segment, is received from a Customer or an RS-Client, then it is
-       a route leak and MUST be considered ineligible.
+   1.  If a route, with the Flags-P2C flag in the recently added FC
+       Segment, is received from a Customer, a Peer, or an RS-Client,
+       then it is a route leak and MUST be considered ineligible.
 
    2.  If a route is received from a Peer (i.e., remote AS with a Peer
-       Role) and with the Flags-OTC flag in both two recently
+       Role) and with the Flags-P2P flag in both two recently
        consecutively added FC Segments, then it is a route leak and MUST
        be considered ineligible.
 
@@ -1446,17 +1455,17 @@ Table of Contents
    [ASPP]     McBride, M., Madory, D., Tantsura, J., Raszuk, R., Li, H.,
               Heitz, J., and G. S. Mishra, "AS Path Prepending", Work in
               Progress, Internet-Draft, draft-ietf-grow-as-path-
-              prepending-14, 3 March 2025,
+              prepending-16, 7 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-
-              path-prepending-14>.
+              path-prepending-16>.
 
    [ASPA-Profile]
               Azimov, A., Uskov, E., Bush, R., Snijders, J., Housley,
               R., and B. Maddison, "A Profile for Autonomous System
               Provider Authorization", Work in Progress, Internet-Draft,
-              draft-ietf-sidrops-aspa-profile-19, 6 January 2025,
+              draft-ietf-sidrops-aspa-profile-20, 18 August 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-
-              aspa-profile-19>.
+              aspa-profile-20>.
 
    [ASPA-Verification]
               Azimov, A., Bogomazov, E., Bush, R., Patel, K., Snijders,
@@ -1468,7 +1477,7 @@ Table of Contents
               aspa-verification-22>.
 
    [Deprecation-AS_SET-AS_CONFED_SET]
-              Kumari, W. A., Sriram, K., Hannachi, L., and J. Haas,
+              Kumari, W., Sriram, K., Hannachi, L., and J. Haas,
               "Deprecation of AS_SET and AS_CONFED_SET in BGP", Work in
               Progress, Internet-Draft, draft-ietf-idr-deprecate-as-set-
               confed-set-18, 7 March 2025,
@@ -1551,9 +1560,9 @@ A.1.3.  Only to Customer (OTC) Attribute
 
    OTC is a route-leak detection and prevention mechanism.  However, the
    OTC value itself is not protected.  It can be forged.  With the
-   signature, FC-BGP can protect the Flags-OTC flag.  So the FC-BGP
-   route leak prevention mechanism is complementary to the OTC
-   attribute.
+   signature, FC-BGP can protect the Flags-P2C flag and Flags-P2P flag.
+   So the FC-BGP route leak prevention mechanism is complementary to the
+   OTC attribute.
 
 A.2.  Implementation Status
 

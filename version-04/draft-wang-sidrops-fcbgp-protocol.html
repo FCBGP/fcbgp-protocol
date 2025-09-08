@@ -14,21 +14,21 @@
 <meta content="
        This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the Border Gateway Protocol (BGP). FC-BGP provides security for the path of Autonomous Systems (ASs) through which a BGP UPDATE message passes. Forwarding Commitment (FC) is a cryptographically signed segment to certify an AS's routing intent on its directly connected hops. Based on FC, FC-BGP aims to build a secure inter-domain system that can simultaneously authenticate the AS_PATH attribute in the BGP UPDATE message and alleviate route leaks in the BGP routing system. The extension is backward compatible, which means a router that supports the extension can interoperate with a router that doesn't support the extension. 
     " name="description">
-<meta content="xml2rfc 3.28.1" name="generator">
+<meta content="xml2rfc 3.30.1" name="generator">
 <meta content="draft-wang-sidrops-fcbgp-protocol-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.1
-    Python 3.12.9
+  xml2rfc 3.30.1
+    Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
-    lxml 5.3.0
-    platformdirs 4.3.7
+    lxml 5.3.1
+    platformdirs 4.4.0
     pycountry 24.6.1
     PyYAML 6.0.2
-    requests 2.32.3
-    setuptools 70.3.0
+    requests 2.32.5
+    setuptools 80.9.0
     wcwidth 0.2.13
 -->
 <link href="draft-wang-sidrops-fcbgp-protocol.xml" rel="alternate" type="application/rfc+xml">
@@ -1048,11 +1048,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">FC-BGP</td>
-<td class="right">April 2025</td>
+<td class="right">September 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Xu, et al.</td>
-<td class="center">Expires 9 October 2025</td>
+<td class="center">Expires 12 March 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wang-sidrops-fcbgp-protocol-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-04-07" class="published">7 April 2025</time>
+<time datetime="2025-09-08" class="published">8 September 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-10-09">9 October 2025</time></dd>
+<dd class="expires"><time datetime="2026-03-12">12 March 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1135,7 +1135,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 12 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1534,7 +1534,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <span class="break"></span><dl class="dlNewline" id="section-3-12">
         <dt id="section-3-12.1">Flags (1 octet):</dt>
         <dd style="margin-left: 1.5em" id="section-3-12.2">
-          <p id="section-3-12.2.1">Several flag bits. The leftmost bit of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Confed_Segment flag (Flags-CS). The Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that constructed this FC segment is sending the UPDATE message to a peer AS within the same AS confederation <span>[<a href="#RFC5065" class="cite xref">RFC5065</a>]</span>. (That is, a sequence of consecutive Confed_Segment flags are set in an FC-BGP UPDATE message whenever, in a non-FC-BGP UPDATE message, an AS_PATH segment of type AS_CONFED_SEQUENCE occurs.) In all other cases, the Flags-CS flag is set to 0. The second leftmost bit (i.e., the second highest) of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Route_Server flag (Flags-RS). The Flags-RS flag is set to 1 to indicate that a route server adds this FC segment, but the AS number will never appear in the AS_PATH attribute. If the AS number of a router server is inserted into AS_PATH, this Flags-RS flag <span class="bcp14">MUST</span> be set to 0. The third leftmost bit (i.e., the third highest) of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Only_to_Customer flag (Flags-OTC). The Flags-OTC flag is set to 1 to indicate that the FC segment's issuer AS sends routes to its customer or peer. If this Flags-OTC flag is set, the next route propagation will only be permitted to the following customers. The remaining 5 bits of the Flags field are unassigned. They <span class="bcp14">MUST</span> be set to 0 by the sender and ignored by the receiver.<a href="#section-3-12.2.1" class="pilcrow">¶</a></p>
+          <p id="section-3-12.2.1">Several flag bits. The leftmost bit of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Confed_Segment flag (Flags-CS). The Flags-CS flag is set to 1 to indicate that the FC-BGP speaker that constructed this FC segment is sending the UPDATE message to a peer AS within the same AS confederation <span>[<a href="#RFC5065" class="cite xref">RFC5065</a>]</span>. (That is, a sequence of consecutive Confed_Segment flags is set in an FC-BGP UPDATE message whenever, in a non-FC-BGP UPDATE message, an AS_PATH segment of type AS_CONFED_SEQUENCE occurs.) In all other cases, the Flags-CS flag is set to 0. The second leftmost bit (i.e., the second highest) of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> is the Route_Server flag (Flags-RS). The Flags-RS flag is set to 1 to indicate that a route server adds this FC segment, but the AS number will never appear in the AS_PATH attribute. If the AS number of a router server is inserted into AS_PATH, this Flags-RS flag <span class="bcp14">MUST</span> be set to 0. The third and fourth leftmost bits (i.e., the third highest and fourth highest bits) of the Flags field in <a href="#figure2" class="auto internal xref">Figure 2</a> are the Provider_to_Customer flag (Flags-P2C) and Peer_to_Peer flag (Flags-P2P) separately. The Flags-P2C flag is set to 1 to indicate that the FC segment's issuer AS sends routes to its customer, and the Flags-P2P flag is set to 1 to indicate that the FC segment's issuer AS sends routes to its peer. If the Flags-P2C or Flags-P2P flags are set, the next route propagation will only be permitted to the following customers. The remaining bits of the Flags field are unassigned. They <span class="bcp14">MUST</span> be set to 0 by the sender and ignored by the receiver.<a href="#section-3-12.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-12.3">Signature Length (2 octets):</dt>
@@ -1621,7 +1621,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
             <p id="section-4.3-5.2.1">Add an FC segment containing, in the CASN field, the AS Confederation Identifier (the public AS number of the confederation).  Note that all fields other than the CASN field are populated.<a href="#section-4.3-5.2.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
-<p id="section-4.3-6">Finally, as discussed above, an AS confederation <span class="bcp14">MAY</span> optionally decide that its members will not verify digital signatures added by members. In such a confederation, when an FC-BGP speaker runs the algorithm in <a href="#validation-steps" class="auto internal xref">Section 5.2.1</a>, the FC-BGP speaker, during the process of signature verifications, first checks whether the Confed_Segment flag in an FC segment is set to 1. If the flag is set to 1, the FC-BGP speaker skips the verification for the corresponding signature and immediately moves on to the next FC segment. It is an error when an FC-BGP speaker receives, from a neighbor who is not in the same AS confederation, an FC-BGP UPDATE message containing a Confed_Segment flag set to 1.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
+<p id="section-4.3-6">Finally, as discussed above, an AS confederation <span class="bcp14">MAY</span> optionally decide that its members will not verify digital signatures added by members. In such a confederation, when an FC-BGP speaker runs the algorithm in <a href="#validation-steps" class="auto internal xref">Section 5.2.1</a>, the FC-BGP speaker, during the process of signature verifications, first checks whether the Confed_Segment flag in an FC segment is set to 1. If the flag is set to 1, the FC-BGP speaker skips verification for the corresponding signature and proceeds immediately to the next FC segment. It is an error when an FC-BGP speaker receives, from a neighbor who is not in the same AS confederation, an FC-BGP UPDATE message containing a Confed_Segment flag set to 1.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="processing-instructions-for-bgp-route-leak-prevention">
@@ -1629,9 +1629,9 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
         <h3 id="name-processing-instructions-for-">
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-processing-instructions-for-" class="section-name selfRef">Processing Instructions for BGP Route Leak Prevention</a>
         </h3>
-<p id="section-4.4-1">BGP routing system suffers lots of vulnerabilities. The systemic vulnerability of the BGP routing system is known as "route leaks" <span>[<a href="#RFC7908" class="cite xref">RFC7908</a>]</span>. There are 6 types of route leaks defined in <span>[<a href="#RFC7908" class="cite xref">RFC7908</a>]</span>.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-1">The BGP routing system is susceptible to numerous vulnerabilities. The systemic vulnerability of the BGP routing system is known as "route leaks" <span>[<a href="#RFC7908" class="cite xref">RFC7908</a>]</span>. There are 6 types of route leaks defined in <span>[<a href="#RFC7908" class="cite xref">RFC7908</a>]</span>.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2"><span>[<a href="#RFC9234" class="cite xref">RFC9234</a>]</span> can detect and prevent BGP route leaks by adding a new BGP OPEN Role capability and OTC transitive path attribute. However, it may be forged.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
-<p id="section-4.4-3">When using BGP route leak prevention with FC-BGP, it <span class="bcp14">SHOULD</span> tell the neighbor its BGP Role as <span><a href="https://rfc-editor.org/rfc/rfc9234#section-4" class="relref">Section 4</a> of [<a href="#RFC9234" class="cite xref">RFC9234</a>]</span>. If the peer's role is Customer, Peer, or RS-Client, the Flags-OTC <span class="bcp14">MUST</span> be set to 1 on route advertisement. Then, the route <span class="bcp14">SHOULD</span> subsequently go only to the Customers. It is worth noting that if the recently added FC Segment already set the Flags-OTC flag, it <span class="bcp14">MUST NOT</span> be propagated to Providers, Peers, or RSes.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-3">When using BGP route leak prevention with FC-BGP, it <span class="bcp14">SHOULD</span> tell the neighbor its BGP Role as <span><a href="https://rfc-editor.org/rfc/rfc9234#section-4" class="relref">Section 4</a> of [<a href="#RFC9234" class="cite xref">RFC9234</a>]</span>. If the peer's role is Customer or RS-Client, the Flags-P2C <span class="bcp14">MUST</span> be set to 1 on route advertisement. If the peer's role is peer, the Flags-P2P <span class="bcp14">MUST</span> be set to 1 on route advertisement. Then, the route <span class="bcp14">SHOULD</span> subsequently go only to the Customers. It is worth noting that if the recently added FC Segment already set the Flags-P2C or Flags-P2P flags to 1, it <span class="bcp14">MUST NOT</span> be propagated to Providers, Peers, or RSes.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1661,7 +1661,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-5.2-2">Note that if an AS uploads its router certificates to RPKI, it would be deemed to support FC-BGP. The validation process <span class="bcp14">MUST</span> check that to ensure no malicious on-path AS removes FCs from FC-BGP UPDATE.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.2-3">Note that the FC-BGP speaker could perform the validation of RPKI router certificates on its own and extract the required data, or it could receive the same data from a trusted cache that performs RPKI validation on behalf of (some set of) FC-BGP speakers. (For example, the trusted cache could deliver the necessary validity information to the FC-BGP speaker by using the Router Key PDU (Protocol Data Unit) for the RPKI-Router protocol <span>[<a href="#RFC8210" class="cite xref">RFC8210</a>]</span>.)<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">The recipient validates an FC-BGP UPDATE message containing the FC path attribute and obtains one result of two states: 'Valid' and 'Not Valid'. We will describe the validation procedure in <a href="#validation-steps" class="auto internal xref">Section 5.2.1</a> in this document. The validation result will be used at BGP route selection, thus it will be discussed at <a href="#BGP-route-selection" class="auto internal xref">Section 6.4</a>.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<p id="section-5.2-5">As the FC-BGP UPDATE message generates at the eBGP router, the FC-BGP validation needs only to be performed at the eBGP router. The iBGP route plays a crucial role in the FC-BGP UPDATE message propagation and distribution. The function of iBGP is to convey the validation status of an FC-BGP UPDATE message from an ingress edge router to an egress edge router within an AS. The specific mechanisms used to convey the validation status can vary depending on the implementation and local policies of the AS. By propagating this information through iBGP, the eBGP router, and other routers within the AS, can be aware of the validation status of the FC-BGP UPDATE messages and make routing decisions accordingly. As stated in <a href="#fcbgp-update" class="auto internal xref">Section 4</a>, when an FC-BGP speaker decides to forward a syntactically correct FC-BGP UPDATE message, it is <span class="bcp14">RECOMMENDED</span> to do so while preserving the FC path attribute. This recommendation applies regardless of the validation state of the UPDATE message.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
+<p id="section-5.2-5">As the FC-BGP UPDATE message is generated at the eBGP router, the FC-BGP validation needs only to be performed at the eBGP router. The iBGP route plays a crucial role in the FC-BGP UPDATE message propagation and distribution. The function of iBGP is to convey the validation status of an FC-BGP UPDATE message from an ingress edge router to an egress edge router within an AS. The specific mechanisms used to convey the validation status can vary depending on the implementation and local policies of the AS. By propagating this information through iBGP, the eBGP router and other routers within the AS can be aware of the validation status of the FC-BGP UPDATE messages and make routing decisions accordingly. As stated in <a href="#fcbgp-update" class="auto internal xref">Section 4</a>, when an FC-BGP speaker decides to forward a syntactically correct FC-BGP UPDATE message, it is <span class="bcp14">RECOMMENDED</span> to do so while preserving the FC path attribute. This recommendation applies regardless of the validation state of the UPDATE message.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
 <p id="section-5.2-6">Ultimately, the decision to forward the FC-BGP UPDATE message with the FC path intact and the choice to perform independent validation at the egress router are both determined by local policies implemented within the AS. Note that the decision to perform validation on the received FC-BGP UPDATE message is left to the discretion of the egress router, which is the router receiving the message within its own AS. The egress router has the freedom to choose whether or not it wants to independently validate the FC path attribute based on its local policy, even if the FC path attribute has already been validated by the ingress router. This additional validation performed at the egress router helps ensure the integrity and security of the received FC-BGP UPDATE message.<a href="#section-5.2-6" class="pilcrow">¶</a></p>
 <div id="validation-steps">
 <section id="section-5.2.1">
@@ -1669,7 +1669,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <a href="#section-5.2.1" class="section-number selfRef">5.2.1. </a><a href="#name-validation-algorithm" class="section-name selfRef">Validation Algorithm</a>
           </h4>
 <p id="section-5.2.1-1">This section specifies the concrete validation algorithm of FC-BGP UPDATE messages. A compliant implementation <span class="bcp14">MUST</span> have an FC-BGP UPDATE validation algorithm that behaves the same as the specified algorithm. This ensures consistency and security in validating FC-BGP UPDATE messages across different implementations. It allows for interoperability and standardized communication between FC-BGP-enabled networks.<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-2">First, the integrity of the FC-BGP UPDATE message <span class="bcp14">MUST</span> be checked. Both syntactical and protocol violation errors are checked. The FC path attribute <span class="bcp14">MUST</span> be present when an FC-BGP UPDATE message is received from an external FC-BGP neighbor and also when such an UPDATE message is propagated to an internal FC-BGP neighbor. The error checks specified in <span><a href="https://rfc-editor.org/rfc/rfc4271#section-6.3." class="relref">Section 6.3.</a> of [<a href="#RFC4271" class="cite xref">RFC4271</a>]</span> are performed, except that for FC-BGP UPDATE messages the checks on the FC path attribute do not apply and instead, the following checks on the FC path attribute are performed:<a href="#section-5.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-2">First, the integrity of the FC-BGP UPDATE message <span class="bcp14">MUST</span> be checked. Both syntactical and protocol violation errors are checked. The FC path attribute <span class="bcp14">MUST</span> be present when an FC-BGP UPDATE message is received from an external FC-BGP neighbor and also when such an UPDATE message is propagated to an internal FC-BGP neighbor. The error checks specified in <span><a href="https://rfc-editor.org/rfc/rfc4271#section-6.3." class="relref">Section 6.3.</a> of [<a href="#RFC4271" class="cite xref">RFC4271</a>]</span> are performed, except that for FC-BGP UPDATE messages, the checks on the FC path attribute do not apply, and instead, the following checks on the FC path attribute are performed:<a href="#section-5.2.1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.2.1-3">
 <li id="section-5.2.1-3.1">
               <p id="section-5.2.1-3.1.1">Check to ensure that the entire FC path attribute is syntactically correct (conforms to the specification in this document).<a href="#section-5.2.1-3.1.1" class="pilcrow">¶</a></p>
@@ -1696,25 +1696,25 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
               <p id="section-5.2.1-3.8.1">If the UPDATE message was received from a neighbor that is not expected to set Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0.<a href="#section-5.2.1-3.8.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.9">
-              <p id="section-5.2.1-3.9.1">If the UPDATE message was received from a neighbor that is expected to set Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.<a href="#section-5.2.1-3.9.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.9.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.<a href="#section-5.2.1-3.9.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.10">
-              <p id="section-5.2.1-3.10.1">If the UPDATE message was received from a neighbor that is not expected to set Flags-OTC bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-OTC bit in the most recently added FC Segment is not equal to 1.<a href="#section-5.2.1-3.10.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.10.1">If the UPDATE message was received from a neighbor that is not expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is not equal to 1.<a href="#section-5.2.1-3.10.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.11">
-              <p id="section-5.2.1-3.11.1">If the UPDATE message was received from a neighbor that is expected to set Flags-OTC bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-OTC bit in the most recently added FC Segment is equal to 1.<a href="#section-5.2.1-3.11.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.11.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is equal to 1.<a href="#section-5.2.1-3.11.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-5.2.1-4">If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are <span class="bcp14">REQUIRED</span> to handle these errors using the "treat-as-withdraw" approach as defined in <span>[<a href="#RFC7606" class="cite xref">RFC7606</a>]</span>. This approach means that the FC-BGP speaker <span class="bcp14">SHOULD</span> treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.<a href="#section-5.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-5">When an AS appears on the AS_PATH of a UPDATE message and has uploaded router certificates in RPKI, it <span class="bcp14">MUST</span> add its FC segment to the FC path attribute. Otherwise, the downstream ASs <span class="bcp14">SHOULD</span> consider that the FC of this AS has been removed by other ASs and the UPDATE message is falsified.<a href="#section-5.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-6">When one FC Segment has set the Flags-OTC flag to 1, the subsequent FC Segments added by the following ASs <span class="bcp14">MUST</span> all set the Flags-OTC flag to 1 in their corresponding FC Segments. The Flags-OTC flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Customer, Peer, or RS-Client.<a href="#section-5.2.1-6" class="pilcrow">¶</a></p>
-<p id="section-5.2.1-7">The following ingress procedure applies to the processing of the Flags-OTC flag on route receipt:<a href="#section-5.2.1-7" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-5">When an AS appears on the AS_PATH of an UPDATE message and has uploaded router certificates in RPKI, it <span class="bcp14">MUST</span> add its FC segment to the FC path attribute. Otherwise, the downstream ASs <span class="bcp14">SHOULD</span> consider that the FC of this AS has been removed by other ASs and the UPDATE message is falsified.<a href="#section-5.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-6">When one FC Segment has set the Flags-P2C flag to 1, the subsequent FC Segments added by the following ASs <span class="bcp14">MUST</span> all set the Flags-P2C flag to 1 in their corresponding FC Segments. The Flags-P2C flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Customer or RS-Client. The Flags-P2P flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Peer.<a href="#section-5.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-7">The following ingress procedure applies to the processing of the Flags-P2C flag and Flags-P2P flag on route receipt:<a href="#section-5.2.1-7" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.2.1-8">
 <li id="section-5.2.1-8.1">
-              <p id="section-5.2.1-8.1.1">If a route, with the Flags-OTC flag in the recently added FC Segment, is received from a Customer or an RS-Client, then it is a route leak and <span class="bcp14">MUST</span> be considered ineligible.<a href="#section-5.2.1-8.1.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-8.1.1">If a route, with the Flags-P2C flag in the recently added FC Segment, is received from a Customer, a Peer, or an RS-Client, then it is a route leak and <span class="bcp14">MUST</span> be considered ineligible.<a href="#section-5.2.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-8.2">
-              <p id="section-5.2.1-8.2.1">If a route is received from a Peer (i.e., remote AS with a Peer Role) and with the Flags-OTC flag in both two recently consecutively added FC Segments, then it is a route leak and <span class="bcp14">MUST</span> be considered ineligible.<a href="#section-5.2.1-8.2.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-8.2.1">If a route is received from a Peer (i.e., remote AS with a Peer Role) and with the Flags-P2P flag in both two recently consecutively added FC Segments, then it is a route leak and <span class="bcp14">MUST</span> be considered ineligible.<a href="#section-5.2.1-8.2.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-5.2.1-9">Next, the FC-BGP speaker iterates through the FC segments. Once the FC-BGP speaker has examined the signature field in the FC attribute, it proceeds to validate the signature using the supported algorithm suites. However, if the FC-BGP speaker encounters a signature corresponding to an algorithm suite indexed by an Algorithm ID that it does not support, that particular signature is not considered in the validation process. If there are no signatures corresponding to any algorithm suites supported by the FC-BGP speaker, a specific action is taken to ensure the continuity of the route selection process. To consider the UPDATE message in the route selection process, the FC-BGP speaker has to treat the message as if it were received as an unsigned BGP UPDATE message. By treating the UPDATE message as unsigned, the FC-BGP speaker acknowledges that it cannot verify the integrity and authenticity of the message through the provided signatures. However, it still allows the message to be considered for route selection, ensuring that important routing information is not disregarded solely due to the lack of supported signature algorithms.<a href="#section-5.2.1-9" class="pilcrow">¶</a></p>
@@ -2076,11 +2076,11 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <dd class="break"></dd>
 <dt id="ASPP">[ASPP]</dt>
         <dd>
-<span class="refAuthor">McBride, M.</span>, <span class="refAuthor">Madory, D.</span>, <span class="refAuthor">Tantsura, J.</span>, <span class="refAuthor">Raszuk, R.</span>, <span class="refAuthor">Li, H.</span>, <span class="refAuthor">Heitz, J.</span>, and <span class="refAuthor">G. S. Mishra</span>, <span class="refTitle">"AS Path Prepending"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-grow-as-path-prepending-14</span>, <time datetime="2025-03-03" class="refDate">3 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-14">https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-14</a>&gt;</span>. </dd>
+<span class="refAuthor">McBride, M.</span>, <span class="refAuthor">Madory, D.</span>, <span class="refAuthor">Tantsura, J.</span>, <span class="refAuthor">Raszuk, R.</span>, <span class="refAuthor">Li, H.</span>, <span class="refAuthor">Heitz, J.</span>, and <span class="refAuthor">G. S. Mishra</span>, <span class="refTitle">"AS Path Prepending"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-grow-as-path-prepending-16</span>, <time datetime="2025-07-07" class="refDate">7 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-16">https://datatracker.ietf.org/doc/html/draft-ietf-grow-as-path-prepending-16</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ASPA-Profile">[ASPA-Profile]</dt>
         <dd>
-<span class="refAuthor">Azimov, A.</span>, <span class="refAuthor">Uskov, E.</span>, <span class="refAuthor">Bush, R.</span>, <span class="refAuthor">Snijders, J.</span>, <span class="refAuthor">Housley, R.</span>, and <span class="refAuthor">B. Maddison</span>, <span class="refTitle">"A Profile for Autonomous System Provider Authorization"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-sidrops-aspa-profile-19</span>, <time datetime="2025-01-06" class="refDate">6 January 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-aspa-profile-19">https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-aspa-profile-19</a>&gt;</span>. </dd>
+<span class="refAuthor">Azimov, A.</span>, <span class="refAuthor">Uskov, E.</span>, <span class="refAuthor">Bush, R.</span>, <span class="refAuthor">Snijders, J.</span>, <span class="refAuthor">Housley, R.</span>, and <span class="refAuthor">B. Maddison</span>, <span class="refTitle">"A Profile for Autonomous System Provider Authorization"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-sidrops-aspa-profile-20</span>, <time datetime="2025-08-18" class="refDate">18 August 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-aspa-profile-20">https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-aspa-profile-20</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ASPA-Verification">[ASPA-Verification]</dt>
         <dd>
@@ -2088,7 +2088,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <dd class="break"></dd>
 <dt id="Deprecation-AS_SET-AS_CONFED_SET">[Deprecation-AS_SET-AS_CONFED_SET]</dt>
         <dd>
-<span class="refAuthor">Kumari, W. A.</span>, <span class="refAuthor">Sriram, K.</span>, <span class="refAuthor">Hannachi, L.</span>, and <span class="refAuthor">J. Haas</span>, <span class="refTitle">"Deprecation of AS_SET and AS_CONFED_SET in BGP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-idr-deprecate-as-set-confed-set-18</span>, <time datetime="2025-03-07" class="refDate">7 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-idr-deprecate-as-set-confed-set-18">https://datatracker.ietf.org/doc/html/draft-ietf-idr-deprecate-as-set-confed-set-18</a>&gt;</span>. </dd>
+<span class="refAuthor">Kumari, W.</span>, <span class="refAuthor">Sriram, K.</span>, <span class="refAuthor">Hannachi, L.</span>, and <span class="refAuthor">J. Haas</span>, <span class="refTitle">"Deprecation of AS_SET and AS_CONFED_SET in BGP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-idr-deprecate-as-set-confed-set-18</span>, <time datetime="2025-03-07" class="refDate">7 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-idr-deprecate-as-set-confed-set-18">https://datatracker.ietf.org/doc/html/draft-ietf-idr-deprecate-as-set-confed-set-18</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="FC-ARXIV">[FC-ARXIV]</dt>
       <dd>
@@ -2160,7 +2160,7 @@ AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
           <h4 id="name-only-to-customer-otc-attrib">
 <a href="#appendix-A.1.3" class="section-number selfRef">A.1.3. </a><a href="#name-only-to-customer-otc-attrib" class="section-name selfRef">Only to Customer (OTC) Attribute</a>
           </h4>
-<p id="appendix-A.1.3-1">OTC is a route-leak detection and prevention mechanism. However, the OTC value itself is not protected. It can be forged. With the signature, FC-BGP can protect the Flags-OTC flag. So the FC-BGP route leak prevention mechanism is complementary to the OTC attribute.<a href="#appendix-A.1.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.1.3-1">OTC is a route-leak detection and prevention mechanism. However, the OTC value itself is not protected. It can be forged. With the signature, FC-BGP can protect the Flags-P2C flag and Flags-P2P flag. So the FC-BGP route leak prevention mechanism is complementary to the OTC attribute.<a href="#appendix-A.1.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
