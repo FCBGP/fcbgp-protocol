@@ -411,9 +411,10 @@ First, the integrity of the FC-BGP UPDATE message MUST be checked. Both syntacti
 6. If the UPDATE message was received from an FC-BGP neighbor that is not a member of the FC-BGP speaker's AS confederation, check to ensure that the FC Segment corresponding to that peer does not contain a Flags field with the Flags-CS flag set to 1.
 7. If the UPDATE message was received from an FC-BGP neighbor that is a member of the FC-BGP speaker's AS confederation, check to ensure that the FC Segment corresponding to that peer contains a Flags field with the Flags-CS flag set to 1.
 8. If the UPDATE message was received from a neighbor that is not expected to set Flags-RS bit to 0 (see {{fcbgp-update}}), then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0. <!-- TODO: (Note: See Section XXX for router configuration guidance related to this item.) -->
-9. If the UPDATE message was received from a neighbor that is expected to set the Flags-RS bit to 0 (see {{fcbgp-update}}), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.
-10. If the UPDATE message was received from a neighbor that is not expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see {{fcbgp-update}}), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is not equal to 1.
-11. If the UPDATE message was received from a neighbor that is expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see {{fcbgp-update}}), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is equal to 1.
+9. If the UPDATE message was received from a neighbor that is not expected to set the Flags-ASPP bit to 0, i.e., the AS doesn't use the ASPP mechanism, then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0.
+10. If the UPDATE message was received from a neighbor that is expected to set the Flags-RS bit to 0 (see {{fcbgp-update}}), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.
+11. If the UPDATE message was received from a neighbor that is not expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see {{fcbgp-update}}), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is not equal to 1.
+12. If the UPDATE message was received from a neighbor that is expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see {{fcbgp-update}}), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is equal to 1.
 
 If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are REQUIRED to handle these errors using the "treat-as-withdraw" approach as defined in {{RFC7606}}. This approach means that the FC-BGP speaker SHOULD treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.
 
@@ -625,7 +626,7 @@ Under full deployment, FC-BGP and BGPsec achieve comparable security benefits as
 
 ### ASPA
 
-The ASPA {{ASPA-Profile}} {{ASPA-Verification}} mechanism is designed to solve the problem of route leak with RPKI ASPA signed objects and AS_PATH attribute. It is an off-path mechanism with a lightweight cryptographical cost for BGP routers. However, it does not protect the AS_PATH attribute. Thus, ASPA and FC-BGP are complementary technologies.
+The ASPA {{ASPA-Profile}} {{ASPA-Verification}} mechanism is designed to solve the problem of route leak with RPKI ASPA signed objects and AS_PATH attribute. It is an off-path mechanism with a lightweight cryptographic cost for BGP routers. However, it does not protect the AS_PATH attribute. Thus, ASPA and FC-BGP are complementary technologies.
 
 ### Only to Customer (OTC) Attribute
 
