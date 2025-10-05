@@ -1696,13 +1696,16 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
               <p id="section-5.2.1-3.8.1">If the UPDATE message was received from a neighbor that is not expected to set Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0.<a href="#section-5.2.1-3.8.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.9">
-              <p id="section-5.2.1-3.9.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.<a href="#section-5.2.1-3.9.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.9.1">If the UPDATE message was received from a neighbor that is not expected to set the Flags-ASPP bit to 0, i.e., the AS doesn't use the ASPP mechanism, then check to ensure that the Flags-RS bit in the most recently added FC Segment is not equal to 0.<a href="#section-5.2.1-3.9.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.10">
-              <p id="section-5.2.1-3.10.1">If the UPDATE message was received from a neighbor that is not expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is not equal to 1.<a href="#section-5.2.1-3.10.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.10.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-RS bit to 0 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-RS bit in the most recently added FC Segment is equal to 0.<a href="#section-5.2.1-3.10.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.2.1-3.11">
-              <p id="section-5.2.1-3.11.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is equal to 1.<a href="#section-5.2.1-3.11.1" class="pilcrow">¶</a></p>
+              <p id="section-5.2.1-3.11.1">If the UPDATE message was received from a neighbor that is not expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is not equal to 1.<a href="#section-5.2.1-3.11.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.2.1-3.12">
+              <p id="section-5.2.1-3.12.1">If the UPDATE message was received from a neighbor that is expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see <a href="#fcbgp-update" class="auto internal xref">Section 4</a>), then check to ensure that the Flags-P2C bit or Flags-P2P bit in the most recently added FC Segment is equal to 1.<a href="#section-5.2.1-3.12.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-5.2.1-4">If any of the checks for the FC path attribute fail, indicating a syntactical or protocol error, it is considered an error. In such cases, FC speakers are <span class="bcp14">REQUIRED</span> to handle these errors using the "treat-as-withdraw" approach as defined in <span>[<a href="#RFC7606" class="cite xref">RFC7606</a>]</span>. This approach means that the FC-BGP speaker <span class="bcp14">SHOULD</span> treat the FC path attribute as if it were a withdraw message, effectively removing the route from consideration. It's worth noting that when a transparent route server is involved, and its AS number appears in the FC (with the Flags-RS bit set to 1), the route server has the option to check if its local AS is listed in the FC. This additional check can be included as part of the loop-detection mechanism mentioned earlier in the specification.<a href="#section-5.2.1-4" class="pilcrow">¶</a></p>
@@ -2152,7 +2155,7 @@ AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
           <h4 id="name-aspa">
 <a href="#appendix-A.1.2" class="section-number selfRef">A.1.2. </a><a href="#name-aspa" class="section-name selfRef">ASPA</a>
           </h4>
-<p id="appendix-A.1.2-1">The ASPA <span>[<a href="#ASPA-Profile" class="cite xref">ASPA-Profile</a>]</span> <span>[<a href="#ASPA-Verification" class="cite xref">ASPA-Verification</a>]</span> mechanism is designed to solve the problem of route leak with RPKI ASPA signed objects and AS_PATH attribute. It is an off-path mechanism with a lightweight cryptographical cost for BGP routers. However, it does not protect the AS_PATH attribute. Thus, ASPA and FC-BGP are complementary technologies.<a href="#appendix-A.1.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.1.2-1">The ASPA <span>[<a href="#ASPA-Profile" class="cite xref">ASPA-Profile</a>]</span> <span>[<a href="#ASPA-Verification" class="cite xref">ASPA-Verification</a>]</span> mechanism is designed to solve the problem of route leak with RPKI ASPA signed objects and AS_PATH attribute. It is an off-path mechanism with a lightweight cryptographic cost for BGP routers. However, it does not protect the AS_PATH attribute. Thus, ASPA and FC-BGP are complementary technologies.<a href="#appendix-A.1.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="only-to-customer-otc-attribute">

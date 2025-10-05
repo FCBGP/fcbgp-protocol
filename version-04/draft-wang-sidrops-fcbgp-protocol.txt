@@ -831,18 +831,23 @@ Table of Contents
         ensure that the Flags-RS bit in the most recently added FC
         Segment is not equal to 0.
 
-   9.   If the UPDATE message was received from a neighbor that is
+   9.   If the UPDATE message was received from a neighbor that is not
+        expected to set the Flags-ASPP bit to 0, i.e., the AS doesn't
+        use the ASPP mechanism, then check to ensure that the Flags-RS
+        bit in the most recently added FC Segment is not equal to 0.
+
+   10.  If the UPDATE message was received from a neighbor that is
         expected to set the Flags-RS bit to 0 (see Section 4), then
         check to ensure that the Flags-RS bit in the most recently added
         FC Segment is equal to 0.
 
-   10.  If the UPDATE message was received from a neighbor that is not
+   11.  If the UPDATE message was received from a neighbor that is not
         expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see
         Section 4), then check to ensure that the Flags-P2C bit or
         Flags-P2P bit in the most recently added FC Segment is not equal
         to 1.
 
-   11.  If the UPDATE message was received from a neighbor that is
+   12.  If the UPDATE message was received from a neighbor that is
         expected to set the Flags-P2C bit or Flags-P2P bit to 1 (see
         Section 4), then check to ensure that the Flags-P2C bit or
         Flags-P2P bit in the most recently added FC Segment is equal to
@@ -1558,8 +1563,8 @@ A.1.2.  ASPA
    The ASPA [ASPA-Profile] [ASPA-Verification] mechanism is designed to
    solve the problem of route leak with RPKI ASPA signed objects and
    AS_PATH attribute.  It is an off-path mechanism with a lightweight
-   cryptographical cost for BGP routers.  However, it does not protect
-   the AS_PATH attribute.  Thus, ASPA and FC-BGP are complementary
+   cryptographic cost for BGP routers.  However, it does not protect the
+   AS_PATH attribute.  Thus, ASPA and FC-BGP are complementary
    technologies.
 
 A.1.3.  Only to Customer (OTC) Attribute
