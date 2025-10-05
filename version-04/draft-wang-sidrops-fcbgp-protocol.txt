@@ -5,12 +5,12 @@
 sidrops                                                            K. Xu
 Internet-Draft                                                   X. Wang
 Intended status: Standards Track                                  Z. Liu
-Expires: 12 March 2026                                             Q. Li
+Expires: 8 April 2026                                              Q. Li
                                                                    J. Wu
                                                      Tsinghua University
                                                                   Y. Guo
                                                  Zhongguancun Laboratory
-                                                        8 September 2025
+                                                          5 October 2025
 
 
                      FC-BGP Protocol Specification
@@ -57,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 March 2026.
+   This Internet-Draft will expire on 8 April 2026.
 
 Copyright Notice
 
@@ -258,7 +258,7 @@ Table of Contents
    FC-BGP does not need to negotiate with neighbors since it is
    considered a transitive path attribute within the BGP UPDATE message.
    BGP speakers that do not recognize the FC path attribute or do not
-   support FC-BGP, SHOULD still transmit the FC path attribute to their
+   support FC-BGP SHOULD still transmit the FC path attribute to their
    neighbors.  As a result, there is no need to establish a new BGP
    capability as defined in [RFC5492].
 
@@ -384,17 +384,20 @@ Table of Contents
       route server adds this FC segment, but the AS number will never
       appear in the AS_PATH attribute.  If the AS number of a router
       server is inserted into AS_PATH, this Flags-RS flag MUST be set to
-      0.  The third and fourth leftmost bits (i.e., the third highest
-      and fourth highest bits) of the Flags field in Figure 2 are the
-      Provider_to_Customer flag (Flags-P2C) and Peer_to_Peer flag
-      (Flags-P2P) separately.  The Flags-P2C flag is set to 1 to
-      indicate that the FC segment's issuer AS sends routes to its
-      customer, and the Flags-P2P flag is set to 1 to indicate that the
-      FC segment's issuer AS sends routes to its peer.  If the Flags-P2C
-      or Flags-P2P flags are set, the next route propagation will only
-      be permitted to the following customers.  The remaining bits of
-      the Flags field are unassigned.  They MUST be set to 0 by the
-      sender and ignored by the receiver.
+      0.  The third leftmost bit (i.e., the third highest bit) of the
+      Flags field in Figure 2 is the AS_Path_Prepending flag (Flags-
+      ASPP).  This Flags-ASPP flag is set to 1 when AS path prepending
+      is used; otherwise, this flag MUST be set to 0.  The fourth and
+      fifth leftmost bits (i.e., the fourth highest and fifth highest
+      bits) of the Flags field in Figure 2 are the Provider_to_Customer
+      flag (Flags-P2C) and Peer_to_Peer flag (Flags-P2P) separately.
+      The Flags-P2C flag is set to 1 to indicate that the FC segment's
+      issuer AS sends routes to its customer, and the Flags-P2P flag is
+      set to 1 to indicate that the FC segment's issuer AS sends routes
+      to its peer.  If the Flags-P2C or Flags-P2P flags are set, the
+      next route propagation will only be permitted to the following
+      customers.  The remaining bits of the Flags field are unassigned.
+      They MUST be set to 0 by the sender and ignored by the receiver.
 
    Signature Length (2 octets):
       It only contains the length of the Signature field in octets, not
@@ -402,11 +405,12 @@ Table of Contents
 
    Signature (variable length):
       The signature content and order are Signature=ECDSA(SHA256(PASN,
-      CASN, NASN, Prefix, Prefix Length)), where the Prefix is the IP
-      address prefix which is encapsulated in the BGP UPDATE, i.e. NLRI,
-      and only one prefix is used each time.  When hashing and signing,
-      the full IP address and IP prefix length are used, i.e., IPv4 uses
-      4 octets and IPv6 uses 16 octets.
+      CASN, NASN, SKI, Algorithm ID, Flags, Signature Length, Prefix,
+      Prefix Length)), where the Signature Length is kept as 0, the
+      Prefix is the IP address prefix which is encapsulated in the BGP
+      UPDATE, i.e., NLRI, and only one prefix is used each time.  When
+      hashing and signing, the full IP address and IP prefix length are
+      used, i.e., IPv4 uses 4 octets and IPv6 uses 16 octets.
 
 4.  FC-BGP UPDATE Messages
 
@@ -425,24 +429,24 @@ Table of Contents
    defined in Figure 1.  It is important to note that if the FC-BGP
    speaker is not the origin AS and there is already an existing FC path
    attribute of the UPDATE message, it MUST prepend its new FC segment
-   to the FCList of the existing FC path attribute like the insertion
-   process of ASN in AS_PATH attribute.  This allows the FC-BGP speaker
-   to contribute to its own FC segment while maintaining the existing FC
-   path information.  Otherwise, if it is the source AS, the FC-BGP
-   speaker generates the FC path attribute defined in Figure 1 and
-   inserts it into the UPDATE message.
+   to the FCList of the existing FC path attribute, like the insertion
+   process of ASN in the AS_PATH attribute.  This allows the FC-BGP
+   speaker to contribute to its own FC segment while maintaining the
+   existing FC path information.  Otherwise, if it is the source AS, the
+   FC-BGP speaker generates the FC path attribute defined in Figure 1
+   and inserts it into the UPDATE message.
 
-   There are three AS numbers in one FC segment as Figure 2 shows.  The
+   There are three AS numbers in one FC segment, as Figure 2 shows.  The
    populating of the Current AS number (CASN) within the FC segment is
-   like the AS number in BGPsec, it MUST match the AS number in the
+   like the AS number in BGPsec; it MUST match the AS number in the
    Subject field of the RPKI router certificate that will be used to
    verify the FC segment constructed by this FC-BGP speaker (see
    Section 3.1.1 of [RFC8209] and [RFC6487]).  The Previous AS number
    (PASN) is typically set to the AS number from which the UPDATE
-   message receives.  However, if the FC-BGP speaker is located in the
-   origin AS, the PASN SHOULD be filled with 0.  The Nexthop AS number
-   (NASN) is set to the AS number of the peer to whom the route is
-   advertised.  So if there are several neighbors, the FC-BGP speaker
+   message is received.  However, if the FC-BGP speaker is located in
+   the origin AS, the PASN SHOULD be filled with 0.  The Nexthop AS
+   number (NASN) is set to the AS number of the peer to whom the route
+   is advertised.  So if there are several neighbors, the FC-BGP speaker
    should generate separate FCs for different neighbors.  But it would
    never generate a new FC segment for the iBGP neighbor.
 
@@ -460,29 +464,29 @@ Table of Contents
    A route server (RS) is a third-party brokering system that
    interconnects three or more BGP-speaking routers using eBGP in IXPs
    [RFC7947].  Typically, RS performs like a transit AS except that it
-   does not insert its AS number to the AS_PATH attribute.  The route
-   server also can participate in the FC-BGP process.  If the RS is an
+   does not insert its AS number into the AS_PATH attribute.  The route
+   server can also participate in the FC-BGP process.  If the RS is an
    FC-BGP-enabled RS, it may choose to set the Flags-RS bit to 1 when it
    populates its FC segment.  However, when the RS chooses to add its AS
    number to the AS_PATH attribute, the Flags-RS bit SHOULD be set to 0.
    If the RS is a non-FC-BGP RS, it propagates the FC-BGP UPDATE message
    directly.  Anyway, the AS number of RS would be used in the FC
-   segment no matter if it appears in the AS_PATH attribute.
+   segment, no matter if it appears in the AS_PATH attribute.
 
    Typically, the route server does not insert ASN into AS_PATH.  Take
-   Figure 3 as an example where AS A advertises a BGP UPDATE to AS C and
-   RS connects AS A and AS B.  When RS supports the FC-BGP mechanism, AS
-   A adds its FC segment: FC(NULL, A, RS), RS adds its FC segment: FC(A,
-   RS, B, Flags-RS), and AS B adds its FC segment: FC(RS, B, C).  If RS
-   does not support the FC-BGP mechanism, FC(A, RS, B, Flags-RS) is
-   missed in FCList, which SHOULD be considered as a partial deployment
-   scenario.
+   Figure 3 as an example, where AS A advertises a BGP UPDATE to AS C
+   and RS connects AS A and AS B.  When RS supports the FC-BGP
+   mechanism, AS A adds its FC segment: FC(NULL, A, RS), RS adds its FC
+   segment: FC(A, RS, B, Flags-RS), and AS B adds its FC segment: FC(RS,
+   B, C).  If RS does not support the FC-BGP mechanism, FC(A, RS, B,
+   Flags-RS) is missed in FCList, which SHOULD be considered as a
+   partial deployment scenario.
 
    +--------+     +--------+     +--------+     +--------+
    |  AS A  | --> |   RS   | --> |  AS B  | --> |  AS C  |
    +--------+     +--------+     +--------+     +--------+
 
-      Figure 3: A network topology with Router Server linked two ASs.
+     Figure 3: A network topology with a Router Server linking two ASs.
 
    AS Path Prepending is a traffic engineering mechanism in BGP to
    deprioritize a route or alternate path, which will prepend the local
@@ -492,12 +496,13 @@ Table of Contents
    FC segments with the same AS number.  Instead, the FC-BGP speaker
    SHOULD aim to produce a single FC segment once, even if the intention
    is to achieve the semantics of prepending the same AS number multiple
-   times.
+   times.  Flags-ASPP MUST be set to 1 if the local AS uses AS Path
+   Prepending.
 
    The Algorithm ID field is set to 1.  FC-BGP only supports one
-   algorithm suite in this document as BGPsec Algorithm defined in
+   algorithm suite in this document as the BGPsec Algorithm defined in
    [RFC8208].  That is the signature algorithm used MUST be the Elliptic
-   Curve Digital Signature Algorithm (ECDSA) with curve P-256 and the
+   Curve Digital Signature Algorithm (ECDSA) with curve P-256, and the
    hash algorithm used MUST be SHA-256.  If it transits from one
    algorithm suite to another, the FC-BGP speaker MUST place its router
    certificate in the RPKI repository first and then specify the
@@ -506,15 +511,16 @@ Table of Contents
    The Signature Length field is populated with the length (in octets)
    of the value in the Signature field.
 
-   The Signature field in the new FC segment is a variable length field.
+   The Signature field in the new FC segment is a variable-length field.
    It contains a digital signature encapsulated in DER format that binds
    the prefix, its length, and triplet <PASN, CASN, NASN> to the RPKI
    router certificate corresponding to the FC-BGP speaker.  The digital
    signature is computed as follows: Signature=ECDSA(SHA256(PASN, CASN,
-   NASN, Prefix, Prefix Length)).
+   NASN, SKI, Algorithm ID, Flags, Signature Length, Prefix, Prefix
+   Length)).
 
    The signatures within the FC segments of an FC-BGP UPDATE message
-   ensure the protection of crucial information including the AS number
+   ensure the protection of crucial information, including the AS number
    of the neighbor involved in the message exchange.  This information
    is explicitly included in the generated FC segment.  Consequently, if
    an FC-BGP speaker intends to transmit an FC-BGP UPDATE message to
@@ -633,7 +639,7 @@ Table of Contents
    confederation members when it removes all path segments of the
    AS_PATH with the type of AS_CONFED_SEQUENCE or AS_CONFED_SET.  To do
    this, the confederation members propagated the route outside the
-   confederation the following:
+   confederation the follows:
 
    1.  Starting with the most recently added FC segment, remove FC
        segments whose Flags-CS bit is 1.  Stop this process once an FC
@@ -719,14 +725,14 @@ Table of Contents
 
    When verifying the authenticity of an FC-BGP UPDATE message,
    information from the RPKI router certificates is utilized.  The RPKI
-   router certificates provide the data including the triplet <AS
+   router certificates provide the data, including the triplet <AS
    Number, Public Key, Subject Key Identifier> to verify the AS_PATH and
    FC path attributes.  As a prerequisite, the recipient MUST have
    access to these RPKI router certificates.
 
    Note that if an AS uploads its router certificates to RPKI, it would
-   be deemed to support FC-BGP.  The validation process MUST check that
-   to ensure no malicious on-path AS removes FCs from FC-BGP UPDATE.
+   be deemed to support FC-BGP.  The validation process MUST check to
+   ensure no malicious on-path AS removes FCs from FC-BGP UPDATE.
 
    Note that the FC-BGP speaker could perform the validation of RPKI
    router certificates on its own and extract the required data, or it
@@ -737,7 +743,7 @@ Table of Contents
    for the RPKI-Router protocol [RFC8210].)
 
    The recipient validates an FC-BGP UPDATE message containing the FC
-   path attribute and obtains one result of two states: 'Valid' and 'Not
+   path attribute and obtains one of two states: 'Valid' and 'Not
    Valid'.  We will describe the validation procedure in Section 5.2.1
    in this document.  The validation result will be used at BGP route
    selection, thus it will be discussed at Section 6.4.
@@ -870,7 +876,7 @@ Table of Contents
    sends routes, is Peer.
 
    The following ingress procedure applies to the processing of the
-   Flags-P2C flag and Flags-P2P flag on route receipt:
+   Flags-P2C flag and the Flags-P2P flag on route receipt:
 
    1.  If a route, with the Flags-P2C flag in the recently added FC
        Segment, is received from a Customer, a Peer, or an RS-Client,
@@ -1472,9 +1478,9 @@ Table of Contents
               J., and K. Sriram, "BGP AS_PATH Verification Based on
               Autonomous System Provider Authorization (ASPA) Objects",
               Work in Progress, Internet-Draft, draft-ietf-sidrops-aspa-
-              verification-22, 23 March 2025,
+              verification-23, 22 September 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-sidrops-
-              aspa-verification-22>.
+              aspa-verification-23>.
 
    [Deprecation-AS_SET-AS_CONFED_SET]
               Kumari, W., Sriram, K., Hannachi, L., and J. Haas,
