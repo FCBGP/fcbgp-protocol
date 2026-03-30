@@ -111,9 +111,13 @@ This document defines an extension, Forwarding Commitment BGP (FC-BGP), to the B
 
 # Introduction {#Introduction}
 
-The FC-BGP mechanism described in this document aims to ensure that advertised routes in BGP {{RFC4271}} are authentic and alleviate the BGP route leaks. FC-BGP accomplishes this by introducing a new optional, transitive, and extended length path attribute called FC (Forwarding Commitment) to the BGP UPDATE message. This attribute can be used by an FC-BGP-compliant BGP speaker (referred to hereafter as an FC-BGP speaker) to generate, propagate, and validate BGP UPDATE messages to enhance security. In other words, when the BGP UPDATE message travels through an FC-BGP-enabled AS, it adds a new FC based on the AS order in AS_PATH. Subsequent ASs can then utilize the list of FCs in the BGP UPDATE message to ensure that the advertised path is consistent with the AS_PATH attribute. And as a complementary of {{RFC9234}}, it can also alleviate the BGP route leaks.
+In a post-ROV (Route Origin Validation) era, route hijacks are largely mitigated but not eliminated, which fundamentally shifts the security focus up the stack. The problem space becomes less about "who owns the prefix" and more about "how routes propagate and whether that propagation is trustworthy and policy-compliant".
 
-BGPsec is a path-level authentication approach described in {{RFC8205}}. It replaces the AS_PATH attribute, which is used to record the sequence of autonomous systems (ASs) that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits BGPsec provides. In contrast, FC-BGP (Forwarding Commitment BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.
+The FC-BGP mechanism described in this document aims to ensure that advertised routes in BGP {{RFC4271}} are authentic and alleviate the BGP route leaks.
+
+FC-BGP accomplishes this by introducing a new optional, transitive, and extended-length path attribute called FC (Forwarding Commitment) to the BGP UPDATE message. This attribute can be used by an FC-BGP-compliant BGP speaker (referred to hereafter as an FC-BGP speaker) to generate, propagate, and validate BGP UPDATE messages to enhance security. In other words, when the BGP UPDATE message travels through an FC-BGP-enabled autonomous system (AS), it adds a new FC based on the AS order in AS_PATH. Subsequent ASs can then utilize the list of FCs in the BGP UPDATE message to ensure that the advertised path is consistent with the AS_PATH attribute. And as a complementary of {{RFC9234}}, it can also alleviate the BGP route leaks.
+
+BGPsec is a path-level authentication approach described in {{RFC8205}}. It replaces the AS_PATH attribute, which is used to record the sequence of ASs that a BGP update has traversed, with the non-transitive BGPsec_Path attribute. However, when a peer does not support BGPsec, the BGPsec_Path attribute will be downgraded to the standard AS_PATH attribute, losing the security benefits BGPsec provides. In contrast, FC-BGP (Forwarding Commitment BGP) preserves the AS_PATH attribute and introduces an additional list of signed messages called Forwarding Commitments. Each Forwarding Commitment (FC) is a publicly verifiable code certifying the correctness of a three-hop pathlet. FC-BGP builds its path authentication based on these FCs.
 
 FC-BGP and BGPsec offer different levels of security benefits in the case of partial deployment, even though they achieve the same security benefits when fully deployed. BGPsec tightly couples path authentication with the BGP path construction process, requiring each AS to iteratively verify the signatures of each prior hop before extending the authentication chain. Consequently, a single legacy AS that does not support BGPsec can break the authentication chain, preventing subsequent BGPsec-aware ASs from reviving the authentication process. As a result, in partial deployment scenarios, BGPsec is often downgraded to the legacy BGP protocol, losing its security benefits.
 
@@ -121,7 +125,7 @@ In contrast to BGPsec, FC-BGP treats partial deployability as a first-class citi
 
 Similar to BGPsec, FC-BGP relies on RPKI to perform route origin validation {{RFC6483}}. Additionally, any FC-BGP speaker that wishes to process the FC path attribute along with BGP UPDATE messages MUST obtain a router certificate and store it in the RPKI repository. This certificate is associated with its AS number. The router key generation here follows {{RFC8208}} and {{RFC8635}}.
 
-It is NOT RECOMMENDED that both BGPsec and FC-BGP simultaneously be enabled in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message. More discussion is at {{coexist_bgpsec}}.
+It is NOT RECOMMENDED that both BGPsec and FC-BGP be enabled simultaneously in a BGP network. However, if a BGP update message contains both BGPsec and FC-BGP features, the BGP speaker should process the message properly. In such cases, the BGP speaker should prioritize BGPsec over FC-BGP. This means that if a BGP update message includes the BGPsec_PATH attribute, a BGP speaker that supports both BGPsec and FC-BGP should use the Secure_Path instead of the AS_PATH to generate or verify the FC segments. This prioritization ensures that the presence of FC-BGP does not compromise the security benefits of BGPsec in the same update message. More discussion is at {{coexist_bgpsec}}.
 
 ## Requirements Language
 
@@ -134,10 +138,10 @@ The following terms are used with a specific meaning:
 {: vspace="0"}
 
 BGP neighbor:
-: Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocols are neighbors. It can be divided into iBGP neighbor and eBGP neighbor.
+: Also just 'neighbor'. Two BGP speakers that communicate using the BGP protocol are neighbors. It can be divided into iBGP neighbors and eBGP neighbors.
 
 BGP speaker:
-: A device, usually a router, exchanging routes with other BGP speakers using the BGP protocol.
+: A device, usually a router, exchanges routes with other BGP speakers using the BGP protocol.
 
 BGP UPDATE:
 : The message is generated with several path attributes to advertise routes.
@@ -180,7 +184,7 @@ However, if one AS has uploaded its keys to RPKI, it would be deemed to support 
 
 # FC Path Attribute
 
-Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended length path attribute. This document registers a new attribute type code for this attribute: TBD, see {{iana-considerations}} for more information.
+Unlike BGPsec, FC-BGP does not modify the AS_PATH. Instead, FC is enclosed in a BGP UPDATE message as an optional, transitive, and extended-length path attribute. This document registers a new attribute type code for this attribute: TBD, see {{iana-considerations}} for more information.
 
 The FC path attribute includes the digital signatures that protect the pathlet information. We refer to those update messages that contain the FC path attribute as "FC-BGP UPDATE messages". Although FC-BGP would not modify the AS_PATH path attribute, it is REQUIRED to never use the AS_SET or AS_CONFED_SET in FC-BGP according to {{RFC6472}} and {{Deprecation-AS_SET-AS_CONFED_SET}}.
 
@@ -239,13 +243,13 @@ FC segment includes the following parts. (See {{fcbgp-update}} for more details 
 {: vspace="0"}
 
 Previous Autonomous System Number (PASN, 4 octets):
-: The PASN is the AS number of the previous hop AS from whom the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it MUST be filled with 0. It will be discussed more at {{sec-three-asn}}.
+: The PASN is the AS number of the previous hop AS from which the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it MUST be filled with 0. It will be discussed more at {{sec-three-asn}}.
 
 Current Autonomous System Number (CASN, 4 octets):
 : The CASN is the AS number of the FC-BGP speaker that added this FC segment to the FC path attribute.
 
 Nexthop Autonomous System Number (NASN, 4 octets):
-: The NASN is the AS number of the next hop AS to whom the FC-BGP speaker will send the BGP UPDATE message.
+: The NASN is the AS number of the next hop AS to which the FC-BGP speaker will send the BGP UPDATE message.
 
 Subject Key Identifier (SKI, 20 octets):
 : The SKI in the RPKI router certificate is a unique identifier for the public key used for signature verification. If the SKI length exceeds 20 octets, it should retrieve the leftmost 20 octets.
@@ -630,7 +634,7 @@ The ASPA {{ASPA-Profile}} {{ASPA-Verification}} mechanism is designed to solve t
 
 ### Only to Customer (OTC) Attribute
 
-OTC is a route-leak detection and prevention mechanism. However, the OTC value itself is not protected. It can be forged. With the signature, FC-BGP can protect the Flags-P2C flag and Flags-P2P flag. So the FC-BGP route leak prevention mechanism is complementary to the OTC attribute.
+OTC is a route-leak detection and prevention mechanism. However, the OTC value itself is not protected. It can be forged. With the signature, FC-BGP can protect the Flags-P2C flag and the Flags-P2P flag. So the FC-BGP route leak prevention mechanism is complementary to the OTC attribute.
 
 ## Implementation Status
 
