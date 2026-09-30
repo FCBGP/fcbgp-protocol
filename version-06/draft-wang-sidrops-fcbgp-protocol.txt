@@ -622,6 +622,8 @@ Table of Contents
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            Version                            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |           Previous Autonomous System Number (PASN)            |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |            Current Autonomous System Number (CASN)            |
@@ -646,6 +648,18 @@ Table of Contents
 
    FC segment includes the following parts.  (See Section 5 for more
    details on populating these fields.)
+
+   Version (1 octet):
+      The version of the FC segment format.  The current value is 1.
+      The Version field is the first field of the FC segment, in a
+      positionally fixed location, so that a receiver can determine,
+      before parsing the rest of the segment, whether it understands the
+      segment format.  The Version field is covered by the FC segment's
+      signature (Section 4.1); an FC segment whose Version is not
+      recognized MUST NOT be treated as authenticated and is handled as
+      'Unsupported' per Section 8.2.2.  Future versions MUST NOT change
+      the position or the 1-octet size of the Version field; see
+      Section 11 for version management.
 
    Previous Autonomous System Number (PASN, 4 octets):
       The PASN is the AS number of the previous hop AS from which the
@@ -759,7 +773,7 @@ Table of Contents
 
    FC-Signature-Input =
        Domain-Separation       (8 octets)
-    || Protocol-Version        (1 octet)
+    || Version                 (1 octet)
     || PASN                    (4 octets)
     || CASN                    (4 octets)
     || NASN                    (4 octets)
@@ -781,9 +795,14 @@ Table of Contents
       Separation string prevents a signature computed for FC-BGP from
       being valid for a different protocol that signs similar data.
 
-   Protocol-Version:  1 octet, set to 1.  This is the version of the FC
-      segment format defined in this document; see Section 11 for
-      version management.
+   Version:  1 octet, the value of the Version field of the FC segment
+      (Figure 2).  The current value is 1.  Because the Version value
+      both appears in a positionally fixed field of the FC segment and
+      is covered by the FC segment's signature, a receiver can detect an
+      unknown segment version before cryptographic verification and
+      handle it as 'Unsupported' without treating the segment as
+      authenticated (Section 8.2.2), and an on-path attacker cannot
+      change the signer's Version without breaking the signature.
 
    PASN, CASN, NASN:  The three AS numbers of the FC segment, each
       encoded as 4 octets as defined in Figure 2.
@@ -884,9 +903,11 @@ Table of Contents
    signatures in FC segments attached to the route advertisement.  This
    practice adheres to the guidelines outlined in [RFC8209].
 
-   Typically, the Flags field is set to 0 and the PC field is set to 1.
-   The PC field is set to a value greater than 1 only when AS Path
-   Prepending is used, as described below.
+   The Version field MUST be set to 1 by an FC-BGP speaker that
+   implements this version of the protocol; see Section 11 and
+   Section 9.1.  Typically, the Flags field is set to 0 and the PC field
+   is set to 1.  The PC field is set to a value greater than 1 only when
+   AS Path Prepending is used, as described below.
 
    A route server (RS) is a third-party brokering system that
    interconnects three or more BGP-speaking routers using eBGP in IXPs
@@ -1729,8 +1750,8 @@ Table of Contents
    | algorithm     | that is not      | are not cryptographically      |
    |               | recognized; an   | verified.  If no other         |
    |               | unknown FC       | failure is detected, the       |
-   |               | segment version  | UPDATE message is              |
-   |               |                  | 'Unsupported' per              |
+   |               | segment Version  | UPDATE message is              |
+   |               | field            | 'Unsupported' per              |
    |               |                  | Section 8.2.1.  It MUST NOT    |
    |               |                  | be silently downgraded to an   |
    |               |                  | ordinary unsigned BGP route.   |
@@ -1902,15 +1923,15 @@ Table of Contents
       value, then mark the entire FC segment as 'Invalid' and stop.
 
    *  Step 2: Construct the digest input for the current FC segment
-      exactly as specified in Section 4.1, using the PASN, CASN, NASN,
-      SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and
-      Prefix Length of the FC segment and of the UPDATE message.  Note
-      that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-
-      BGP speaker is a member of an AS confederation), the AS number
-      used for the CASN MUST be the AS number announced in the BGP OPEN
-      message for the session over which the FC-BGP UPDATE message was
-      received.  All three AS numbers in one FC segment follow this
-      rule.
+      exactly as specified in Section 4.1, using the Version, PASN,
+      CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI,
+      Prefix, and Prefix Length of the FC segment and of the UPDATE
+      message.  Note that if an FC-BGP speaker uses multiple AS numbers
+      (e.g., the FC-BGP speaker is a member of an AS confederation), the
+      AS number used for the CASN MUST be the AS number announced in the
+      BGP OPEN message for the session over which the FC-BGP UPDATE
+      message was received.  All three AS numbers in one FC segment
+      follow this rule.
 
    *  Step 3: Use the signature validation algorithm (for the given
       algorithm suite) to verify the signature in the current segment.
@@ -1985,9 +2006,12 @@ Table of Contents
       remaining FC segments signed under it to expire from the network,
       and then remove the Algorithm ID from the registry.
 
-   *  The FC Segment Protocol-Version in Section 4.1 provides the
-      version of the FC segment format; the handling of an unknown
-      Protocol-Version follows Section 8.2.2.
+   *  The Version field (Figure 2) is the first field of the FC segment,
+      in a positionally fixed location, and is also included in the FC
+      Signature Input (Section 4.1).  A receiver that does not recognize
+      the Version value handles the FC segment as 'Unsupported' per
+      Section 8.2.2; the signed value prevents the version from being
+      altered in transit.
 
 9.2.  Speedup and Early Termination of Signature Verification
 
@@ -2777,6 +2801,11 @@ Table of Contents
    stable; any allocated content is covered by the FC segment's
    signature.
 
+   TBD.  Regist the FC Segment Version field (Figure 2).  The current
+   value is 1.  Allocations MUST NOT change the position or the 1-octet
+   size of the Version field, so that receivers can always locate it
+   before parsing the rest of the FC segment.
+
    TBD.  A new OID should be assigned for keys used in FC-BGP.
 
    AS number 0 is used here to populate the PASN in an FC segment where
@@ -3186,6 +3215,13 @@ A.2.  Test Vectors
    |             |FC path attribute|             |same path     |             |
    |             |                 |             |representation|             |
    +-------------+-----------------+-------------+--------------+-------------+
+   |21.  Unknown |FC segments carry|'Unsupported'|MUST NOT be   |Per          |
+   |FC segment   |a Version field  |             |silently      |Section 8.2.2|
+   |Version      |value the        |             |downgraded to |             |
+   |             |receiver does not|             |an ordinary   |             |
+   |             |recognize        |             |unsigned BGP  |             |
+   |             |                 |             |route         |             |
+   +-------------+-----------------+-------------+--------------+-------------+
 
                                   Table 9
 
@@ -3268,12 +3304,12 @@ A.4.  An Example
    the FC segment use the message format shown in Figure 1 and Figure 2
    separately.  When signing, the FC-BGP speaker constructs the
    canonical FC Signature Input defined in Section 4.1 (which covers the
-   Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm
-   ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI,
-   Prefix, and Prefix Length), computes the SHA-256 hash over that byte
-   string, signs the digest with ECDSA, and then fills in the Signature
-   field and the other FC fields.  After that, AS 65537 prepends its own
-   FC on top of the FC List.  At this point, the processing of FC path
+   Domain-Separation, Version, PASN, CASN, NASN, SKI, Algorithm ID,
+   Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix,
+   and Prefix Length), computes the SHA-256 hash over that byte string,
+   signs the digest with ECDSA, and then fills in the Signature field
+   and the other FC fields.  After that, AS 65537 prepends its own FC on
+   top of the FC List.  At this point, the processing of FC path
    attributes by the FC-BGP speaker is complete.  The subsequent
    processing of BGP messages follows the standard BGP process.
 

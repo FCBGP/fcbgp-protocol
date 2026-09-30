@@ -1812,6 +1812,8 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                            Version                            |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |           Previous Autonomous System Number (PASN)            |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |            Current Autonomous System Number (CASN)            |
@@ -1835,24 +1837,29 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-4-11">In FC-BGP, all ASs <span class="bcp14">MUST</span> use 4-byte AS numbers in FC segments. Existing 2-byte AS numbers are converted into 4-byte AS numbers by setting the two high-order octets of the 4-octet field to 0 <span>[<a href="#RFC6793" class="cite xref">RFC6793</a>]</span>.<a href="#section-4-11" class="pilcrow">¶</a></p>
 <p id="section-4-12">FC segment includes the following parts. (See <a href="#fcbgp-update" class="auto internal xref">Section 5</a> for more details on populating these fields.)<a href="#section-4-12" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlNewline" id="section-4-13">
-        <dt id="section-4-13.1">Previous Autonomous System Number (PASN, 4 octets):</dt>
+        <dt id="section-4-13.1">Version (1 octet):</dt>
         <dd style="margin-left: 1.5em" id="section-4-13.2">
-          <p id="section-4-13.2.1">The PASN is the AS number of the previous hop AS from which the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it <span class="bcp14">MUST</span> be filled with 0. It will be discussed more at <a href="#sec-three-asn" class="auto internal xref">Section 10.4.1</a>.<a href="#section-4-13.2.1" class="pilcrow">¶</a></p>
+          <p id="section-4-13.2.1">The version of the FC segment format. The current value is 1. The Version field is the first field of the FC segment, in a positionally fixed location, so that a receiver can determine, before parsing the rest of the segment, whether it understands the segment format. The Version field is covered by the FC segment's signature (<a href="#sig-input" class="auto internal xref">Section 4.1</a>); an FC segment whose Version is not recognized <span class="bcp14">MUST NOT</span> be treated as authenticated and is handled as 'Unsupported' per <a href="#error-matrix" class="auto internal xref">Section 8.2.2</a>. Future versions <span class="bcp14">MUST NOT</span> change the position or the 1-octet size of the Version field; see <a href="#iana-considerations" class="auto internal xref">Section 11</a> for version management.<a href="#section-4-13.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-4-13.3">Current Autonomous System Number (CASN, 4 octets):</dt>
+<dt id="section-4-13.3">Previous Autonomous System Number (PASN, 4 octets):</dt>
         <dd style="margin-left: 1.5em" id="section-4-13.4">
-          <p id="section-4-13.4.1">The CASN is the AS number of the FC-BGP speaker that added this FC segment to the FC path attribute.<a href="#section-4-13.4.1" class="pilcrow">¶</a></p>
+          <p id="section-4-13.4.1">The PASN is the AS number of the previous hop AS from which the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it <span class="bcp14">MUST</span> be filled with 0. It will be discussed more at <a href="#sec-three-asn" class="auto internal xref">Section 10.4.1</a>.<a href="#section-4-13.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-4-13.5">Nexthop Autonomous System Number (NASN, 4 octets):</dt>
+<dt id="section-4-13.5">Current Autonomous System Number (CASN, 4 octets):</dt>
         <dd style="margin-left: 1.5em" id="section-4-13.6">
-          <p id="section-4-13.6.1">The NASN is the AS number of the next hop AS to which the FC-BGP speaker will send the BGP UPDATE message.<a href="#section-4-13.6.1" class="pilcrow">¶</a></p>
+          <p id="section-4-13.6.1">The CASN is the AS number of the FC-BGP speaker that added this FC segment to the FC path attribute.<a href="#section-4-13.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-4-13.7">Subject Key Identifier (SKI, 20 octets):</dt>
+<dt id="section-4-13.7">Nexthop Autonomous System Number (NASN, 4 octets):</dt>
         <dd style="margin-left: 1.5em" id="section-4-13.8">
-          <p id="section-4-13.8.1">The SKI in the RPKI router certificate is a unique identifier for the public key used for signature verification. If the SKI length exceeds 20 octets, it should retrieve the leftmost 20 octets.<a href="#section-4-13.8.1" class="pilcrow">¶</a></p>
+          <p id="section-4-13.8.1">The NASN is the AS number of the next hop AS to which the FC-BGP speaker will send the BGP UPDATE message.<a href="#section-4-13.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-13.9">Subject Key Identifier (SKI, 20 octets):</dt>
+        <dd style="margin-left: 1.5em" id="section-4-13.10">
+          <p id="section-4-13.10.1">The SKI in the RPKI router certificate is a unique identifier for the public key used for signature verification. If the SKI length exceeds 20 octets, it should retrieve the leftmost 20 octets.<a href="#section-4-13.10.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1919,7 +1926,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <pre>
 FC-Signature-Input =
     Domain-Separation       (8 octets)
- || Protocol-Version        (1 octet)
+ || Version                 (1 octet)
  || PASN                    (4 octets)
  || CASN                    (4 octets)
  || NASN                    (4 octets)
@@ -1942,9 +1949,9 @@ FC-Signature-Input =
             <p id="section-4.1-5.2.1">8 octets containing the ASCII encoding of the string "FC-BGP" followed by two 0x00 octets. The Domain-Separation string prevents a signature computed for FC-BGP from being valid for a different protocol that signs similar data.<a href="#section-4.1-5.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-4.1-5.3">Protocol-Version:</dt>
+<dt id="section-4.1-5.3">Version:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-5.4">
-            <p id="section-4.1-5.4.1">1 octet, set to 1. This is the version of the FC segment format defined in this document; see <a href="#iana-considerations" class="auto internal xref">Section 11</a> for version management.<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-5.4.1">1 octet, the value of the Version field of the FC segment (<a href="#figure2" class="auto internal xref">Figure 2</a>). The current value is 1. Because the Version value both appears in a positionally fixed field of the FC segment and is covered by the FC segment's signature, a receiver can detect an unknown segment version before cryptographic verification and handle it as 'Unsupported' without treating the segment as authenticated (<a href="#error-matrix" class="auto internal xref">Section 8.2.2</a>), and an on-path attacker cannot change the signer's Version without breaking the signature.<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.1-5.5">PASN, CASN, NASN:</dt>
@@ -2019,7 +2026,7 @@ FC-Signature-Input =
 <p id="section-5.1-3">The FC-BGP speaker follows a specific process to create the FC path attribute for the ongoing UPDATE message. First, it generates a new FC Segment containing the information described below and adds it to the FCList of the outer format defined in <a href="#figure1" class="auto internal xref">Figure 1</a>. If the FC-BGP speaker is not the origin AS and an FC path attribute already exists in the UPDATE message, the speaker <span class="bcp14">MUST</span> prepend the new FC segment to the FCList, in the same way that an AS number is prepended to the AS_PATH attribute. This keeps the FCList ordered in the same direction as the AS_PATH attribute, so that the first FC segment in the FCList corresponds to the first AS number (the most recently prepended ASN) in the AS_PATH; see <a href="#fcmapping" class="auto internal xref">Section 7</a>. Otherwise, if the speaker is the origin AS, it generates the FC path attribute defined in <a href="#figure1" class="auto internal xref">Figure 1</a> and inserts it into the UPDATE message.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">There are three AS numbers in one FC segment, as <a href="#figure2" class="auto internal xref">Figure 2</a> shows. The populating of the Current AS number (CASN) within the FC segment is like the AS number in BGPsec; it <span class="bcp14">MUST</span> match the AS number in the Subject field of the RPKI router certificate that will be used to verify the FC segment constructed by this FC-BGP speaker (see <span><a href="https://rfc-editor.org/rfc/rfc8209#section-3.1.1" class="relref">Section 3.1.1</a> of [<a href="#RFC8209" class="cite xref">RFC8209</a>]</span> and <span>[<a href="#RFC6487" class="cite xref">RFC6487</a>]</span>). The Previous AS number (PASN) is typically set to the AS number from which the UPDATE message is received. However, if the FC-BGP speaker is located in the origin AS, the PASN <span class="bcp14">SHOULD</span> be filled with 0. The Nexthop AS number (NASN) is set to the AS number of the peer to whom the route is advertised. So if there are several neighbors, the FC-BGP speaker should generate separate FCs for different neighbors. But it would never generate a new FC segment for the iBGP neighbor.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
 <p id="section-5.1-5">The Subject Key Identifier field (SKI) within the new FC segment is populated with the identifier found in the Subject Key Identifier extension of the RPKI router certificate associated with the FC-BGP speaker. This identifier serves as a crucial piece of information for recipients of the route advertisement. It enables them to identify the appropriate certificate to employ when verifying the signatures in FC segments attached to the route advertisement. This practice adheres to the guidelines outlined in <span>[<a href="#RFC8209" class="cite xref">RFC8209</a>]</span>.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">Typically, the Flags field is set to 0 and the PC field is set to 1. The PC field is set to a value greater than 1 only when AS Path Prepending is used, as described below.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.1-6">The Version field <span class="bcp14">MUST</span> be set to 1 by an FC-BGP speaker that implements this version of the protocol; see <a href="#iana-considerations" class="auto internal xref">Section 11</a> and <a href="#algorithms-extensibility" class="auto internal xref">Section 9.1</a>. Typically, the Flags field is set to 0 and the PC field is set to 1. The PC field is set to a value greater than 1 only when AS Path Prepending is used, as described below.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
 <p id="section-5.1-7">A route server (RS) is a third-party brokering system that interconnects three or more BGP-speaking routers using eBGP in IXPs <span>[<a href="#RFC7947" class="cite xref">RFC7947</a>]</span>. Typically, an RS behaves like a transit AS except that it does not insert its AS number into the AS_PATH attribute. An RS can also participate in FC-BGP. If the RS is FC-enabled, it adds its FC segment with the Flags-RS bit set to 1 when its AS number does not appear in the AS_PATH attribute; when its AS number is inserted into the AS_PATH attribute, the Flags-RS bit <span class="bcp14">MUST</span> be set to 0. A non-FC RS propagates the FC-BGP UPDATE message directly without adding an FC segment. Note that the AS number of an RS is used in the FC segment whether or not it appears in the AS_PATH attribute; how the resulting FC-to-AS_PATH Mapping is established is defined in <a href="#rs-processing" class="auto internal xref">Section 6</a>.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
 <p id="section-5.1-8">Typically, the route server does not insert its ASN into the AS_PATH. Take <a href="#fig-rs-ex" class="auto internal xref">Figure 3</a> as an example, where AS A advertises a BGP UPDATE to AS C and the RS connects AS A and AS B. When the RS supports FC-BGP, AS A adds its FC segment FC(NULL, A, RS), the RS adds FC(A, RS, B) with Flags-RS set to 1, and AS B adds FC(RS, B, C). If the RS does not support FC-BGP, FC(A, RS, B) is missing from the FCList; this is the partial-deployment case for Route Servers, and its treatment is defined in <a href="#rs-processing" class="auto internal xref">Section 6</a> and <a href="#deployment" class="auto internal xref">Section 3</a>.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
 <span id="name-a-network-topology-with-a-r"></span><div id="fig-rs-ex">
@@ -2499,7 +2506,7 @@ b. If the Flags-RS bit of f(j) is 1 (an FC segment of a route server), the FC se
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">Unsupported algorithm</td>
-                <td class="text-left" rowspan="1" colspan="1">An Algorithm ID that is not recognized; an unknown FC segment version</td>
+                <td class="text-left" rowspan="1" colspan="1">An Algorithm ID that is not recognized; an unknown FC segment Version field</td>
                 <td class="text-left" rowspan="1" colspan="1">The affected FC segment(s) are not cryptographically verified. If no other failure is detected, the UPDATE message is 'Unsupported' per <a href="#validation-states" class="auto internal xref">Section 8.2.1</a>. It <span class="bcp14">MUST NOT</span> be silently downgraded to an ordinary unsigned BGP route.</td>
               </tr>
               <tr>
@@ -2586,7 +2593,7 @@ b. If the Flags-RS bit of f(j) is 1 (an FC segment of a route server), the FC se
               <p id="section-8.2.3-12.1.1">Step 1: Locate the public key needed to verify the signature in the current FC segment. To do this, consult the valid RPKI router certificate data and look up all valid &lt;AS Number, Public Key, Subject Key Identifier&gt; triples in which the AS matches the Current AS Number (CASN) in the corresponding FC segment. Of these triples that match the AS number, check whether there is an Subject Key Identifier (SKI) that matches the value in the SKI field of the FC segment. If this check finds no such matching SKI value, then mark the entire FC segment as 'Invalid' and stop.<a href="#section-8.2.3-12.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-8.2.3-12.2">
-              <p id="section-8.2.3-12.2.1">Step 2: Construct the digest input for the current FC segment exactly as specified in <a href="#sig-input" class="auto internal xref">Section 4.1</a>, using the PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN <span class="bcp14">MUST</span> be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.<a href="#section-8.2.3-12.2.1" class="pilcrow">¶</a></p>
+              <p id="section-8.2.3-12.2.1">Step 2: Construct the digest input for the current FC segment exactly as specified in <a href="#sig-input" class="auto internal xref">Section 4.1</a>, using the Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN <span class="bcp14">MUST</span> be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.<a href="#section-8.2.3-12.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-8.2.3-12.3">
               <p id="section-8.2.3-12.3.1">Step 3: Use the signature validation algorithm (for the given algorithm suite) to verify the signature in the current segment. That is, invoke the signature validation algorithm on the following three inputs: the value of the Signature field in the current FC segment, the digest constructed in Step 2 above, and the public key obtained from the valid RPKI data in Step 1 above. If the signature validation algorithm determines that the signature is invalid, then mark the entire FC segment as 'Invalid' and stop. If the signature validation algorithm determines that the signature is valid, then the FC segment is marked as 'Valid' and validation continues with the following FC segments.<a href="#section-8.2.3-12.3.1" class="pilcrow">¶</a></p>
@@ -2637,7 +2644,7 @@ b. If the Flags-RS bit of f(j) is 1 (an FC segment of a route server), the FC se
             <p id="section-9.1-3.5.1">An algorithm <span class="bcp14">MUST NOT</span> be removed from use without a documented transition plan. Before deprecating an algorithm, operators <span class="bcp14">MUST</span> stop generating FC segments under it, allow enough time for the remaining FC segments signed under it to expire from the network, and then remove the Algorithm ID from the registry.<a href="#section-9.1-3.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-9.1-3.6">
-            <p id="section-9.1-3.6.1">The FC Segment Protocol-Version in <a href="#sig-input" class="auto internal xref">Section 4.1</a> provides the version of the FC segment format; the handling of an unknown Protocol-Version follows <a href="#error-matrix" class="auto internal xref">Section 8.2.2</a>.<a href="#section-9.1-3.6.1" class="pilcrow">¶</a></p>
+            <p id="section-9.1-3.6.1">The Version field (<a href="#figure2" class="auto internal xref">Figure 2</a>) is the first field of the FC segment, in a positionally fixed location, and is also included in the FC Signature Input (<a href="#sig-input" class="auto internal xref">Section 4.1</a>). A receiver that does not recognize the Version value handles the FC segment as 'Unsupported' per <a href="#error-matrix" class="auto internal xref">Section 8.2.2</a>; the signed value prevents the version from being altered in transit.<a href="#section-9.1-3.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3193,8 +3200,9 @@ b. If the Flags-RS bit of f(j) is 1 (an FC segment of a route server), the FC se
 <p id="section-11-1">TBD. Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <p id="section-11-2">TBD. Regist Flags. The leftmost bit is the Confed_Segment flag, and the second highest/leftmost bit is the Route_Server flag in this document.<a href="#section-11-2" class="pilcrow">¶</a></p>
 <p id="section-11-3">TBD. The 3-octet RESERVED field of the FC segment (<a href="#figure2" class="auto internal xref">Figure 2</a>) is reserved for future allocation. Allocations <span class="bcp14">MUST NOT</span> change the size of the field, so that the FC Signature Input (<a href="#sig-input" class="auto internal xref">Section 4.1</a>) remains stable; any allocated content is covered by the FC segment's signature.<a href="#section-11-3" class="pilcrow">¶</a></p>
-<p id="section-11-4">TBD. A new OID should be assigned for keys used in FC-BGP.<a href="#section-11-4" class="pilcrow">¶</a></p>
-<p id="section-11-5">AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.<a href="#section-11-5" class="pilcrow">¶</a></p>
+<p id="section-11-4">TBD. Regist the FC Segment Version field (<a href="#figure2" class="auto internal xref">Figure 2</a>). The current value is 1. Allocations <span class="bcp14">MUST NOT</span> change the position or the 1-octet size of the Version field, so that receivers can always locate it before parsing the rest of the FC segment.<a href="#section-11-4" class="pilcrow">¶</a></p>
+<p id="section-11-5">TBD. A new OID should be assigned for keys used in FC-BGP.<a href="#section-11-5" class="pilcrow">¶</a></p>
+<p id="section-11-6">AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.<a href="#section-11-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-combined-references">
@@ -3611,6 +3619,15 @@ AS(1) --- AS(2) -...- AS(k-1) ---- AS(k) -...- AS(n)
               <td class="text-left" rowspan="1" colspan="1">Per <a href="#coexist_bgpsec" class="auto internal xref">Section 9.13</a>
 </td>
             </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">21. Unknown FC segment Version</td>
+              <td class="text-left" rowspan="1" colspan="1">FC segments carry a Version field value the receiver does not recognize</td>
+              <td class="text-left" rowspan="1" colspan="1">'Unsupported'</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span class="bcp14">MUST NOT</span> be silently downgraded to an ordinary unsigned BGP route</td>
+              <td class="text-left" rowspan="1" colspan="1">Per <a href="#error-matrix" class="auto internal xref">Section 8.2.2</a>
+</td>
+            </tr>
           </tbody>
         </table>
 <p id="appendix-A.2-3">The byte-level test vectors for IPv4, IPv6, AS Path Prepending, invalid DER, and tampered fields are derived from the canonical FC Signature Input defined in <a href="#sig-input" class="auto internal xref">Section 4.1</a> and <span class="bcp14">MUST</span> be reproducible from the wire encoding of the FC path attribute and of the UPDATE message alone. Any two conforming implementations <span class="bcp14">MUST</span> compute the same FC Signature Input and <span class="bcp14">MUST</span> obtain the same validation state for a given input.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
@@ -3648,7 +3665,7 @@ AS(65536) --&gt; AS(65537) --&gt; AS(65538)
 <p id="appendix-A.4-4">When the FC-BGP speaker in AS 65536 plans to propagate routes to its downstream AS 65537, it fills the FC path attribute first. The PASN is 0/NULL, the CASN is 65536, and the NASN is 65537. Then it calculates the signature, fills the FC, and forms the FC path attribute and FC-BGP UPDATE message. Then, it sends the UPDATE message out.<a href="#appendix-A.4-4" class="pilcrow">¶</a></p>
 <p id="appendix-A.4-5">When receiving an UPDATE message from AS 65536, the FC-BGP speaker in AS 65537 retrieves the FC path attribute and extracts the FC list. It then finds the FC with <code>CASN == 65536</code> as the AS_PATH has only one AS(65536) and checks whether PASN is 0 as well as NASN is 65537. If so, it uses the SKI field to find the public key and calculates the signature using the algorithm specified in the Algorithm ID. If the calculated signature matches the signature in the FC segment, then the AS-Path hop associated with the AS 65536 is verified. This process repeats for all FCs and AS-Paths in the FC list if it has other ASs in AS_PATH. However, if AS 65537 does not support FC-BGP, the BGP speaker of AS 65537 simply forwards the BGP UPDATE to its neighbors when propagating this FC-BGP route without validating the FC path attribute.<a href="#appendix-A.4-5" class="pilcrow">¶</a></p>
 <p id="appendix-A.4-6">FC-BGP speakers need to generate different UPDATE messages for different neighbors. Each UPDATE announcement contains only one route prefix and cannot be aggregated. This is because different route prefixes may have different announcement paths due to different routing policies. Multiple aggregated route prefixes may cause FC generation and verification errors. When multiple route prefixes need to be announced, the FC-BGP speaker needs to generate different UPDATE messages for each route prefix. Thus, the FC-BGP speaker of AS 65537 generates different UPDATE messages for AS 65538 and AS 65539 separately. The biggest difference is that the NASN is 65538 for AS 65538 and 65539 for AS 65539 in the FC segment generated by AS 65537.<a href="#appendix-A.4-6" class="pilcrow">¶</a></p>
-<p id="appendix-A.4-7">Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in <a href="#figure1" class="auto internal xref">Figure 1</a> and <a href="#figure2" class="auto internal xref">Figure 2</a> separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in <a href="#sig-input" class="auto internal xref">Section 4.1</a> (which covers the Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.<a href="#appendix-A.4-7" class="pilcrow">¶</a></p>
+<p id="appendix-A.4-7">Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in <a href="#figure1" class="auto internal xref">Figure 1</a> and <a href="#figure2" class="auto internal xref">Figure 2</a> separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in <a href="#sig-input" class="auto internal xref">Section 4.1</a> (which covers the Domain-Separation, Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.<a href="#appendix-A.4-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="acknowledgments">
