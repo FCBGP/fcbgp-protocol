@@ -428,7 +428,7 @@ FC-Signature-Input =
 The individual components are defined as follows:
 
 Domain-Separation:
-: 8 octets containing the ASCII encoding of the string "FC-BGP" followed by three 0x00 octets. The Domain-Separation string prevents a signature computed for FC-BGP from being valid for a different protocol that signs similar data.
+: 8 octets containing the ASCII encoding of the string "FC-BGP" followed by two 0x00 octets. The Domain-Separation string prevents a signature computed for FC-BGP from being valid for a different protocol that signs similar data.
 
 Protocol-Version:
 : 1 octet, set to 1. This is the version of the FC segment format defined in this document; see {{iana-considerations}} for version management.
