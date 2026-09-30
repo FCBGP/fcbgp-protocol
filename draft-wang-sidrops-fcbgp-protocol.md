@@ -333,7 +333,7 @@ A speaker that receives an FC path attribute or an FC segment that exceeds any o
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 | Algorithm ID  |      Flags    |       Signature Length        |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|      PC       |                                              |
+|      PC       |                 RESERVED                      |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~                          Signature                            ~
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -382,7 +382,7 @@ Flags (1 octet):
 
 The remaining bits (bits 3 to 0) of the Flags field are unassigned. They MUST be set to 0 by the sender and ignored by the receiver. New flags are registered in the FC Flags registry defined in {{iana-considerations}}.
 
-Note that the behavior that was previously expressed by an AS_Path_Prepending flag (Flags-ASPP) is now expressed by the Prepending Count (PC) field defined below.
+Note that the behavior that was previously expressed by an AS_Path_Prepending flag (Flags-ASPP) is now expressed by the Prepending Count field defined below.
 
 Signature Length (2 octets):
 : The length, in octets, of the Signature field. It does not include any other field of the FC segment.
@@ -391,6 +391,9 @@ Signature Length (2 octets):
 
 Prepending Count (PC, 1 octet):
 : The number of consecutive occurrences of the Current AS Number (CASN) in the AS_PATH attribute that this single FC segment represents. In the normal case, in which an ASN appears once in the AS_PATH attribute, the PC MUST be set to 1. When the issuer AS uses AS Path Prepending and its ASN appears n (n greater than or equal to 2) consecutive times in the AS_PATH attribute {{ASPP}}, the issuer MUST generate a single FC segment with PC set to n rather than n FC segments. The PC field is covered by the FC segment's signature and MUST match the number of consecutive occurrences of the CASN in the AS_PATH attribute of the same BGP UPDATE message; see {{fcmapping}} and {{validation-steps}}.
+
+RESERVED:
+: Three octets reserved for future allocation. For the version of the FC segment format defined in this document, the sender MUST set this field to 0. The field is included in the FC Signature Input ({{sig-input}}), so that any future allocation is covered by the FC segment's signature and cannot be altered without detection. New allocations MUST preserve the 3-octet size of the field; see {{iana-considerations}}.
 
 {: vspace="0"}
 
@@ -415,6 +418,7 @@ FC-Signature-Input =
  || Flags                   (1 octet)
  || Canonical Sig Length    (2 octets, always 0)
  || PC                      (1 octet)
+ || RESERVED                (3 octets)
  || AFI                     (2 octets)
  || SAFI                    (1 octet)
  || Prefix                  (4 or 16 octets)
@@ -446,6 +450,9 @@ Canonical Sig Length:
 
 PC:
 : 1 octet, the value of the Prepending Count field.
+
+RESERVED:
+: 3 octets, the value of the RESERVED field of the FC segment ({{figure2}}). For the version of the FC segment format defined in this document, the value MUST be 0. Future allocations from the RESERVED field MUST preserve its 3-octet size so that the FC Signature Input defined here remains stable; see {{iana-considerations}}.
 
 AFI and SAFI:
 : The Address Family Identifier (2 octets) and Subsequent Address Family Identifier (1 octet) of the prefix being announced, as carried in the MP_REACH_NLRI attribute {{RFC4760}}. This document supports only unicast IPv4 (AFI 1, SAFI 1) and unicast IPv6 (AFI 2, SAFI 1). The same prefix announced under a different AFI or SAFI yields a different signature input and therefore a different signature, which prevents signatures from being replayed across address families.
@@ -493,7 +500,7 @@ The Algorithm ID field for FC-BGP is set to 1. FC-BGP supports the same algorith
 
 The Signature Length field is populated with the length, in octets, of the value in the Signature field.
 
-The Signature field in the new FC segment is a variable-length field. It contains a digital signature in DER format that binds the pathlet identified by the triplet <PASN, CASN, NASN>, together with the PC, the SKI, the Algorithm ID, the Flags, and the prefix, to the RPKI router certificate of the FC-BGP speaker. The signature is computed over the canonical FC Signature Input defined in {{sig-input}}.
+The Signature field in the new FC segment is a variable-length field. It contains a digital signature in DER format that binds the pathlet identified by the triplet <PASN, CASN, NASN>, together with the PC, the RESERVED field, the SKI, the Algorithm ID, the Flags, and the prefix, to the RPKI router certificate of the FC-BGP speaker. The signature is computed over the canonical FC Signature Input defined in {{sig-input}}.
 
 
 The signatures within the FC segments of an FC-BGP UPDATE message ensure the protection of crucial information, including the AS number of the neighbor involved in the message exchange. This information is explicitly included in the generated FC segment. Consequently, if an FC-BGP speaker intends to transmit an FC-BGP UPDATE message to multiple BGP neighbors, it MUST generate a distinct FC-BGP UPDATE message for each unique neighbor AS to whom the UPDATE message is being sent.
@@ -791,7 +798,7 @@ For each FC segment, the FC-BGP speaker processes FC-BGP UPDATE message validati
 <!-- TODO: agree that this section is the FC-BGP analogue of the BGPsec signature validation; the differences are (a) each FC segment carries its own Algorithm ID, and (b) the input to the signature is the FC Signature Input of {{sig-input}}. -->
 
 - Step 1: Locate the public key needed to verify the signature in the current FC segment. To do this, consult the valid RPKI router certificate data and look up all valid <AS Number, Public Key, Subject Key Identifier> triples in which the AS matches the Current AS Number (CASN) in the corresponding FC segment. Of these triples that match the AS number, check whether there is an Subject Key Identifier (SKI) that matches the value in the SKI field of the FC segment. If this check finds no such matching SKI value, then mark the entire FC segment as 'Invalid' and stop.
-- Step 2: Construct the digest input for the current FC segment exactly as specified in {{sig-input}}, using the PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN MUST be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.
+- Step 2: Construct the digest input for the current FC segment exactly as specified in {{sig-input}}, using the PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN MUST be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.
 - Step 3: Use the signature validation algorithm (for the given algorithm suite) to verify the signature in the current segment. That is, invoke the signature validation algorithm on the following three inputs: the value of the Signature field in the current FC segment, the digest constructed in Step 2 above, and the public key obtained from the valid RPKI data in Step 1 above. If the signature validation algorithm determines that the signature is invalid, then mark the entire FC segment as 'Invalid' and stop. If the signature validation algorithm determines that the signature is valid, then the FC segment is marked as 'Valid' and validation continues with the following FC segments.
 
 When one FC Segment has set the Flags-P2C flag to 1, the subsequent FC segments added by the following ASes MUST all set the Flags-P2C flag to 1 in their corresponding FC segments. The Flags-P2C flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Customer or RS-Client. The Flags-P2P flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Peer.
@@ -1070,6 +1077,8 @@ TBD. Wait for IANA to assign FC-BGP-UPDATE-PATH-ATTRIBUTE-TYPE.
 
 TBD. Regist Flags. The leftmost bit is the Confed_Segment flag, and the second highest/leftmost bit is the Route_Server flag in this document.
 
+TBD. The 3-octet RESERVED field of the FC segment ({{figure2}}) is reserved for future allocation. Allocations MUST NOT change the size of the field, so that the FC Signature Input ({{sig-input}}) remains stable; any allocated content is covered by the FC segment's signature.
+
 TBD. A new OID should be assigned for keys used in FC-BGP.
 
 AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.
@@ -1172,7 +1181,7 @@ When receiving an UPDATE message from AS 65536, the FC-BGP speaker in AS 65537 r
 
 FC-BGP speakers need to generate different UPDATE messages for different neighbors. Each UPDATE announcement contains only one route prefix and cannot be aggregated. This is because different route prefixes may have different announcement paths due to different routing policies. Multiple aggregated route prefixes may cause FC generation and verification errors. When multiple route prefixes need to be announced, the FC-BGP speaker needs to generate different UPDATE messages for each route prefix. Thus, the FC-BGP speaker of AS 65537 generates different UPDATE messages for AS 65538 and AS 65539 separately. The biggest difference is that the NASN is 65538 for AS 65538 and 65539 for AS 65539 in the FC segment generated by AS 65537.
 
-Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in {{figure1}} and {{figure2}} separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in {{sig-input}} (which covers the Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
+Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in {{figure1}} and {{figure2}} separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in {{sig-input}} (which covers the Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
 
 ## Acknowledgments
 {:numbered="false"}
