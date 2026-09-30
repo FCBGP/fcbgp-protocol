@@ -323,6 +323,8 @@ A speaker that receives an FC path attribute or an FC segment that exceeds any o
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                            Version                            |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |           Previous Autonomous System Number (PASN)            |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |            Current Autonomous System Number (CASN)            |
@@ -345,6 +347,9 @@ In FC-BGP, all ASs MUST use 4-byte AS numbers in FC segments. Existing 2-byte AS
 FC segment includes the following parts. (See {{fcbgp-update}} for more details on populating these fields.)
 
 {: vspace="0"}
+
+Version (1 octet):
+: The version of the FC segment format. The current value is 1. The Version field is the first field of the FC segment, in a positionally fixed location, so that a receiver can determine, before parsing the rest of the segment, whether it understands the segment format. The Version field is covered by the FC segment's signature ({{sig-input}}); an FC segment whose Version is not recognized MUST NOT be treated as authenticated and is handled as 'Unsupported' per {{error-matrix}}. Future versions MUST NOT change the position or the 1-octet size of the Version field; see {{iana-considerations}} for version management.
 
 Previous Autonomous System Number (PASN, 4 octets):
 : The PASN is the AS number of the previous hop AS from which the FC-BGP speaker receives the FC-BGP UPDATE message. If the current AS has no previous AS hop, it MUST be filled with 0. It will be discussed more at {{sec-three-asn}}.
@@ -409,7 +414,7 @@ All fields are concatenated in the order listed below, and each integer field is
 ~~~~
 FC-Signature-Input =
     Domain-Separation       (8 octets)
- || Protocol-Version        (1 octet)
+ || Version                 (1 octet)
  || PASN                    (4 octets)
  || CASN                    (4 octets)
  || NASN                    (4 octets)
@@ -430,8 +435,8 @@ The individual components are defined as follows:
 Domain-Separation:
 : 8 octets containing the ASCII encoding of the string "FC-BGP" followed by two 0x00 octets. The Domain-Separation string prevents a signature computed for FC-BGP from being valid for a different protocol that signs similar data.
 
-Protocol-Version:
-: 1 octet, set to 1. This is the version of the FC segment format defined in this document; see {{iana-considerations}} for version management.
+Version:
+: 1 octet, the value of the Version field of the FC segment ({{figure2}}). The current value is 1. Because the Version value both appears in a positionally fixed field of the FC segment and is covered by the FC segment's signature, a receiver can detect an unknown segment version before cryptographic verification and handle it as 'Unsupported' without treating the segment as authenticated ({{error-matrix}}), and an on-path attacker cannot change the signer's Version without breaking the signature.
 
 PASN, CASN, NASN:
 : The three AS numbers of the FC segment, each encoded as 4 octets as defined in {{figure2}}.
@@ -481,7 +486,7 @@ There are three AS numbers in one FC segment, as {{figure2}} shows. The populati
 
 The Subject Key Identifier field (SKI) within the new FC segment is populated with the identifier found in the Subject Key Identifier extension of the RPKI router certificate associated with the FC-BGP speaker. This identifier serves as a crucial piece of information for recipients of the route advertisement. It enables them to identify the appropriate certificate to employ when verifying the signatures in FC segments attached to the route advertisement. This practice adheres to the guidelines outlined in {{RFC8209}}.
 
-Typically, the Flags field is set to 0 and the PC field is set to 1. The PC field is set to a value greater than 1 only when AS Path Prepending is used, as described below.
+The Version field MUST be set to 1 by an FC-BGP speaker that implements this version of the protocol; see {{iana-considerations}} and {{algorithms-extensibility}}. Typically, the Flags field is set to 0 and the PC field is set to 1. The PC field is set to a value greater than 1 only when AS Path Prepending is used, as described below.
 
 A route server (RS) is a third-party brokering system that interconnects three or more BGP-speaking routers using eBGP in IXPs {{RFC7947}}. Typically, an RS behaves like a transit AS except that it does not insert its AS number into the AS_PATH attribute. An RS can also participate in FC-BGP. If the RS is FC-enabled, it adds its FC segment with the Flags-RS bit set to 1 when its AS number does not appear in the AS_PATH attribute; when its AS number is inserted into the AS_PATH attribute, the Flags-RS bit MUST be set to 0. A non-FC RS propagates the FC-BGP UPDATE message directly without adding an FC segment. Note that the AS number of an RS is used in the FC segment whether or not it appears in the AS_PATH attribute; how the resulting FC-to-AS_PATH Mapping is established is defined in {{rs-processing}}.
 
@@ -753,7 +758,7 @@ In particular, a cryptographic verification failure MUST NOT be treated as an UP
 | Signature verification failure | A signature does not verify under the identified certificate; a signature that is not valid DER | The FC segment is marked 'Invalid'; the UPDATE message becomes 'Invalid' per {{validation-states}}. Not an UPDATE syntax error. |
 | FC-to-AS_PATH Mapping failure | FCList order reversed; triplet not data-path adjacent; PC not equal to the number of consecutive occurrences; two consecutive normal FCs with the same CASN; a non-consecutive repeated CASN | 'Invalid' per {{validation-states}}. Not a mere missing FC. |
 | Missing FC | An FC-required ({{deployment}}) AS has no corresponding FC segment | If the AS is FC-required, the Mapping cannot be completed and the UPDATE message is 'Invalid'. If the AS is not FC-required, there is no violation and the coverage is 'Incomplete' (partial deployment). |
-| Unsupported algorithm | An Algorithm ID that is not recognized; an unknown FC segment version | The affected FC segment(s) are not cryptographically verified. If no other failure is detected, the UPDATE message is 'Unsupported' per {{validation-states}}. It MUST NOT be silently downgraded to an ordinary unsigned BGP route. |
+| Unsupported algorithm | An Algorithm ID that is not recognized; an unknown FC segment Version field | The affected FC segment(s) are not cryptographically verified. If no other failure is detected, the UPDATE message is 'Unsupported' per {{validation-states}}. It MUST NOT be silently downgraded to an ordinary unsigned BGP route. |
 | Certificate missing or invalid | No valid RPKI router certificate for the CASN; the certificate is revoked or expired; the SKI is not found | An FC segment whose verifying certificate cannot be found or is invalid cannot be verified. If the certificate state is definitive (absent, revoked, or expired), the FC segment is marked 'Invalid'. If the certificate state is only temporarily unknown (e.g., RPKI data not yet synchronized), validation may be deferred to 'Not Validated' per local policy; see {{deployment}} and {{Validation}}. |
 | RPKI state change | A certificate used by FC segments becomes revoked or expires, is replaced, or a new certificate appears | Revalidation of the affected UPDATE messages is triggered as specified in {{Validation}}; the state of the affected FC segments is reevaluated. |
 
@@ -798,7 +803,7 @@ For each FC segment, the FC-BGP speaker processes FC-BGP UPDATE message validati
 <!-- TODO: agree that this section is the FC-BGP analogue of the BGPsec signature validation; the differences are (a) each FC segment carries its own Algorithm ID, and (b) the input to the signature is the FC Signature Input of {{sig-input}}. -->
 
 - Step 1: Locate the public key needed to verify the signature in the current FC segment. To do this, consult the valid RPKI router certificate data and look up all valid <AS Number, Public Key, Subject Key Identifier> triples in which the AS matches the Current AS Number (CASN) in the corresponding FC segment. Of these triples that match the AS number, check whether there is an Subject Key Identifier (SKI) that matches the value in the SKI field of the FC segment. If this check finds no such matching SKI value, then mark the entire FC segment as 'Invalid' and stop.
-- Step 2: Construct the digest input for the current FC segment exactly as specified in {{sig-input}}, using the PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN MUST be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.
+- Step 2: Construct the digest input for the current FC segment exactly as specified in {{sig-input}}, using the Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length of the FC segment and of the UPDATE message. Note that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is a member of an AS confederation), the AS number used for the CASN MUST be the AS number announced in the BGP OPEN message for the session over which the FC-BGP UPDATE message was received. All three AS numbers in one FC segment follow this rule.
 - Step 3: Use the signature validation algorithm (for the given algorithm suite) to verify the signature in the current segment. That is, invoke the signature validation algorithm on the following three inputs: the value of the Signature field in the current FC segment, the digest constructed in Step 2 above, and the public key obtained from the valid RPKI data in Step 1 above. If the signature validation algorithm determines that the signature is invalid, then mark the entire FC segment as 'Invalid' and stop. If the signature validation algorithm determines that the signature is valid, then the FC segment is marked as 'Valid' and validation continues with the following FC segments.
 
 When one FC Segment has set the Flags-P2C flag to 1, the subsequent FC segments added by the following ASes MUST all set the Flags-P2C flag to 1 in their corresponding FC segments. The Flags-P2C flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Customer or RS-Client. The Flags-P2P flag is set to 1 only when the role of its neighbor, to whom the propagator AS sends routes, is Peer.
@@ -821,7 +826,7 @@ The following rules govern algorithm registration, transition, and deprecation:
 - During a transition between algorithm suites, a speaker MAY generate FC segments with different Algorithm IDs for different FC segments, provided that the private key and certificate for each Algorithm ID are available. Each FC segment's Algorithm ID is covered by that FC segment's own signature ({{sig-input}}), so mixed-Algorithm-ID FC lists are cryptographically self-contained.
 - An FC-BGP speaker that encounters an FC segment whose Algorithm ID it does not recognize MUST NOT verify that FC segment and MUST handle it per {{error-matrix}}: the UPDATE message becomes 'Unsupported' (or 'Invalid' if another failure is present) per {{validation-states}}. An unsupported algorithm MUST NOT cause the UPDATE message to be silently treated as an ordinary unsigned BGP route.
 - An algorithm MUST NOT be removed from use without a documented transition plan. Before deprecating an algorithm, operators MUST stop generating FC segments under it, allow enough time for the remaining FC segments signed under it to expire from the network, and then remove the Algorithm ID from the registry.
-- The FC Segment Protocol-Version in {{sig-input}} provides the version of the FC segment format; the handling of an unknown Protocol-Version follows {{error-matrix}}.
+- The Version field ({{figure2}}) is the first field of the FC segment, in a positionally fixed location, and is also included in the FC Signature Input ({{sig-input}}). A receiver that does not recognize the Version value handles the FC segment as 'Unsupported' per {{error-matrix}}; the signed value prevents the version from being altered in transit.
 
 ## Speedup and Early Termination of Signature Verification {#speedup-early-termination}
 
@@ -1079,6 +1084,8 @@ TBD. Regist Flags. The leftmost bit is the Confed_Segment flag, and the second h
 
 TBD. The 3-octet RESERVED field of the FC segment ({{figure2}}) is reserved for future allocation. Allocations MUST NOT change the size of the field, so that the FC Signature Input ({{sig-input}}) remains stable; any allocated content is covered by the FC segment's signature.
 
+TBD. Regist the FC Segment Version field ({{figure2}}). The current value is 1. Allocations MUST NOT change the position or the 1-octet size of the Version field, so that receivers can always locate it before parsing the rest of the FC segment.
+
 TBD. A new OID should be assigned for keys used in FC-BGP.
 
 AS number 0 is used here to populate the PASN in an FC segment where there is no previous hop for an AS, i.e., the origin AS when adding the FC segment to the FC-BGP UPDATE message.
@@ -1153,6 +1160,7 @@ This section specifies the interoperability test cases for FC-BGP validation. Ea
 | 18. Aggregation or AS_PATH modification | The AS_PATH attribute is changed after the FCList was constructed | 'Invalid', or the FC path attribute is removed before propagation | Regenerate a fresh FC path attribute or remove it | Per {{fcmapping}} and {{asn-processing}} |
 | 19. Over-long FCList | The FCList Length exceeds the limits of {{fc-path-attribute}} | Malformed attribute | Treated as a malformed attribute | Per RFC 7606 {{RFC7606}} via {{error-matrix}} |
 | 20. FC-BGP and BGPsec coexisting | The UPDATE message carries both a BGPsec_Path attribute and an FC path attribute | Per {{coexist_bgpsec}} | The FC segments are generated and verified against the same path representation | Per {{coexist_bgpsec}} |
+| 21. Unknown FC segment Version | FC segments carry a Version field value the receiver does not recognize | 'Unsupported' | MUST NOT be silently downgraded to an ordinary unsigned BGP route | Per {{error-matrix}} |
 
 The byte-level test vectors for IPv4, IPv6, AS Path Prepending, invalid DER, and tampered fields are derived from the canonical FC Signature Input defined in {{sig-input}} and MUST be reproducible from the wire encoding of the FC path attribute and of the UPDATE message alone. Any two conforming implementations MUST compute the same FC Signature Input and MUST obtain the same validation state for a given input.
 
@@ -1181,7 +1189,7 @@ When receiving an UPDATE message from AS 65536, the FC-BGP speaker in AS 65537 r
 
 FC-BGP speakers need to generate different UPDATE messages for different neighbors. Each UPDATE announcement contains only one route prefix and cannot be aggregated. This is because different route prefixes may have different announcement paths due to different routing policies. Multiple aggregated route prefixes may cause FC generation and verification errors. When multiple route prefixes need to be announced, the FC-BGP speaker needs to generate different UPDATE messages for each route prefix. Thus, the FC-BGP speaker of AS 65537 generates different UPDATE messages for AS 65538 and AS 65539 separately. The biggest difference is that the NASN is 65538 for AS 65538 and 65539 for AS 65539 in the FC segment generated by AS 65537.
 
-Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in {{figure1}} and {{figure2}} separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in {{sig-input}} (which covers the Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
+Take AS 65538 as the next hop. The FC-BGP speaker in AS 65537 will encapsulate each prefix to be sent to AS 65538 in a single UPDATE message, add the FC path attribute, and sign the path content using its private key to fill a new FC segment. The FC path attribute and the FC segment use the message format shown in {{figure1}} and {{figure2}} separately. When signing, the FC-BGP speaker constructs the canonical FC Signature Input defined in {{sig-input}} (which covers the Domain-Separation, Version, PASN, CASN, NASN, SKI, Algorithm ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI, Prefix, and Prefix Length), computes the SHA-256 hash over that byte string, signs the digest with ECDSA, and then fills in the Signature field and the other FC fields. After that, AS 65537 prepends its own FC on top of the FC List. At this point, the processing of FC path attributes by the FC-BGP speaker is complete. The subsequent processing of BGP messages follows the standard BGP process.
 
 ## Acknowledgments
 {:numbered="false"}
