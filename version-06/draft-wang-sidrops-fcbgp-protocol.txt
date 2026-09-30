@@ -632,7 +632,7 @@ Table of Contents
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    | Algorithm ID  |      Flags    |       Signature Length        |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |      PC       |                                              |
+   |      PC       |                 RESERVED                      |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    ~                          Signature                            ~
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -710,7 +710,7 @@ Table of Contents
 
    Note that the behavior that was previously expressed by an
    AS_Path_Prepending flag (Flags-ASPP) is now expressed by the
-   Prepending Count (PC) field defined below.
+   Prepending Count field defined below.
 
    Signature Length (2 octets):  The length, in octets, of the Signature
       field.  It does not include any other field of the FC segment.
@@ -727,6 +727,14 @@ Table of Contents
       the number of consecutive occurrences of the CASN in the AS_PATH
       attribute of the same BGP UPDATE message; see Section 7 and
       Section 8.2.3.
+
+   RESERVED:  Three octets reserved for future allocation.  For the
+      version of the FC segment format defined in this document, the
+      sender MUST set this field to 0.  The field is included in the FC
+      Signature Input (Section 4.1), so that any future allocation is
+      covered by the FC segment's signature and cannot be altered
+      without detection.  New allocations MUST preserve the 3-octet size
+      of the field; see Section 11.
 
    Signature (variable length):  A digital signature, in DER format,
       computed over the canonical FC Signature Input defined in
@@ -760,6 +768,7 @@ Table of Contents
     || Flags                   (1 octet)
     || Canonical Sig Length    (2 octets, always 0)
     || PC                      (1 octet)
+    || RESERVED                (3 octets)
     || AFI                     (2 octets)
     || SAFI                    (1 octet)
     || Prefix                  (4 or 16 octets)
@@ -794,6 +803,12 @@ Table of Contents
       content.
 
    PC:  1 octet, the value of the Prepending Count field.
+
+   RESERVED:  3 octets, the value of the RESERVED field of the FC
+      segment (Figure 2).  For the version of the FC segment format
+      defined in this document, the value MUST be 0.  Future allocations
+      from the RESERVED field MUST preserve its 3-octet size so that the
+      FC Signature Input defined here remains stable; see Section 11.
 
    AFI and SAFI:  The Address Family Identifier (2 octets) and
       Subsequent Address Family Identifier (1 octet) of the prefix being
@@ -927,9 +942,10 @@ Table of Contents
    The Signature field in the new FC segment is a variable-length field.
    It contains a digital signature in DER format that binds the pathlet
    identified by the triplet <PASN, CASN, NASN>, together with the PC,
-   the SKI, the Algorithm ID, the Flags, and the prefix, to the RPKI
-   router certificate of the FC-BGP speaker.  The signature is computed
-   over the canonical FC Signature Input defined in Section 4.1.
+   the RESERVED field, the SKI, the Algorithm ID, the Flags, and the
+   prefix, to the RPKI router certificate of the FC-BGP speaker.  The
+   signature is computed over the canonical FC Signature Input defined
+   in Section 4.1.
 
    The signatures within the FC segments of an FC-BGP UPDATE message
    ensure the protection of crucial information, including the AS number
@@ -1887,13 +1903,14 @@ Table of Contents
 
    *  Step 2: Construct the digest input for the current FC segment
       exactly as specified in Section 4.1, using the PASN, CASN, NASN,
-      SKI, Algorithm ID, Flags, PC, AFI/SAFI, Prefix, and Prefix Length
-      of the FC segment and of the UPDATE message.  Note that if an FC-
-      BGP speaker uses multiple AS numbers (e.g., the FC-BGP speaker is
-      a member of an AS confederation), the AS number used for the CASN
-      MUST be the AS number announced in the BGP OPEN message for the
-      session over which the FC-BGP UPDATE message was received.  All
-      three AS numbers in one FC segment follow this rule.
+      SKI, Algorithm ID, Flags, PC, RESERVED, AFI/SAFI, Prefix, and
+      Prefix Length of the FC segment and of the UPDATE message.  Note
+      that if an FC-BGP speaker uses multiple AS numbers (e.g., the FC-
+      BGP speaker is a member of an AS confederation), the AS number
+      used for the CASN MUST be the AS number announced in the BGP OPEN
+      message for the session over which the FC-BGP UPDATE message was
+      received.  All three AS numbers in one FC segment follow this
+      rule.
 
    *  Step 3: Use the signature validation algorithm (for the given
       algorithm suite) to verify the signature in the current segment.
@@ -2754,6 +2771,12 @@ Table of Contents
    the second highest/leftmost bit is the Route_Server flag in this
    document.
 
+   TBD.  The 3-octet RESERVED field of the FC segment (Figure 2) is
+   reserved for future allocation.  Allocations MUST NOT change the size
+   of the field, so that the FC Signature Input (Section 4.1) remains
+   stable; any allocated content is covered by the FC segment's
+   signature.
+
    TBD.  A new OID should be assigned for keys used in FC-BGP.
 
    AS number 0 is used here to populate the PASN in an FC segment where
@@ -3246,11 +3269,11 @@ A.4.  An Example
    separately.  When signing, the FC-BGP speaker constructs the
    canonical FC Signature Input defined in Section 4.1 (which covers the
    Domain-Separation, Protocol-Version, PASN, CASN, NASN, SKI, Algorithm
-   ID, Flags, canonical signature length, PC, AFI/SAFI, Prefix, and
-   Prefix Length), computes the SHA-256 hash over that byte string,
-   signs the digest with ECDSA, and then fills in the Signature field
-   and the other FC fields.  After that, AS 65537 prepends its own FC on
-   top of the FC List.  At this point, the processing of FC path
+   ID, Flags, canonical signature length, PC, RESERVED, AFI/SAFI,
+   Prefix, and Prefix Length), computes the SHA-256 hash over that byte
+   string, signs the digest with ECDSA, and then fills in the Signature
+   field and the other FC fields.  After that, AS 65537 prepends its own
+   FC on top of the FC List.  At this point, the processing of FC path
    attributes by the FC-BGP speaker is complete.  The subsequent
    processing of BGP messages follows the standard BGP process.
 
